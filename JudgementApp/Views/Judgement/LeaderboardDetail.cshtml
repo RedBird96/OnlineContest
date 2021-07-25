@@ -1,0 +1,43 @@
+﻿@model IEnumerable<JudgementApp.Models.Leaderboard>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<body style="background: rgb(24,31,42);color: rgb(133, 135, 150);">
+    <section class="contact-clean" style="background: rgb(24,31,42);">
+        <form method="post" style="text-align: center;background: rgb(17,23,31);">
+            <h2 class="text-center" style="color: rgb(255,255,255);">Details</h2>
+            <div>
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        <thead>
+                            <tr style="color: rgb(133, 135, 150);">
+                                <th style="width: 206px;color: rgb(16,173,137);">No</th>
+                                <th style="width: 206px;color: rgb(16,173,137);">Date</th>
+                                <th style="width: 206px;color: rgb(16,173,137);">Win Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int count = 1; }
+                            @foreach (var row in Model)
+                            {
+                                <tr style="color: rgb(255,255,255);">
+                                    <td>@count</td>
+                                    <td>@row.Date</td>
+                                    <td>@row.WinPercentage %</td>
+
+                                    @{ count++;}
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </section>
+    <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/theme.js"></script>
+</body>

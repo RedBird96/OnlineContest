@@ -1,0 +1,46 @@
+﻿@model IEnumerable<JudgementApp.Models.Leaderboard>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<body style="background: rgb(24,31,42);color: rgb(133, 135, 150);">
+    <section class="contact-clean" style="background: rgb(24,31,42);">
+        <form method="post" style="text-align: center;background: rgb(17,23,31);">
+            <h2 class="text-center" style="color: rgb(255,255,255);">Leaderboard</h2>
+            <div>
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        <thead>
+                            <tr style="color: rgb(133, 135, 150);">
+                                <th style="width: 206px;color: rgb(16,173,137);">Username</th>
+                                <th style="width: 206px;color: rgb(16,173,137);">Contests Attempted</th>
+                                <th style="width: 206px;color: rgb(16,173,137);">Win Percentage</th>
+                                <th style="width: 206px;color: rgb(16,173,137);">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model)
+                            {
+                                <tr style="color: rgb(255,255,255);">
+                                    <td href="@Url.Action("Index", "Judgement")">@row.Username</td>
+                                    <td>@row.ContestAttempted</td>
+                                    <td>@row.WinPercentage %</td>
+
+                                    <td>
+                                        @Html.ActionLink("Details", "LeaderboardDetail", new { Name = row.Username })
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("Index", "Judgement")'">Judgement</button>
+
+        </form>
+    </section>
+    <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/theme.js"></script>
+</body>

@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewBag.Title = "Success";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<body style="background: rgb(241,247,252);">
+    <section class="contact-clean">
+        <form method="post" style="text-align: center;">
+            <h2 class="text-center">Create Problem</h2>
+            <div>
+                <div class="card shadow mb-4" id="Question-1">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="text-primary fw-bold m-0">Information&nbsp;</h6>
+                    </div>
+                    <div class="card-body" style="text-align: left;"><label class="form-label" style="font-style: normal;font-weight: bold;">Your problem has been created successfully!</label></div>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("CreateProblem", "Judgement")'">Edit Problem</button>
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("Leaderboard", "Judgement")'">Leaderboard</button>
+        </form>
+    </section>
+    <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/theme.js"></script>
+</body>

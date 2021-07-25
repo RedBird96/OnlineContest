@@ -1,0 +1,140 @@
+﻿@model List<JudgementApp.Models.Data>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+<body>
+    <section class="contact-clean">
+        <form action="Update" method="post" style="text-align: center;">
+            <h2 class="text-center">Create Problem</h2>
+            <div>
+                <div class="card shadow mb-4" id="Question-1">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="text-primary fw-bold m-0">Question 1</h6>
+                    </div>
+                    <div class="card-body" style="text-align: left;">
+                        <label class="form-label" style="font-style: normal;font-weight: bold;">will [P1] hit [P2] by [P3]?</label>
+                        <div style="width: 290px;">
+                            <label class="form-label" style="padding-left: 4px;">P1</label><select name="Q1_P1" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                @foreach (var details in Model)
+                                {
+                                    if (details.Id == 0)
+                                    {
+                                        continue;
+                                    }
+                                    <option value=@details.SymbolName>@details.SymbolName</option>
+                                }
+                            </select>
+                        </div>
+                        <div style="width: 290px;"><label class="form-label" style="padding-left: 4px;">P2<input name="Q1_P2" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;"></label></div>
+                        <div style="width: 290px;">
+                            <label class="form-label" style="display: inline;padding-left: 4px;">P3</label><select name="Q1_P3" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                <option value="12:00 noon" selected="">12:00 noon</option>
+                                <option value="12:30 pm">12:30 pm</option>
+                                <option value="01:00 pm">01:00 pm</option>
+                                <option value="01:30 pm">01:30 pm</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card shadow mb-4" id="Question-2">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="text-primary fw-bold m-0">Question 2</h6>
+                    </div>
+                    <div class="card-body" style="text-align: left;">
+                        <label class="form-label"><strong>will [P1] close [P2] [P3] [P4]?</strong></label>
+                        <div style="width: 290px;">
+                            <label class="form-label" style="padding-left: 4px;">P1</label><select name="Q2_P1" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                @foreach (var details in Model)
+                                {
+                                    if (details.Id == 0)
+                                    {
+                                        continue;
+                                    }
+                                    <option value=@details.SymbolName>@details.SymbolName</option>
+                                }
+                            </select>
+                        </div>
+                        <div style="width: 290px;">
+                            <label class="form-label" style="padding-left: 4px;">P2</label><select name="Q2_P2" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                <option value="above">above</option>
+                                <option value="below">below</option>
+                            </select>
+                        </div>
+                        <div style="width: 290px;"><label class="form-label" style="display: inline;padding-left: 4px;">P3</label><input name="Q2_P3" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;"></div>
+                        <div style="width: 290px;">
+                            <label class="form-label" style="padding-left: 4px;">
+                                P4<select name="Q2_P4" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                    <option value="today" selected="">today</option>
+                                    <option value="this week">this week</option>
+                                    <option value="this month">this month</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card shadow mb-4" id="Question-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="text-primary fw-bold m-0">Question 3</h6>
+                    </div>
+                    <div class="card-body" style="text-align: left;">
+                        <label class="form-label"><strong>will [P1] have a higher return in the AM or PM?</strong></label>
+                        <div style="width: 290px;">
+                            <label class="form-label" style="padding-left: 4px;">P1</label><select name="Q3_P1" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                @foreach (var details in Model)
+                                {
+                                    if (details.Id == 0)
+                                    {
+                                        continue;
+                                    }
+                                    <option value=@details.SymbolName>@details.SymbolName</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card shadow mb-4" id="Question-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="text-primary fw-bold m-0">Question 4</h6>
+                    </div>
+                    <div class="card-body" style="text-align: left;">
+                        <label class="form-label"><strong>will [P1] have a higher return before or after [P2]?</strong></label>
+                        <div style="width: 290px;">
+                            <label class="form-label" style="padding-left: 4px;">P1</label><select name="Q4_P1" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                @foreach (var details in Model)
+                                {
+                                    if (details.Id == 0)
+                                    {
+                                        continue;
+                                    }
+                                    <option value=@details.SymbolName>@details.SymbolName</option>
+                                }
+                            </select>
+                        </div>
+                        <div style="width: 290px;">
+                            <label class="form-label" style="padding-left: 4px;">
+                                P2<select name="Q4_P2" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                    <option value="12:00 noon" selected="">12:00 noon</option>
+                                    <option value="12:30 pm">12:30 pm</option>
+                                    <option value="01:00 pm">01:00 pm</option>
+                                    <option value="01:30 pm">01:30 pm</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Update</button>
+
+        </form>
+    </section>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/theme.js"></script>
+</body>
