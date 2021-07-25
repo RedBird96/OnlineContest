@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolygonUse", "PolygonUse.csproj", "{1BA99E36-2E64-460F-8D90-23116F3E6393}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolygonAPI", "PolygonAPI\PolygonAPI.csproj", "{6F0B7701-8046-4EDA-85B3-E7B937375D5A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1BA99E36-2E64-460F-8D90-23116F3E6393}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BA99E36-2E64-460F-8D90-23116F3E6393}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BA99E36-2E64-460F-8D90-23116F3E6393}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1BA99E36-2E64-460F-8D90-23116F3E6393}.Debug|x64.Build.0 = Debug|Any CPU
+		{1BA99E36-2E64-460F-8D90-23116F3E6393}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BA99E36-2E64-460F-8D90-23116F3E6393}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BA99E36-2E64-460F-8D90-23116F3E6393}.Release|x64.ActiveCfg = Release|Any CPU
+		{1BA99E36-2E64-460F-8D90-23116F3E6393}.Release|x64.Build.0 = Release|Any CPU
+		{6F0B7701-8046-4EDA-85B3-E7B937375D5A}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{6F0B7701-8046-4EDA-85B3-E7B937375D5A}.Debug|x64.ActiveCfg = Debug|x64
+		{6F0B7701-8046-4EDA-85B3-E7B937375D5A}.Debug|x64.Build.0 = Debug|x64
+		{6F0B7701-8046-4EDA-85B3-E7B937375D5A}.Release|Any CPU.ActiveCfg = Release|x64
+		{6F0B7701-8046-4EDA-85B3-E7B937375D5A}.Release|x64.ActiveCfg = Release|x64
+		{6F0B7701-8046-4EDA-85B3-E7B937375D5A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4E23EB69-16D9-4E4F-82AD-DC40678FDE51}
+	EndGlobalSection
+EndGlobal
