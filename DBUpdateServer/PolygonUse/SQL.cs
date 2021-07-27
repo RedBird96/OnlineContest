@@ -12,8 +12,8 @@ namespace PolygonUse
 {
     public static class SQL
     {
-        private static SqlConnection con = new SqlConnection(@"Data Source=DESKTOP-IFTEV0K;Initial Catalog=JudgementApp;Integrated Security=True;Pooling=False");// ReadCS().ToString()); 
-                                                                                                                                                                 //  private static SqlConnection con = new SqlConnection(@"Server =WIN-U0806780LB2\SQLEXPRESS; Database=POS_CARWASH;User ID = sa; pwd=123");// ReadCS().ToString()); 
+        //private static SqlConnection con = new SqlConnection(@"Data Source=DESKTOP-IFTEV0K;Initial Catalog=JudgementApp;Integrated Security=True;Pooling=False");// ReadCS().ToString()); 
+        private static SqlConnection con = new SqlConnection(@"workstation id=OnlineContest.mssql.somee.com;packet size=4096;user id=Bruce9623_SQLLogin_1;pwd=slwgidap1;data source=OnlineContest.mssql.somee.com;persist security info=False;initial catalog=OnlineContest");// ReadCS().ToString()); 
 
         //public static String DataSource = ReadCS();
         //private static SqlConnection con = new SqlConnection(DataSource);// ReadCS().ToString()); 

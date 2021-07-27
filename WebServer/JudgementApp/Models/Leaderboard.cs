@@ -19,5 +19,7 @@ namespace JudgementApp.Models
 
         public string Date { get; set; }
 
+        public int TotalQuestionCount { get; set; }
+
     }
 }

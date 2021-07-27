@@ -1,65 +1,131 @@
-﻿    @model JudgementApp.Models.JudgementParameter
+﻿@model List<JudgementApp.Models.Data>
 
-    @{
-        Layout = "~/Views/Shared/_Layout.cshtml";
-    }
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-    <body>
-        <section class="contact-clean">
-            <form method="post" action="saveJudgement" style="text-align: center;">
-                <h2 class="text-center">Judgement</h2>
-                <div class="mb-3">
-                    <input class="form-control" type="text" name="UserName" required="required" placeholder="Name">
-                    <div class="mb-3"></div>
-                </div>
-                <div>
+<body>
+    <section class="contact-clean">
+        <form name="form" id="JudgementForm" style="text-align: center;">
+            <h2 class="text-center">Judgement</h2>
+            <div class="mb-3">
+                <input class="form-control" type="text" id="UserName" name="UserName" required="required" placeholder="Name">
+                <div class="mb-3"></div>
+            </div>
+            <div>
+                @foreach (JudgementApp.Models.Data item in Model)
+                {
+
+                    string QResult = "Q" + item.Id+"_R" ;
+
+                    var q = "Q" + item.Id;
+                    <input id="@q" value="@item.Id" style="display:none;" />
+                    
                     <div class="card shadow mb-4" id="Question-1">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="text-primary fw-bold m-0">Question 1</h6>
+                            <h6 class="text-primary fw-bold m-0">Question @item.Row_Num</h6>
                         </div>
-                        <div class="card-body" style="text-align: left;">
-                            <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(1, "p1") hit  @Main.GetParameter(1, "p2") by  @Main.GetParameter(1, "p3")?</label>
-                            <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-5" name="Q1_Result" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
-                            <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-6" name="Q1_Result" value="Fiction"><label class="form-check-label" for="formCheck-2">Fiction</label></div>
-                        </div>
+                        @if (item.Type == 1)
+                        {
+                            <div class="card-body" style="text-align: left;">
+                                <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1") hit  @Main.GetParameter(item.Id, "p2") by  @Main.GetParameter(item.Id, "p3")?</label>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fiction"><label class="form-check-label" for="formCheck-2">Fiction</label></div>
+                            </div>
+                        }
+                        @if (item.Type == 2)
+                        {
+                            <div class="card-body" style="text-align: left;">
+                                <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1") close  @Main.GetParameter(item.Id, "p2")  @Main.GetParameter(item.Id, "p3")  @Main.GetParameter(item.Id, "p4")?</label>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fiction"> <label class="form-check-label" for="formCheck-2">Fiction</label></div>
+                            </div>
+                        }
+                        @if (item.Type == 3)
+                        {
+                            <div class="card-body" style="text-align: left;">
+                                <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(item.Id, "p1") have a higher return in the AM or PM?</label>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="AM"><label class="form-check-label" for="formCheck-1">AM</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="PM"><label class="form-check-label" for="formCheck-2">PM</label></div>
+                            </div>
+                        }
+                        @if (item.Type == 4)
+                        {
+                            <div class="card-body" style="text-align: left;">
+                                <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(item.Id, "p1") have a higher return before or after  @Main.GetParameter(item.Id, "p2")?</label>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Before"><label class="form-check-label" for="formCheck-1">Before</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="After"><label class="form-check-label" for="formCheck-2">After</label></div>
+                            </div>
+                        }
+
                     </div>
-                    <div class="card shadow mb-4" id="Question-2">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="text-primary fw-bold m-0">Question 2</h6>
-                        </div>
-                        <div class="card-body" style="text-align: left;">
-                            <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(2, "p1") close  @Main.GetParameter(2, "p2")  @Main.GetParameter(2, "p3")  @Main.GetParameter(2, "p4")?</label>
-                            <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-7" name="Q2_Result" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
-                            <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-8" name="Q2_Result" value="Fiction"> <label class="form-check-label" for="formCheck-2">Fiction</label></div>
-                        </div>
-                    </div>
-                    <div class="card shadow mb-4" id="Question-3">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="text-primary fw-bold m-0">Question 3</h6>
-                        </div>
-                        <div class="card-body" style="text-align: left;">
-                            <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(3, "p1") have a higher return in the AM or PM?</label>
-                            <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-9" name="Q3_Result" value="AM"><label class="form-check-label" for="formCheck-1">AM</label></div>
-                            <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-10" name="Q3_Result" value="PM"><label class="form-check-label" for="formCheck-2">PM</label></div>
-                        </div>
-                    </div>
-                    <div class="card shadow mb-4" id="Question-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="text-primary fw-bold m-0">Question 4</h6>
-                        </div>
-                        <div class="card-body" style="text-align: left;">
-                            <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(4, "p1") have a higher return before or after  @Main.GetParameter(4, "p2")?</label>
-                            <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-11" name="Q4_Result" value="Before"><label class="form-check-label" for="formCheck-1">Before</label></div>
-                            <div class="form-check"><input class="form-check-input" type="radio" id="formCheck-12" name="Q4_Result" value="After"><label class="form-check-label" for="formCheck-2">After</label></div>
-                        </div>
-                    </div>
-                </div><button class="btn btn-primary" type="submit" style="width: 170px">SubMIt</button>
-                <br />
-                <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("Leaderboard", "Judgement")'">Leaderboard</button>
+                }
 
 
-            </form>
-        </section>
-        <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
-        <script src="~/assets/js/theme.js"></script>
-    </body>
+                <input id="total" value="@Model.Count" style="display:none;" />
+            </div><button class="btn btn-primary" type="button" onclick="onUpdate();" style="width: 170px">Submit</button>
+            <br />
+            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("Leaderboard", "Judgement")'">Leaderboard</button>
+
+
+        </form>
+    </section>
+    <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/theme.js"></script>
+    <script type="text/javascript">
+        var result;
+       
+        function onUpdate() {
+            debugger;
+            
+                var model = {};
+            model.UserName = $("#UserName").val();
+            if (model.UserName.length>0) {
+                var judgment = [];
+                result.forEach(item => {
+                    debugger;
+                    if (item.P1 == null || item.P1 == undefined) {
+                        item.P1 = "null"
+                    }
+                    if (item.P2 == null || item.P2 == undefined) {
+                        item.P2 = "null"
+                    }
+                    if (item.P3 == null || item.P3 == undefined) {
+                        item.P3 = "null"
+                    }
+                    if (item.P4 == null || item.P4 == undefined) {
+                        item.P4 = "null"
+                    }
+                    var QResult = $("input[name='Q" + item.Id + "_R']:checked").val();
+                    judgment.push({ ID: item.Id, QResult: QResult, QType: item.Type, Param: item.P1 + "," + item.P2 + "," + item.P3 + "," + item.P4 })
+                    var q = "Q" + item.Id;
+                })
+                model.UserName = $("#UserName").val();
+                model.Result = judgment;
+                var fd = new FormData();
+                fd.append('data', JSON.stringify(model));
+                $.ajax({
+                    url: '/Judgement/saveJudgement',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (data) {
+                        window.location = "/Judgement/ResponseSubmitted"
+
+                    }
+                });
+            } else {
+                alert("Please enter the username")
+            }
+        }
+        $(function () {
+
+            $.get("/Judgement/LoadData").then(s => {
+                debugger;
+                result = s;
+
+            })
+        })
+    </script>
+</body>

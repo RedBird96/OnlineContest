@@ -190,6 +190,8 @@ namespace PolygonUse
                     {
                         //Messenger.Default.Send(new QuoteReceivedMessage(quote.Symbol, ask: (decimal)quote.AskPrice, bid: (decimal)quote.BidPrice,
                         //    lastDateTimeUTC: Utils.ToDateTime(quote.Timestamp / 1000)));
+
+                        DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(quote.Timestamp / 1000));
                         quotesBuffer.Enqueue(quote);
                     }
                 }

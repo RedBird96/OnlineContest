@@ -11,12 +11,19 @@ namespace PolygonUse
     class Interval 
     {
         private DateTime timestamp { get; set; }
-        private double rate { get; set; }
+        private double Open { get; set; }
+        private double High { get; set; }
+        private double Low { get; set; }
+        private double Close { get; set; }
 
-        public Interval(DateTime timestamp, double rate) 
+
+        public Interval(DateTime timestamp, double open, double high, double low, double close) 
         {
             this.timestamp = timestamp;
-            this.rate = rate;
+            this.Open = open;
+            this.High = high;
+            this.Low = low;
+            this.Close = close;
         }
 
         public DateTime GetTimestamp() 
@@ -24,9 +31,21 @@ namespace PolygonUse
             return timestamp;
         }
 
-        public double GetRate() 
+        public double GetOpen()
         {
-            return rate;
+            return Open;
+        }
+        public double GetHigh()
+        {
+            return High;
+        }
+        public double GetLow()
+        {
+            return Low;
+        }
+        public double GetClose() 
+        {
+            return Close;
         }
     }
 
@@ -41,45 +60,49 @@ namespace PolygonUse
             intervals = new List<Interval>();
         }
 
-        private void LoadHistoryBar(string symbol, int days)
+        private void LoadHistoryBar(string symbol, DateTime startDT, int nuit, string unit_string)
         {
             this.symbol = symbol;
             intervals.Clear();
 
-            string unit = "minute";
-
             //You have to set here yesterday date
-            DateTime startDT = DateTime.UtcNow.AddDays(-1 * days);
+            DateTime endDT = DateTime.Now;
 
             Configuration config = new Configuration();
             config.AddApiKey("apiKey", AccessToken);
             StocksEquitiesApi stocksApi = new StocksEquitiesApi(config);
 
-            var resp = stocksApi.V2AggsTickerStocksTickerRangeMultiplierTimespanFromToGet(symbol, 30, unit,
-                            startDT.ToString("yyyy-MM-dd"), DateTime.UtcNow.ToString("yyyy-MM-dd"));
+            var resp = stocksApi.V2AggsTickerStocksTickerRangeMultiplierTimespanFromToGet(symbol, nuit, unit_string,
+                            startDT.ToString("yyyy-MM-dd"), endDT.ToString("yyyy-MM-dd"));
 
             if (resp.Status == "OK" && resp.ResultsCount > 0)
             {
                 foreach (var item in resp.Results)
                 {
-                    DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(item.T / 1000));
-                    intervals.Add(new Interval(dateTimeOffset.DateTime, Convert.ToDouble(item.C)));
+                    System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+                    dtDateTime = dtDateTime.AddSeconds((double)item.T / 1000).ToLocalTime();
+                    intervals.Add(new Interval(dtDateTime, Convert.ToDouble(item.O), Convert.ToDouble(item.H), Convert.ToDouble(item.L), Convert.ToDouble(item.C)));
                 }
-
             }
         }
 
-        public string AssessQ1(string symbol, double rate, DateTime dateTime)
+        public string AssessQ1(string symbol, double rate, DateTime dateTime, DateTime historyDateTime)
         {
-            LoadHistoryBar(symbol, 1);
+            LoadHistoryBar(symbol, historyDateTime, 30, "minute");
 
+            double high_price = 0;
             foreach (Interval interval in intervals)
             {
+                if (interval.GetTimestamp().Hour < 9 || interval.GetTimestamp().Hour > 16)
+                    continue;
+
                 if (interval.GetTimestamp().TimeOfDay == dateTime.TimeOfDay)
                 {
-                    if (interval.GetRate() > rate) return "Fact";
+                    if (high_price > rate) return "Fact";
                     else return "Fiction";
                 }
+                if (interval.GetHigh() > high_price)
+                    high_price = interval.GetHigh();
             }
             //Interval not found (maybe symbol is not correct).
             return "Fiction";
@@ -87,15 +110,16 @@ namespace PolygonUse
 
         //isAbove = True (Above)
         //isAbove = False (Below)
-        public string AssessQ2(string symbol, bool isAbove, double rate, int days) 
+        public string AssessQ2(string symbol, bool isAbove, int days, double rate, DateTime historyDateTime) 
         {
-            LoadHistoryBar(symbol, days);
+            LoadHistoryBar(symbol, historyDateTime, days, "day");
 
             if (isAbove)
             {
                 foreach (Interval interval in intervals)
                 {
-                    if (interval.GetRate() > rate) return "Fact";
+                    if (historyDateTime.Day == interval.GetTimestamp().Day)
+                        if (interval.GetClose() > rate) return "Fact";
                 }
             }
 
@@ -103,53 +127,72 @@ namespace PolygonUse
             {
                 foreach (Interval interval in intervals)
                 {
-                    if (interval.GetRate() < rate) return "Fact";
+                    if (historyDateTime.Day == interval.GetTimestamp().Day)
+                        if (interval.GetClose() < rate) return "Fact";
                 }
             }
-
+            
             return "Fiction";
         }
 
-        public string AssessQ3(string symbol)
+        public string AssessQ3(string symbol, DateTime historyDateTime)
         {
-            LoadHistoryBar(symbol, 1);
+            LoadHistoryBar(symbol, historyDateTime, 30, "minute");
 
-            double rate_9_30 = 0, rate_12_00 = 0, rate_16_00 = 0;
+            double close_1530 = 0, close_1130 = 0;
+            double open_0930 = 0, open_1200 = 0;
+
+            double am_val = 0;
+            double pm_val = 0;
 
             foreach (Interval interval in intervals)
             {
-                if (interval.GetTimestamp().Hour == 9 && interval.GetTimestamp().Minute == 30) rate_9_30 = interval.GetRate();
-                if (interval.GetTimestamp().Hour == 12 && interval.GetTimestamp().Minute == 0) rate_12_00 = interval.GetRate();
-                if (interval.GetTimestamp().Hour == 16 && interval.GetTimestamp().Minute == 0) rate_16_00 = interval.GetRate();
+                if (interval.GetTimestamp().Hour == 9 && interval.GetTimestamp().Minute == 30)
+                    open_0930 = interval.GetOpen();
+                else if (interval.GetTimestamp().Hour == 11 && interval.GetTimestamp().Minute == 30)
+                    close_1130 = interval.GetClose();
+                else if (interval.GetTimestamp().Hour == 12 && interval.GetTimestamp().Minute == 00)
+                    open_1200 = interval.GetOpen();
+                else if (interval.GetTimestamp().Hour == 15 && interval.GetTimestamp().Minute == 30)
+                    close_1530 = interval.GetClose();
             }
 
-            double AM = rate_12_00 - rate_9_30;
-            double PM = rate_16_00 - rate_12_00;
+            am_val = ((close_1130 - open_0930) / open_0930) * 100;
+            pm_val = ((close_1530 - open_1200) / open_1200) * 100; 
 
-            if (AM > PM) return "AM";
+            if (am_val > pm_val) return "AM";
             else return "PM";
 
         }
 
-        public string AssessQ4(string symbol, DateTime dateTime)
+        public string AssessQ4(string symbol, DateTime dateTime, DateTime historyDateTime)
         {
-            LoadHistoryBar(symbol, 1);
+            LoadHistoryBar(symbol, historyDateTime, 30, "minute");
 
-            double rate_9_30 = 0, rate_t = 0, rate_16_00 = 0;
+            DateTime pre_30min = dateTime.AddMinutes(-30);
 
+            double close_1530 = 0, close_predt = 0;
+            double open_0930 = 0, open_dt = 0;
+
+            double before_val = 0;
+            double after_val = 0;
             foreach (Interval interval in intervals)
             {
-                if (interval.GetTimestamp().Hour == 9 && interval.GetTimestamp().Minute == 30) rate_9_30 = interval.GetRate();
-                if (interval.GetTimestamp().Hour == dateTime.TimeOfDay.Hours && interval.GetTimestamp().Minute == dateTime.TimeOfDay.Minutes) rate_t = interval.GetRate();
-                if (interval.GetTimestamp().Hour == 16 && interval.GetTimestamp().Minute == 0) rate_16_00 = interval.GetRate();
+                if (interval.GetTimestamp().Hour == 9 && interval.GetTimestamp().Minute == 30)
+                    open_0930 = interval.GetOpen();
+                else if (interval.GetTimestamp().Hour == pre_30min.Hour && interval.GetTimestamp().Minute == pre_30min.Minute)
+                    close_predt = interval.GetClose();
+                else if (interval.GetTimestamp().Hour == dateTime.Hour && interval.GetTimestamp().Minute == dateTime.Minute)
+                    open_dt = interval.GetOpen();
+                else if (interval.GetTimestamp().Hour == 15 && interval.GetTimestamp().Minute == 30)
+                    close_1530 = interval.GetClose();
             }
 
-            double after = rate_t - rate_9_30;
-            double before = rate_16_00 - rate_t;
+            before_val = ((close_predt - open_0930) / open_0930) * 100;
+            after_val = ((close_1530 - open_dt) / open_dt) * 100;
 
-            if (before > after) return "Before";
+            if (before_val > after_val) return "Before";
             else return "After";
-
         }
     }
 }

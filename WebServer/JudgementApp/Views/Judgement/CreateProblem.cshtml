@@ -5,136 +5,410 @@
 
 }
 <body>
-    <section class="contact-clean">
-        <form action="Update" method="post" style="text-align: center;">
-            <h2 class="text-center">Create Problem</h2>
-            <div>
-                <div class="card shadow mb-4" id="Question-1">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="text-primary fw-bold m-0">Question 1</h6>
-                    </div>
-                    <div class="card-body" style="text-align: left;">
-                        <label class="form-label" style="font-style: normal;font-weight: bold;">will [P1] hit [P2] by [P3]?</label>
-                        <div style="width: 290px;">
-                            <label class="form-label" style="padding-left: 4px;">P1</label><select name="Q1_P1" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
-                                @foreach (var details in Model)
-                                {
-                                    if (details.Id == 0)
-                                    {
-                                        continue;
-                                    }
-                                    <option value=@details.SymbolName>@details.SymbolName</option>
-                                }
-                            </select>
-                        </div>
-                        <div style="width: 290px;"><label class="form-label" style="padding-left: 4px;">P2<input name="Q1_P2" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;"></label></div>
-                        <div style="width: 290px;">
-                            <label class="form-label" style="display: inline;padding-left: 4px;">P3</label><select name="Q1_P3" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
-                                <option value="12:00 noon" selected="">12:00 noon</option>
-                                <option value="12:30 pm">12:30 pm</option>
-                                <option value="01:00 pm">01:00 pm</option>
-                                <option value="01:30 pm">01:30 pm</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div class="card shadow mb-4" id="Question-2">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="text-primary fw-bold m-0">Question 2</h6>
-                    </div>
-                    <div class="card-body" style="text-align: left;">
-                        <label class="form-label"><strong>will [P1] close [P2] [P3] [P4]?</strong></label>
-                        <div style="width: 290px;">
-                            <label class="form-label" style="padding-left: 4px;">P1</label><select name="Q2_P1" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
-                                @foreach (var details in Model)
-                                {
-                                    if (details.Id == 0)
-                                    {
-                                        continue;
-                                    }
-                                    <option value=@details.SymbolName>@details.SymbolName</option>
-                                }
-                            </select>
-                        </div>
-                        <div style="width: 290px;">
-                            <label class="form-label" style="padding-left: 4px;">P2</label><select name="Q2_P2" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
-                                <option value="above">above</option>
-                                <option value="below">below</option>
-                            </select>
-                        </div>
-                        <div style="width: 290px;"><label class="form-label" style="display: inline;padding-left: 4px;">P3</label><input name="Q2_P3" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;"></div>
-                        <div style="width: 290px;">
-                            <label class="form-label" style="padding-left: 4px;">
-                                P4<select name="Q2_P4" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
-                                    <option value="today" selected="">today</option>
-                                    <option value="this week">this week</option>
-                                    <option value="this month">this month</option>
-                                </select>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div class="card shadow mb-4" id="Question-3">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="text-primary fw-bold m-0">Question 3</h6>
-                    </div>
-                    <div class="card-body" style="text-align: left;">
-                        <label class="form-label"><strong>will [P1] have a higher return in the AM or PM?</strong></label>
-                        <div style="width: 290px;">
-                            <label class="form-label" style="padding-left: 4px;">P1</label><select name="Q3_P1" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
-                                @foreach (var details in Model)
-                                {
-                                    if (details.Id == 0)
-                                    {
-                                        continue;
-                                    }
-                                    <option value=@details.SymbolName>@details.SymbolName</option>
-                                }
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div class="card shadow mb-4" id="Question-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h6 class="text-primary fw-bold m-0">Question 4</h6>
-                    </div>
-                    <div class="card-body" style="text-align: left;">
-                        <label class="form-label"><strong>will [P1] have a higher return before or after [P2]?</strong></label>
-                        <div style="width: 290px;">
-                            <label class="form-label" style="padding-left: 4px;">P1</label><select name="Q4_P1" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
-                                @foreach (var details in Model)
-                                {
-                                    if (details.Id == 0)
-                                    {
-                                        continue;
-                                    }
-                                    <option value=@details.SymbolName>@details.SymbolName</option>
-                                }
-                            </select>
-                        </div>
-                        <div style="width: 290px;">
-                            <label class="form-label" style="padding-left: 4px;">
-                                P2<select name="Q4_P2" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
-                                    <option value="12:00 noon" selected="">12:00 noon</option>
-                                    <option value="12:30 pm">12:30 pm</option>
-                                    <option value="01:00 pm">01:00 pm</option>
-                                    <option value="01:30 pm">01:30 pm</option>
-                                </select>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button class="btn btn-primary" type="submit">Update</button>
+    <div class="popup card shadow"  id="myPopup" popup-name="popup-1">
+        <div class="popup-content">
+            <h4 class="modal-title">Add New Question</h4>
 
-        </form>
-    </section>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/theme.js"></script>
+            <table>
+                <tr>
+                    <td>Type</td>
+                    <td>
+                        <select name="NewQuestion" id="NewQuestion" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                            <option value="1">Question 1</option>
+                            <option value="2">Question 2</option>
+                            <option value="3">Question 3</option>
+                            <option value="4">Question 4</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+            <br />
+            <button class="btn btn-primary pull-right" style="margin-left:10px;" onclick="AddNew()">Add</button>
+            <button class="btn btn-danger pull-right" style="margin-left:10px;" onclick="Close()">Close</button>
+        </div>
+                </div>
+           
+       
+                <section class="contact-clean" id="mainContent">
+                    <form style="text-align: center;">
+                        <h2 class="text-center">Create Problem</h2>
+                        <div>
+                            @{
+                                foreach (JudgementApp.Models.Data item in Model)
+                                {
+                                    string p1 = "Q" + item.Id + "_P1";
+                                    string p2 = "Q" + item.Id + "_P2";
+                                    string p3 = "Q" + item.Id + "_P3";
+                                    string p4 = "Q" + item.Id + "_P4";
+
+                                    <div class="card shadow mb-4" id="Question-1">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h6 class="text-primary col-md-11 text-left fw-bold m-0"><span class="pull-left">Question @item.Row_Num</span></h6>
+                                            <i class="pull-right fa fa-plus" title="Add New" onclick="ShowAdd( @item.Id)"></i>
+                                            @if (item.Id != 1 && item.Id != 2 && item.Id != 3 && item.Id != 4)
+                                            {
+                                                <i class="pull-right fa fa-minus" title="Remove" onclick="RemoveQuestion( @item.Id)"></i>
+                                            }
+                                        </div>
+                                        <div class="card-body" style="text-align: left;">
+                                            <label class="form-label" style="font-style: normal;font-weight: bold;">@item.Title</label>
+
+                                            @if (item.Type == 1)
+                                            {
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P1</td>
+                                                            <td>
+                                                                @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                </div>
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P1</td>
+                                                            <td>
+                                                                <input name="@p2" id="@p2" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P3</td>
+                                                            <td>
+                                                                <select name="@p3" id="@p3" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                                    <option value="10:00 am" selected="">10:00 am</option>
+                                                                    <option value="10:30 am">10:30 am</option>
+                                                                    <option value="11:00 am">11:00 am</option>
+                                                                    <option value="11:30 am">11:30 am</option>
+                                                                    <option value="12:00 pm">12:00 pm</option>
+                                                                    <option value="12:30 pm">12:30 pm</option>
+                                                                    <option value="01:00 pm">01:00 pm</option>
+                                                                    <option value="01:30 pm">01:30 pm</option>
+                                                                    <option value="02:00 pm">02:00 pm</option>
+                                                                    <option value="02:30 pm">02:30 pm</option>
+                                                                    <option value="03:30 pm">03:00 pm</option>
+                                                                    <option value="03:30 pm">03:30 pm</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            }
+
+
+                                            @*// type 2*@
+                                            @if (item.Type == 2)
+                                            {
+
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P1</td>
+                                                            <td>
+                                                                @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                </div>
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P2</td>
+                                                            <td>
+                                                                <select name="@p2" id="@p2" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                                    <option value="above">above</option>
+                                                                    <option value="below">below</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P3</td>
+                                                            <td>
+                                                                <input name="@p3" id="@p3" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P4</td>
+                                                            <td>
+                                                                <select name="@p4" id="@p4" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                                    <option value="today" selected="">today</option>
+                                                                    <option value="this week">this week</option>
+                                                                    <option value="this month">this month</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            }
+
+
+                                            @*type 3*@
+                                            @if (item.Type == 3)
+                                            {
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P1</td>
+                                                            <td>
+                                                                @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+
+                                                </div>
+
+                                            }
+
+
+                                            @*type 4*@
+                                            @if (item.Type == 4)
+                                            {
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P1</td>
+                                                            <td>
+                                                                @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-control", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+
+                                                </div>
+                                                <div style="width: 290px;">
+                                                    <table>
+                                                        <tr>
+                                                            <td>P2</td>
+                                                            <td>
+                                                                <select name="@p2" id="@p2" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                                    <option value="10:00 am">10:00 am</option>
+                                                                    <option value="10:30 am">10:30 am</option>
+                                                                    <option value="11:00 am">11:00 am</option>
+                                                                    <option value="11:30 am">11:30 am</option>
+                                                                    <option value="12:00 pm">12:00 pm</option>
+                                                                    <option value="12:30 pm">12:30 pm</option>
+                                                                    <option value="01:00 pm">01:00 pm</option>
+                                                                    <option value="01:30 pm">01:30 pm</option>
+                                                                    <option value="02:00 pm">02:00 pm</option>
+                                                                    <option value="02:30 pm">02:30 pm</option>
+                                                                    <option value="03:30 pm">03:00 pm</option>
+                                                                    <option value="03:30 pm">03:30 pm</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    var q = "Q" + item.Id;
+                                    <input id="@q" value="@item.Id" style="display:none;" />
+                                }
+                            }
+                            <input id="total" value="@Model.Count" style="display:none;" />
+                            <input id="QuestionID" style="display:none;" />
+                        </div>
+
+                        <button class="btn btn-primary" type="button" id="btnUpdate">Update</button>
+
+                    </form>
+                </section>
+
+                <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+                <script src="assets/js/theme.js"></script>
+                 <script type="text/javascript">
+                    var result = [];
+                    
+                    function Close() {
+                        $('#myPopup').fadeOut(300);
+                        document.getElementById("mainContent").style.display = "block";
+                    }
+                    function ShowAdd(id) {
+                        var model = result.filter(x => x.Id == id);
+                        model = model[0];
+                        $("#NewQuestion").val(model.Type + '')
+                        $("#QuestionID").val(id + '')
+                        $('#myPopup').fadeIn(300);
+                        document.getElementById("mainContent").style.display = "none";
+                    }
+                    function AddNew() {
+                        var id = Number.parseInt($("#NewQuestion").val());
+                        var model = result.filter(x => x.Id == id);
+                        model = model[0];
+                        model.Type = Number.parseInt($("#NewQuestion").val())
+                        var fd = new FormData();
+                        fd.append('data', JSON.stringify(model));
+                        $.ajax({
+                            url: '/Judgement/AddQuestion',
+                            data: fd,
+                            processData: false,
+                            contentType: false,
+                            type: 'POST',
+                            success: function (data) {
+                                document.getElementById("mainContent").style.display = "block";
+                                alert('Question added successfully');
+                                location.reload();
+                            }
+                        });
+                    }
+                    function RemoveQuestion(id) {
+                        var model = result.filter(x => x.Id == id);
+                        model = model[0];
+                        var fd = new FormData();
+                        fd.append('data', JSON.stringify(model));
+                        $.ajax({
+                            url: '/Judgement/RemoveQuestion',
+                            data: fd,
+                            processData: false,
+                            contentType: false,
+                            type: 'POST',
+                            success: function (data) {
+                                alert('Question removed successfully');
+                                location.reload();
+                            }
+                        });
+                    }
+                    function onLoad() {
+
+                        $.get("/Judgement/LoadData").then(s => {
+                            debugger;
+                            result = s;
+                            if (result.length > 0) {
+                                result.forEach(x => {
+                                    $("#Q" + x.Id + "_P1").val(x.P1);
+                                    if ($("#Q" + x.Id + "_P2") != undefined)
+                                        $("#Q" + x.Id + "_P2").val(x.P2);
+                                    if ($("#Q" + x.Id + "_P3") != undefined)
+                                        $("#Q" + x.Id + "_P3").val(x.P3);
+                                    if ($("#Q" + x.Id + "_P4") != undefined)
+                                        $("#Q" + x.Id + "_P4").val(x.P4);
+                                })
+                            }
+                        })
+                    }
+                    function onAdd() {
+
+                    }
+                    $(function () {
+                        $('#btnUpdate').click(function () {
+                            var total = Number.parseInt($("#total").val());
+                            var input = [];
+                            for (var i = 0; i < total; i++) {
+                                var Q = Number.parseInt($("#Q" + result[i].Id).val());
+                                var P1 = null, P2 = null, P3 = null, P4 = null;
+                                if ($("#Q" + result[i].Id + "_P1").val() != undefined)
+                                    P1 = $("#Q" + result[i].Id + "_P1").val();
+                                if ($("#Q" + result[i].Id + "_P2").val() != undefined)
+                                    P2 = $("#Q" + result[i].Id + "_P2").val();
+                                if ($("#Q" + result[i].Id + "_P3").val() != undefined)
+                                    P3 = $("#Q" + result[i].Id + "_P3").val();
+                                if ($("#Q" + result[i].Id + "_P4").val() != undefined)
+                                    P4 = $("#Q" + result[i].Id + "_P4").val();
+
+                                input.push({ Id: Q, P1: P1, P2: P2, P3: P3, P4: P4 })
+                            }
+                            var fd = new FormData();
+                            fd.append('data', JSON.stringify(input));
+                            $.ajax({
+                                url: '/Judgement/Update',
+                                data: fd,
+                                processData: false,
+                                contentType: false,
+                                type: 'POST',
+                                success: function (data) {
+                                    alert('Data updated successfully');
+                                }
+                            });
+
+                        })
+                        setTimeout(s => {
+                            onLoad();
+                        }, 20)
+
+                    })
+                </script>
 </body>
+<style>
+    p {
+    font-size: 16px;
+    line-height: 26px;
+    letter-spacing: 0.5px;
+    color: #484848;
+}
+
+/* Popup Open button */
+.open-button{
+    color:#FFF;
+    background:#0066CC;
+    padding:10px;
+    text-decoration:none;
+    border:1px solid #0157ad;
+    border-radius:3px;
+}
+
+.open-button:hover{
+    background:#01478e;
+}
+
+.popup {
+    position:fixed;
+    top:0px;
+    left:0px;
+    background:rgba(0,0,0,0.75);
+    width:100%;
+    height:100%;
+    display:none;
+}
+
+/* Popup inner div */
+.popup-content {
+    width: 500px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 40px;
+    margin-top: 20px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,1);
+    border-radius: 3px;
+    background: #fff;
+    position: relative;
+}
+
+/* Popup close button */
+.close-button {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.8);
+    font-size: 20px;
+    text-align: center;
+    color: #fff;
+    text-decoration:none;
+}
+
+.close-button:hover {
+    background: rgba(0,0,0,1);
+}
+
+
+
+</style>
