@@ -35,7 +35,7 @@ CREATE TABLE [dbo].[Judgement](
 	[Name] [varchar](50) NULL,
 	[ProblemNo] [int] NULL,
 	[TotalCorrect] [int] NULL,
-	[Date] [date] NULL,
+	[Date] [datetime] NULL,
 	[Q1] [varchar](50) NULL,
 	[T1] [int] NULL,
 	[P1] [varchar](500) NULL,

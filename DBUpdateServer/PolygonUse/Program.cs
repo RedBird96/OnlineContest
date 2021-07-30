@@ -25,9 +25,10 @@ namespace PolygonUse
                 string txt_log = "";
                 int txt_log_question_index = 0;
                 //Getting Judgement data from yesterday
-                DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE TotalCorrect IS NULL");
+                //DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE TotalCorrect IS NULL");
+                DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE Name='DavidTest7.29'");
 
-                txt_log = "[David 7.27 Test] ";
+                txt_log = "[David Test 7.28] ";
                 //Evaluating for each user from yesterday
                 foreach (DataRow row in judgementTable.Rows)
                 {
@@ -78,11 +79,11 @@ namespace PolygonUse
                             if (assessment.AssessQ1(P1, rate, dateTime, submit_DT).Equals(question_answer))
                             {
                                 totalCorrect++;
-                                txt_log = txt_log + $", Question{txt_log_question_index}:Right";
+                                txt_log = txt_log + $", Question{question_index}:Right";
                             }
                             else
                             {
-                                txt_log = txt_log + $", Question{txt_log_question_index}:Wrong";
+                                txt_log = txt_log + $", Question{question_index}:Wrong";
                             }
                         }
                         
@@ -106,11 +107,11 @@ namespace PolygonUse
                             if (assessment.AssessQ2(P1, isAbove, days, rate, submit_DT).Equals(question_answer))
                             {
                                 totalCorrect++;
-                                txt_log = txt_log + $",Question{txt_log_question_index}:Right";
+                                txt_log = txt_log + $",Question{question_index}:Right";
                             }
                             else
                             {
-                                txt_log = txt_log + $",Question{txt_log_question_index}:Wrong";
+                                txt_log = txt_log + $",Question{question_index}:Wrong";
                             }
                         }
                         
@@ -122,11 +123,11 @@ namespace PolygonUse
                             if (assessment.AssessQ3(P1, submit_DT).Equals(question_answer))
                             {
                                 totalCorrect++;
-                                txt_log = txt_log + $",Question{txt_log_question_index}:Right";
+                                txt_log = txt_log + $",Question{question_index}:Right";
                             }
                             else
                             {
-                                txt_log = txt_log + $",Question{txt_log_question_index}:Wrong";
+                                txt_log = txt_log + $",Question{question_index}:Wrong";
                             }
                         }
                         
@@ -152,11 +153,11 @@ namespace PolygonUse
                             if (assessment.AssessQ4(P1, dateTime, submit_DT).Equals(question_answer))
                             {
                                 totalCorrect++;
-                                txt_log = txt_log + $",Question{txt_log_question_index}:Right";
+                                txt_log = txt_log + $",Question{question_index}:Right";
                             }
                             else
                             {
-                                txt_log = txt_log + $",Question{txt_log_question_index}:Wrong";
+                                txt_log = txt_log + $",Question{question_index}:Wrong";
                             }
                         }
                         

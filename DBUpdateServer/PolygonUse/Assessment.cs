@@ -88,21 +88,50 @@ namespace PolygonUse
 
         public string AssessQ1(string symbol, double rate, DateTime dateTime, DateTime historyDateTime)
         {
-            LoadHistoryBar(symbol, historyDateTime, 30, "minute");
 
-            double high_price = 0;
+            DateTime dtTempEnterDateTime = new DateTime(historyDateTime.Year, historyDateTime.Month, historyDateTime.Day, historyDateTime.Hour, historyDateTime.Minute, 0);
+
+            LoadHistoryBar(symbol, dtTempEnterDateTime, 1, "minute");
+
+            bool IsHigh = true;
+            double enter_rate = 0;
+            double high_low_price = 0;
             foreach (Interval interval in intervals)
             {
-                if (interval.GetTimestamp().Hour < 9 || interval.GetTimestamp().Hour > 16)
+                if (interval.GetTimestamp().Hour > 16)
                     continue;
-
-                if (interval.GetTimestamp().TimeOfDay == dateTime.TimeOfDay)
+                if (interval.GetTimestamp() >= dtTempEnterDateTime && enter_rate == 0)
                 {
-                    if (high_price > rate) return "Fact";
-                    else return "Fiction";
+                    enter_rate = interval.GetOpen();
+                    if (enter_rate < rate)
+                        IsHigh = true;
+                    else
+                        IsHigh = false;
                 }
-                if (interval.GetHigh() > high_price)
-                    high_price = interval.GetHigh();
+                if (interval.GetTimestamp() >= dateTime)
+                {
+                    if (IsHigh)
+                    { 
+                        if (high_low_price > rate) return "Fact";
+                        else return "Fiction";
+                    }
+                    else
+                    {
+                        if (high_low_price < rate) return "Fact";
+                        else return "Fiction";
+                    }
+                }
+                if (IsHigh)
+                {
+                    if (interval.GetHigh() > high_low_price)
+                        high_low_price = interval.GetHigh();
+                }
+                else
+                {
+                    if (interval.GetLow() < high_low_price)
+                        high_low_price = interval.GetLow();
+                }
+                
             }
             //Interval not found (maybe symbol is not correct).
             return "Fiction";
