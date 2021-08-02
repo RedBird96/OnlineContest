@@ -11,6 +11,8 @@ namespace JudgementApp.Models
         public long FKCompany { get; set; }
         public string ProblemName { get; set; }
         public string Username { get; set; }
+        public string UserEmail { get; set; }
+        
 
         public int ContestAttempted { get; set; }
 

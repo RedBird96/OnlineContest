@@ -15,8 +15,8 @@ namespace JudgementApp
 
             routes.MapRoute(
      name: "contest-admin",
-     url: "contest-admin/{id}",
-     defaults: new { controller = "Judgement", action = "CreateProblem" }
+     url: "contest-admin/{id}/{ProblemName}",
+     defaults: new { controller = "Judgement", action = "CreateProblem", id = UrlParameter.Optional, ProblemName = UrlParameter.Optional }
 
   );
    routes.MapRoute(
@@ -35,7 +35,7 @@ namespace JudgementApp
             routes.MapRoute(
                name: "Default",
                url: "{controller}/{action}/{id}",
-               defaults: new { controller = "Judgement", action = "Leaderboard", id = UrlParameter.Optional }
+               defaults: new {  controller = "Judgement", action = "CreateProblem", id = UrlParameter.Optional }
            );
         }
        

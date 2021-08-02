@@ -10,8 +10,8 @@
 <body style="background: @company.BackgroundColor;color:  @company.TextColor">
     <section class="contact-clean" style="background: @company.BackgroundColor;">
         <form method="post" style="text-align: center;background: @company.CardBackgroundColor;">
-            <h2 class="text-center" style="color: @company.HeadingColor;">Leaderboard</h2>
-            <b class="text-center"style="color: @company.HeadingColor;">@ViewData["contestName"]</b>
+            <h2 class="text-center" id="ProblemName" style="color: @company.HeadingColor;">@ViewData["contestName"]</h2>
+            
             <div>
                 <div class="table-responsive">
                     <table class="table table-borderless">
@@ -32,7 +32,7 @@
                                     <td>@row.WinPercentage %</td>
 
                                     <td style="color:@company.LinkColor">
-                                        @Html.ActionLink("Details", "LeaderboardDetail", new { Name = row.Username, FKCompany = company.PKCompany, contestName = ViewData["contestName"] })
+                                        @Html.ActionLink("Details", "LeaderboardDetail", new { Name = row.Username,  UserEmail =row.UserEmail, FKCompany = company.PKCompany, contestName = ViewData["contestName"] })
                                     </td>
                                 </tr>
                             }

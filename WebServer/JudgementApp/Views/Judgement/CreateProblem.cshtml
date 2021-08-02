@@ -43,7 +43,7 @@
                                                                     <tr>
                                                                         <td style="width:20%"><b>Company ID</b> </td>
                                                                         <td>
-                                                                            <label id="PKCompany">@company.PKCompany</label>
+                                                                            <input type="number" id="PKCompany" onchange="onChangeContest()" class="form-control" width="250px" value="@company.PKCompany" />
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -55,13 +55,16 @@
                                                                     <tr>
                                                                         <td><b>Company Logo</b> </td>
                                                                         <td>
-                                                                            <img src="@company.Logo" style="width:100px;" />
+                                                                            <img id="CompanyLogo" src="@company.Logo" style="width:100px;" />
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <td><b>Contest Name</b> </td>
                                                                         <td>
-                                                                            <input class="form-control" type="text" id="ProblemName" name="ProblemName" value="@company.ProblemName" required="required" placeholder="Name">
+                                                                            <br />
+                                                                            
+                                                                            <input class="form-control" onchange="onChangeContest()" type="text" id="ProblemName" name="ProblemName" value="@company.ProblemName" required="required" placeholder="Name">
+                                                                            <br />
                                                                         </td>
                                                                     </tr>
                                                                 </table>
@@ -107,9 +110,9 @@
                                                 <div style="width: 290px;">
                                                     <table>
                                                         <tr>
-                                                            <td>P1</td>
+                                                            <td>P2</td>
                                                             <td>
-                                                                <input name="@p2" id="@p2" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                                <input type="number" name="@p2" id="@p2" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -173,7 +176,7 @@
                                                         <tr>
                                                             <td>P3</td>
                                                             <td>
-                                                                <input name="@p3" id="@p3" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                                <input type="number" name="@p3" id="@p3" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -276,29 +279,38 @@
                 <script src="assets/js/theme.js"></script>
                  <script type="text/javascript">
                     var result = [];
-                    
+                     function onChangeContest() {
+                         window.location = "/contest-admin/" + $("#PKCompany").val() + "/" + $("#ProblemName").val()
+
+                     }
                     function Close() {
                         $('#myPopup').fadeOut(300);
                         document.getElementById("mainContent").style.display = "block";
                     }
                      function ShowAdd(id) {
+                         var PKCompany = $("#PKCompany").val();
+                         var ProblemName = $("#ProblemName").val();
+                         if (PKCompany > 0) {
                          if (ProblemName != null && ProblemName != undefined && ProblemName.length > 0) {
 
                         var model = result.filter(x => x.Id == id);
                         model = model[0];
-                        var ProblemName = $("#ProblemName").val();
+                       
                             $("#NewQuestion").val(model.Type + '')
                             $("#QuestionID").val(id + '')
                             $('#myPopup').fadeIn(300);
                             document.getElementById("mainContent").style.display = "none";
                         } else {
                             alert("Please enter the contest name")
-                        }
+                             }
+                         } else {
+                             alert("Please enter the company id")
+                         }
                     }
                      function AddNew() {
                          debugger;
                         var id = Number.parseInt($("#NewQuestion").val());
-                        var PKCompany = Number.parseInt($("#PKCompany").html());
+                        var PKCompany = $("#PKCompany").val();
                         var ProblemName = $("#ProblemName").val();
                         var model = result.filter(x => x.Id == id);
                         model = model[0];
@@ -314,9 +326,13 @@
                             contentType: false,
                             type: 'POST',
                             success: function (data) {
+                                $('#myPopup').fadeOut(300);
                                 document.getElementById("mainContent").style.display = "block";
+                                setTimeout(function () {
+                                    this.onChangeContest();
+                                }, 50)
                                 alert('Question added successfully');
-                                location.reload();
+                               
                             }
                         });
                     }
@@ -333,13 +349,13 @@
                             type: 'POST',
                             success: function (data) {
                                 alert('Question removed successfully');
-                                location.reload();
+                                onChangeContest();
                             }
                         });
                     }
                      function onLoad() {
                          var ProblemName = $("#ProblemName").val();
-                        var PKCompany = Number.parseInt($("#PKCompany").html());
+                        var PKCompany = $("#PKCompany").val();
                          $.get("/Judgement/LoadData?id=" + PKCompany + '&ProblemName=' + ProblemName).then(s => {
                             debugger;
                             result = s;
@@ -359,13 +375,20 @@
                     function onAdd() {
 
                      }
+                     function isNumeric(n) {
+                         return !isNaN(parseFloat(n)) && isFinite(n);
+                     }
                      function CreateUpdateModel() {
                          var total = Number.parseInt($("#total").val());
-                         var PKCompany = Number.parseInt($("#PKCompany").html());
+                         var PKCompany = $("#PKCompany").val();
                          var ProblemName = $("#ProblemName").val();
                          var input = [];
                          for (var i = 0; i < total; i++) {
-                             var Q = Number.parseInt($("#Q" + result[i].Id).val());
+                             var Q  = $("#Q" + result[i].Id).val();
+                             if (isNumeric(Q)!=true) {
+                                 Q = Number.parseInt($("#Q" + result[i].Id).val());
+                             }
+                           
                              var P1 = null, P2 = null, P3 = null, P4 = null;
                              if ($("#Q" + result[i].Id + "_P1").val() != undefined)
                                  P1 = $("#Q" + result[i].Id + "_P1").val();
@@ -384,27 +407,33 @@
                      }
                     $(function () {
                         $('#btnUpdate').click(function () {
-                            var fd = CreateUpdateModel();
-                            $.ajax({
-                                url: '/Judgement/Update',
-                                data: fd,
-                                processData: false,
-                                contentType: false,
-                                type: 'POST',
-                                success: function (data) {
-                                    alert('Data published successfully');
-                                    debugger;
-                                    var CompanyName = $("#CompanyName").html();
-                                    var ProblemName = $("#ProblemName").val();
-                                    var href = window.location.href.split('contest-admin')[0] +"contest-"+ CompanyName + "-" + ProblemName
-                                    $("#judgmentLink").attr("href", href);
-                                    $("#judgmentLink").text(href)
-                                    $("#judgmentLink").css({ "display": "block" });
-                                }
-                            });
-
+                            var PKCompany = $("#PKCompany").val();
+                            if (PKCompany > 0) {
+                                var fd = CreateUpdateModel();
+                                $.ajax({
+                                    url: '/Judgement/Update',
+                                    data: fd,
+                                    processData: false,
+                                    contentType: false,
+                                    type: 'POST',
+                                    success: function (data) {
+                                        alert('Data published successfully');
+                                        debugger;
+                                        var CompanyName = $("#CompanyName").html();
+                                        var ProblemName = $("#ProblemName").val();
+                                        var href = window.location.href.toLowerCase().split('contest-admin')[0] + "contest-" + CompanyName + "-" + ProblemName
+                                        $("#judgmentLink").attr("href", href);
+                                        $("#judgmentLink").text(href)
+                                        $("#judgmentLink").css({ "display": "block" });
+                                    }
+                                });
+                            } else {
+                                alert("Please enter the company id")
+                            }
                         })
                         $('#btnSave').click(function () {
+                            var PKCompany = $("#PKCompany").val();
+                            if (PKCompany > 0) {
                             var fd = CreateUpdateModel();
                             $.ajax({
                                 url: '/Judgement/Update',
@@ -416,6 +445,9 @@
                                     alert('Data saved successfully');
                                 }
                             });
+                            } else {
+                                alert("Please enter the company id")
+                            }
 
                         })
                         setTimeout(s => {
@@ -423,6 +455,8 @@
                         }, 20)
 
                     })
+                    
+                     
                 </script>
 </body>
 <style>
