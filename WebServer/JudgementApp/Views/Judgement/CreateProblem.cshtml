@@ -396,7 +396,7 @@
                                     debugger;
                                     var CompanyName = $("#CompanyName").html();
                                     var ProblemName = $("#ProblemName").val();
-                                    var href = window.location.href.split('contest-admin')[0] +"contest-"+ CompanyName + "-" + ProblemName
+                                    var href = window.location.href.toLowerCase().split('contest-admin')[0] +"contest-"+ CompanyName + "-" + ProblemName
                                     $("#judgmentLink").attr("href", href);
                                     $("#judgmentLink").text(href)
                                     $("#judgmentLink").css({ "display": "block" });
