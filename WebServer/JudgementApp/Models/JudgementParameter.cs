@@ -10,6 +10,7 @@ namespace JudgementApp.Models
 
        
         public string UserName { get; set; }
+        public string UserEmail { get; set; }
         public string FKCompany { get; set; }
         public string ProblemName { get; set; }
         public List<JudgmentQ> Result { get; set; }

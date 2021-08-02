@@ -9,44 +9,41 @@
 <body>
     <section class="contact-clean">
         <form name="form" id="JudgementForm" style="text-align: center;">
-            <h2 class="text-center">Judgement</h2>
+            <h2 class="text-center" id="ProblemName">@ViewData["contestName"]</h2>
             @{
 
-                        <table style="width:100%;">
-                            <tr >
-                                <td colspan="2" align="center"><b id="ProblemName">@ViewData["contestName"]</b> </td>
+                <table style="width:100%;">
 
-                            </tr>
-                            <tr>
+                    <tr>
 
-                                <td width="100px">
-                                    <img src="@company.Logo" style="width:100px;" />
-                                </td>
+                        <td width="100px">
+                            <img src="@company.Logo" style="width:100px;" />
+                        </td>
 
-                                <td>
+                        <td>
 
-                                    <table>
+                            <table>
 
-                                        <tr>
+                                <tr>
 
-                                            <td>
-                                                <label id="CompanyName">@company.EmailAddress</label>
-                                                <label style="display:none;" id="PKCompany">@company.PKCompany</label>
-                                            </td>
-                                        </tr>
-                                        <tr>
+                                    <td>
+                                        <label id="CompanyName">@company.EmailAddress</label>
+                                        <label style="display:none;" id="PKCompany">@company.PKCompany</label>
+                                    </td>
+                                </tr>
+                                <tr>
 
-                                            <td>
-                                                <label id="CompanyName">@company.CompanyName</label>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
+                                    <td>
+                                        <label id="CompanyName">@company.CompanyName</label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
 
 
-                        </table>
+                </table>
 
 
 
@@ -54,7 +51,12 @@
             <div class="mb-3">
                 <br />
                 <input class="form-control" type="text" id="UserName" name="UserName" required="required" placeholder="Name">
-                <div class="mb-3"></div>
+                
+            </div>
+            <div class="mb-3">
+                <br />
+                <input class="form-control" type="email" id="UserEmail" name="UserEmail" required="required" placeholder="Email Address">
+                <div class="mb-3"><br /></div>
             </div>
             <div>
                 @foreach (JudgementApp.Models.Data item in Model)
@@ -72,7 +74,7 @@
                         @if (item.Type == 1)
                         {
                             <div class="card-body" style="text-align: left;">
-                                <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1",Convert.ToString( ViewData["contestName"]),company.PKCompany) hit  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany) by  @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
+                                <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) hit  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany) by  @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
                                 <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
                                 <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fiction"><label class="form-check-label" for="formCheck-2">Fiction</label></div>
                             </div>
@@ -124,7 +126,16 @@
 
             var model = {};
             model.UserName = $("#UserName").val();
-            if (model.UserName.length > 0) {
+            model.UserEmail = $("#UserEmail").val();
+
+            if (model.UserName.length < 1) {
+                alert("Please enter the username")
+            }
+            else if (model.UserEmail.length < 1) {
+                alert("Please enter the Email Address")
+
+            }
+              else {
                 var judgment = [];
                 result.forEach(item => {
                     debugger;
@@ -145,8 +156,10 @@
                     var q = "Q" + item.Id;
                 })
                 model.UserName = $("#UserName").val();
+                model.UserEmail = $("#UserEmail").val();
                 model.ProblemName = $("#ProblemName").html();
                 model.FKCompany = $("#PKCompany").html();
+                debugger;
                 model.Result = judgment;
                 var fd = new FormData();
                 fd.append('data', JSON.stringify(model));
@@ -161,9 +174,7 @@
 
                     }
                 });
-            } else {
-                alert("Please enter the username")
-            }
+            } 
         }
         $(function () {
 

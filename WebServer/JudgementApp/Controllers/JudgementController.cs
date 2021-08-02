@@ -53,7 +53,7 @@ namespace JudgementApp.Controllers
                 symbolNameDic.Add(line, line);
 
             }
-        ViewData["Company"]=    GetCompanyInfo(FKCompany);
+        ViewData["Company"]=    GetCompanyInfo(FKCompany, ProblemName);
             foreach (DataRow dr in dt.Rows)
             {
                 Data data = new Data();
@@ -79,11 +79,12 @@ namespace JudgementApp.Controllers
             return Json(GetData(FKCompany, ProblemName), JsonRequestBehavior.AllowGet); ;
         }
         [Route("contest-admin/{id?}/{ProblemName?}")]
-        public ActionResult CreateProblem(string id,string ProblemName)
+        public ActionResult CreateProblem(string id="0",string ProblemName="")
         {
-       
+           
+            ViewData["contestName"] = ProblemName;
 
-            long FKCompany = Convert.ToInt64(EncryptUtil.DecryptString(id));
+            long FKCompany = Convert.ToInt64(id);
             return View(GetData(FKCompany, ProblemName));
 
             //uncomment this code to get the symbol from the site
@@ -159,19 +160,21 @@ namespace JudgementApp.Controllers
             string id = "";
             id = SQL.ScalarQuery("Select PKCompany from Company where CompanyName='" + companyName + "' and IsActive=1");
             long FKCompany = Convert.ToInt64(id);
-            ViewData["Company"] = GetCompanyInfo(FKCompany);
-            var results = Main.GetDataTable("select Name  from Judgement where ProblemName='"+contestName+"' and FKCompany='"+FKCompany+"' group by Name");
+            ViewData["Company"] = GetCompanyInfo(FKCompany, contestName);
+            var results = Main.GetDataTable("select Name,UserEmail  from Judgement where ProblemName='" + contestName+"' and FKCompany='"+FKCompany+"' group by Name");
 
             foreach (DataRow Item in results.Rows)
             {
                 var row = new Leaderboard();
                 row.Username = Item["Name"].ToString();
+                row.UserEmail = Item["UserEmail"].ToString();
+                
                 int totalCorrect = 0;
                 int totalQuestionCount = 0;
-                int.TryParse(SQL.ScalarQuery("select SUM(TotalCorrect) from Judgement where name = '" + row.Username + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'"), out totalCorrect);
+                int.TryParse(SQL.ScalarQuery("select SUM(TotalCorrect) from Judgement where name = '" + row.Username + "' and UserEmail='"+row.UserEmail+"' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'"), out totalCorrect);
                 row.TotalCorrect = totalCorrect;
-                int.TryParse(SQL.ScalarQuery("select SUM(ProblemNo) from Judgement where name = '" + row.Username + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'"), out totalQuestionCount);
-                row.ContestAttempted = Convert.ToInt32(SQL.ScalarQuery("select Count(*) from Judgement where Name = '" + row.Username + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'"));
+                int.TryParse(SQL.ScalarQuery("select SUM(ProblemNo) from Judgement where name = '" + row.Username + "'  and UserEmail='" + row.UserEmail + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'"), out totalQuestionCount);
+                row.ContestAttempted = Convert.ToInt32(SQL.ScalarQuery("select Count(*) from Judgement where Name = '" + row.Username + "'  and UserEmail='" + row.UserEmail + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'"));
                 double winPer = 0;
                 if (totalQuestionCount != 0)
                     winPer = (row.TotalCorrect *100) / (totalQuestionCount);
@@ -192,7 +195,7 @@ namespace JudgementApp.Controllers
             long FKCompany = Convert.ToInt64(result.FKCompany);
 
 
-            if (Main.CheckUser(result.UserName,result.ProblemName, FKCompany))
+            if (Main.CheckUser(result.UserName,result.ProblemName, FKCompany, result.UserEmail))
             {
 
                 string query = "update Judgement set ";
@@ -206,19 +209,19 @@ namespace JudgementApp.Controllers
                     i++;
                     query += "Q"+ judgment.ID+" = '" + judgment.QResult + "',P"+ judgment.ID+" = '" + judgment.Param + "',T" + judgment.ID + " = '" + judgment.QType + "'";
                 }
-                query += " where Name = '" + result.UserName + "' and ProblemName = '" + result.ProblemName + "' and FKCompany=" + FKCompany;
+                query += " where Name = '" + result.UserName + "' and UserEmail='"+result.UserEmail+"' and ProblemName = '" + result.ProblemName + "' and FKCompany=" + FKCompany;
                     SQL.NonScalarQuery(query);
             }
             else
             {
-                string query = "Insert into Judgement (Name,date,ProblemNo,FKCompany,ProblemName";
+                string query = "Insert into Judgement (Name,UserEmail,date,ProblemNo,FKCompany,ProblemName";
                 var i = 0;
                 foreach (JudgmentQ judgment in result.Result)
                 {
                    
                     query += ",Q" + judgment.ID + ",P" + judgment.ID + ",T" + judgment.ID;
                 }
-                query += ")values('" + result.UserName + "',GetDate(),"+max+ ","+ FKCompany + ",'"+result.ProblemName+"'";
+                query += ")values('" + result.UserName + "','"+result.UserEmail+"',GetDate(),"+max+ ","+ FKCompany + ",'"+result.ProblemName+"'";
                 foreach (JudgmentQ judgment in result.Result)
                 {
                    
@@ -238,17 +241,19 @@ namespace JudgementApp.Controllers
         public ActionResult LeaderboardDetail()
         {
             string Name = Request.QueryString["Name"];
+            string UserEmail = Request.QueryString["UserEmail"];
             string contestName = Request.QueryString["contestName"];
             long FKCompany =Convert.ToInt64( Request.QueryString["FKCompany"]);
-            ViewData["Company"] = GetCompanyInfo(FKCompany);
+            ViewData["Company"] = GetCompanyInfo(FKCompany, contestName);
             var leaderboard = new List<Leaderboard>();
 
-            var results = Main.GetDataTable("select Name,Date,IsNull(TotalCorrect,0) as TotalCorrect, ProblemNo  from Judgement where Name = '" + Name.ToString() + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'");
+            var results = Main.GetDataTable("select Name,UserEmail,Date,IsNull(TotalCorrect,0) as TotalCorrect, ProblemNo  from Judgement where Name = '" + Name.ToString() + "' and UserEmail='"+UserEmail+"' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'");
 
             foreach (DataRow Item in results.Rows)
             {
                 var row = new Leaderboard();
                 row.Username = Item["Name"].ToString();
+                row.UserEmail = Item["UserEmail"].ToString();
                 row.Date = Convert.ToDateTime(Item["Date"]).ToShortDateString();
 
                 row.TotalCorrect = int.Parse(Item["TotalCorrect"].ToString());
@@ -267,7 +272,7 @@ namespace JudgementApp.Controllers
             return View(leaderboard);
         }
 
-       public Company GetCompanyInfo(long PKCompany)
+       public Company GetCompanyInfo(long PKCompany,string problemName)
         {
             Company company = new Company();
             DataTable dt = Main.GetDataTable("prc_GetCompany '"+PKCompany+"'");
@@ -276,7 +281,17 @@ namespace JudgementApp.Controllers
             {
                     company.PKCompany = Convert.ToInt64(Item["PKCompany"]);
                     company.CompanyName = Convert.ToString(Item["CompanyName"]);
-                    company.ProblemName = Convert.ToString(Item["ProblemName"]);
+                    if (problemName != null && problemName.Length > 0)
+                    {
+                        ViewData["contestName"] = problemName;
+                        company.ProblemName = problemName;
+                    }
+                    else
+                    {
+                        company.ProblemName = Convert.ToString(Item["ProblemName"]);
+
+                    }
+
                     company.Logo= Convert.ToString(Item["Logo"]);
                     if ((!DBNull.Value.Equals(Item["BackgroundColor"])) && Item["BackgroundColor"].ToString().Length > 0)
                     {
@@ -330,5 +345,10 @@ namespace JudgementApp.Controllers
                 }
                 return company;
         }
+        public JsonResult SearchCompany(long id,string prob=null)
+        {
+            long FKCompany = Convert.ToInt64(id);
+            return Json(GetCompanyInfo( id, prob), JsonRequestBehavior.AllowGet); ;
         }
+    }
 }
