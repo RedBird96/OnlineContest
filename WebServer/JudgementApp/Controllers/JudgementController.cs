@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -129,10 +131,9 @@ namespace JudgementApp.Controllers
             SQL.NonScalarQuery("Delete from CreateProblem where QuestionNo=" + model.Id +" and ProblemName='"+model.ProblemName+"' and FKCompany="+model.FKCompany);
             return "Delte";
         }
-        public ActionResult Update(string input = "")
+        public ActionResult Update(string input = "", HttpPostedFileBase file =null)
         {
             input = Request.Form["data"];
-
             List<Data> model = new List<Data>();
 
             model = JsonConvert.DeserializeObject<List<Data>>(input);
@@ -149,6 +150,30 @@ namespace JudgementApp.Controllers
                   
                 }
             }
+            
+          
+            string folderName = "assets/img/company/" + model[0].FKCompany;
+
+
+            if (file != null)
+            {
+                List<string> LastFiles = new List<string>();
+                string filePath = System.Web.HttpContext.Current.Server.MapPath("~")+ folderName;
+
+                if (!Directory.Exists(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                }
+
+                string fileName = model[0].FKCompany+"_" + DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + "__" +  file.FileName.Trim('"');
+                string fullPath ="/" +folderName + "/"+fileName;
+                file.SaveAs(filePath +"/"+ fileName);
+                SQL.NonScalarQuery("Update Company set Logo='" + fullPath + "' where PKCompany=" + model[0].FKCompany);
+            }
+                           
+                       
+                
+            
             return View("~/Views/Judgement/Success.cshtml");
         }
 
@@ -161,7 +186,7 @@ namespace JudgementApp.Controllers
             id = SQL.ScalarQuery("Select PKCompany from Company where CompanyName='" + companyName + "' and IsActive=1");
             long FKCompany = Convert.ToInt64(id);
             ViewData["Company"] = GetCompanyInfo(FKCompany, contestName);
-            var results = Main.GetDataTable("select Name,UserEmail  from Judgement where ProblemName='" + contestName+"' and FKCompany='"+FKCompany+"' group by Name");
+            var results = Main.GetDataTable("select Name,UserEmail  from Judgement where ProblemName='" + contestName+"' and FKCompany='"+FKCompany+ "' group by Name,UserEmail");
 
             foreach (DataRow Item in results.Rows)
             {

@@ -56,6 +56,7 @@
                                                                         <td><b>Company Logo</b> </td>
                                                                         <td>
                                                                             <img id="CompanyLogo" src="@company.Logo" style="width:100px;" />
+                                                                            <input type="file"  id="file"/>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -318,7 +319,8 @@
                         model.ProblemName = ProblemName;
                         model.Type = Number.parseInt($("#NewQuestion").val())
                         var fd = new FormData();
-                        fd.append('data', JSON.stringify(model));
+                         fd.append('data', JSON.stringify(model));
+                        
                         $.ajax({
                             url: '/Judgement/AddQuestion',
                             data: fd,
@@ -382,6 +384,7 @@
                          var total = Number.parseInt($("#total").val());
                          var PKCompany = $("#PKCompany").val();
                          var ProblemName = $("#ProblemName").val();
+                        
                          var input = [];
                          for (var i = 0; i < total; i++) {
                              var Q  = $("#Q" + result[i].Id).val();
@@ -403,12 +406,22 @@
                          }
                          var fd = new FormData();
                          fd.append('data', JSON.stringify(input));
+                         var file = document.getElementById("file").files[0];
+                         fd.append('file', file);
                          return fd;
                      }
-                    $(function () {
+                     $(function () {
+                         setTimeout(function() {
+                             onLoad();
+                         }, 20)
                         $('#btnUpdate').click(function () {
                             var PKCompany = $("#PKCompany").val();
-                            if (PKCompany > 0) {
+                            var ProblemName = $("#ProblemName").val();
+                            if (PKCompany < 1) {
+                                alert("Please enter the company id")
+                            } else if (ProblemName.length < 1) {
+                                alert("Please enter the contest name")
+                            } else {
                                 var fd = CreateUpdateModel();
                                 $.ajax({
                                     url: '/Judgement/Update',
@@ -427,13 +440,16 @@
                                         $("#judgmentLink").css({ "display": "block" });
                                     }
                                 });
-                            } else {
-                                alert("Please enter the company id")
-                            }
+                            } 
                         })
                         $('#btnSave').click(function () {
                             var PKCompany = $("#PKCompany").val();
-                            if (PKCompany > 0) {
+                            var ProblemName = $("#ProblemName").val();
+                            if (PKCompany < 1) {
+                                alert("Please enter the company id")
+                            } else if (ProblemName.length < 1) {
+                                alert("Please enter the contest name")
+                            } else {
                             var fd = CreateUpdateModel();
                             $.ajax({
                                 url: '/Judgement/Update',
@@ -442,18 +458,18 @@
                                 contentType: false,
                                 type: 'POST',
                                 success: function (data) {
+                                   
+                                        setTimeout(s => {
+                                            onChangeContest()
+                                        }, 20)
+                                   
                                     alert('Data saved successfully');
                                 }
                             });
-                            } else {
-                                alert("Please enter the company id")
-                            }
-
+                            } 
                         })
-                        setTimeout(s => {
-                            onLoad();
-                        }, 20)
 
+                       
                     })
                     
                      
