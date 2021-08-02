@@ -118,11 +118,13 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Common\EncryptUtil.cs" />
     <Compile Include="Controllers\JudgementController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Main.cs" />
+    <Compile Include="Models\Company.cs" />
     <Compile Include="Models\Data.cs" />
     <Compile Include="Models\JudgementParameter.cs" />
     <Compile Include="Models\Leaderboard.cs" />
@@ -200,6 +202,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="assets\img\company\" />
+    <Folder Include="Page\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

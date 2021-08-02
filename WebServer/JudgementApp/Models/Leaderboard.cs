@@ -8,7 +8,8 @@ namespace JudgementApp.Models
     public class Leaderboard
     {
         public int Id { get; set; }
-
+        public long FKCompany { get; set; }
+        public string ProblemName { get; set; }
         public string Username { get; set; }
 
         public int ContestAttempted { get; set; }

@@ -1,10 +1,12 @@
-﻿@model List<JudgementApp.Models.Data>
+﻿@using JudgementApp.Models;
+@model List<JudgementApp.Models.Data>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
 <body>
+
     <div class="popup card shadow"  id="myPopup" popup-name="popup-1">
         <div class="popup-content">
             <h4 class="modal-title">Add New Question</h4>
@@ -34,6 +36,41 @@
                     <form style="text-align: center;">
                         <h2 class="text-center">Create Problem</h2>
                         <div>
+                            <div style="text-align:left !important">
+                                @{
+                                    Company company = (Company)ViewData["Company"];
+                                                                <table style="width:100%;">
+                                                                    <tr>
+                                                                        <td style="width:20%"><b>Company ID</b> </td>
+                                                                        <td>
+                                                                            <label id="PKCompany">@company.PKCompany</label>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><b>Company Name</b> </td>
+                                                                        <td>
+                                                                            <label id="CompanyName">@company.CompanyName</label>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><b>Company Logo</b> </td>
+                                                                        <td>
+                                                                            <img src="@company.Logo" style="width:100px;" />
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><b>Contest Name</b> </td>
+                                                                        <td>
+                                                                            <input class="form-control" type="text" id="ProblemName" name="ProblemName" value="@company.ProblemName" required="required" placeholder="Name">
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+
+                        
+                                   
+                                }
+                            </div>
+                            
                             @{
                                 foreach (JudgementApp.Models.Data item in Model)
                                 {
@@ -226,10 +263,13 @@
                             <input id="QuestionID" style="display:none;" />
                         </div>
 
-                        <button class="btn btn-primary" type="button" id="btnSave">Save</button>
-                        <button class="btn btn-primary" type="button" id="btnUpdate">Publish</button>
+                                <button class="btn btn-primary" type="button" id="btnSave">Save</button>
+                                <button class="btn btn-primary" type="button" id="btnUpdate">Publish</button>
+                        <div class="col-md-12">
+                            <a id="judgmentLink" style="display:none;color: rgb(16,173,137)">Judgment Link</a>
+                        </div>
 
-                    </form>
+</form>
                 </section>
 
                 <script src="assets/bootstrap/js/bootstrap.min.js"></script>
@@ -241,18 +281,29 @@
                         $('#myPopup').fadeOut(300);
                         document.getElementById("mainContent").style.display = "block";
                     }
-                    function ShowAdd(id) {
+                     function ShowAdd(id) {
+                         if (ProblemName != null && ProblemName != undefined && ProblemName.length > 0) {
+
                         var model = result.filter(x => x.Id == id);
                         model = model[0];
-                        $("#NewQuestion").val(model.Type + '')
-                        $("#QuestionID").val(id + '')
-                        $('#myPopup').fadeIn(300);
-                        document.getElementById("mainContent").style.display = "none";
+                        var ProblemName = $("#ProblemName").val();
+                            $("#NewQuestion").val(model.Type + '')
+                            $("#QuestionID").val(id + '')
+                            $('#myPopup').fadeIn(300);
+                            document.getElementById("mainContent").style.display = "none";
+                        } else {
+                            alert("Please enter the contest name")
+                        }
                     }
-                    function AddNew() {
+                     function AddNew() {
+                         debugger;
                         var id = Number.parseInt($("#NewQuestion").val());
+                        var PKCompany = Number.parseInt($("#PKCompany").html());
+                        var ProblemName = $("#ProblemName").val();
                         var model = result.filter(x => x.Id == id);
                         model = model[0];
+                        model.FKCompany = PKCompany;
+                        model.ProblemName = ProblemName;
                         model.Type = Number.parseInt($("#NewQuestion").val())
                         var fd = new FormData();
                         fd.append('data', JSON.stringify(model));
@@ -286,9 +337,10 @@
                             }
                         });
                     }
-                    function onLoad() {
-
-                        $.get("/Judgement/LoadData").then(s => {
+                     function onLoad() {
+                         var ProblemName = $("#ProblemName").val();
+                        var PKCompany = Number.parseInt($("#PKCompany").html());
+                         $.get("/Judgement/LoadData?id=" + PKCompany + '&ProblemName=' + ProblemName).then(s => {
                             debugger;
                             result = s;
                             if (result.length > 0) {
@@ -306,27 +358,33 @@
                     }
                     function onAdd() {
 
-                    }
+                     }
+                     function CreateUpdateModel() {
+                         var total = Number.parseInt($("#total").val());
+                         var PKCompany = Number.parseInt($("#PKCompany").html());
+                         var ProblemName = $("#ProblemName").val();
+                         var input = [];
+                         for (var i = 0; i < total; i++) {
+                             var Q = Number.parseInt($("#Q" + result[i].Id).val());
+                             var P1 = null, P2 = null, P3 = null, P4 = null;
+                             if ($("#Q" + result[i].Id + "_P1").val() != undefined)
+                                 P1 = $("#Q" + result[i].Id + "_P1").val();
+                             if ($("#Q" + result[i].Id + "_P2").val() != undefined)
+                                 P2 = $("#Q" + result[i].Id + "_P2").val();
+                             if ($("#Q" + result[i].Id + "_P3").val() != undefined)
+                                 P3 = $("#Q" + result[i].Id + "_P3").val();
+                             if ($("#Q" + result[i].Id + "_P4").val() != undefined)
+                                 P4 = $("#Q" + result[i].Id + "_P4").val();
+
+                             input.push({ Id: Q, P1: P1, P2: P2, P3: P3, P4: P4, FKCompany: PKCompany, ProblemName: ProblemName })
+                         }
+                         var fd = new FormData();
+                         fd.append('data', JSON.stringify(input));
+                         return fd;
+                     }
                     $(function () {
                         $('#btnUpdate').click(function () {
-                            var total = Number.parseInt($("#total").val());
-                            var input = [];
-                            for (var i = 0; i < total; i++) {
-                                var Q = Number.parseInt($("#Q" + result[i].Id).val());
-                                var P1 = null, P2 = null, P3 = null, P4 = null;
-                                if ($("#Q" + result[i].Id + "_P1").val() != undefined)
-                                    P1 = $("#Q" + result[i].Id + "_P1").val();
-                                if ($("#Q" + result[i].Id + "_P2").val() != undefined)
-                                    P2 = $("#Q" + result[i].Id + "_P2").val();
-                                if ($("#Q" + result[i].Id + "_P3").val() != undefined)
-                                    P3 = $("#Q" + result[i].Id + "_P3").val();
-                                if ($("#Q" + result[i].Id + "_P4").val() != undefined)
-                                    P4 = $("#Q" + result[i].Id + "_P4").val();
-
-                                input.push({ Id: Q, P1: P1, P2: P2, P3: P3, P4: P4 })
-                            }
-                            var fd = new FormData();
-                            fd.append('data', JSON.stringify(input));
+                            var fd = CreateUpdateModel();
                             $.ajax({
                                 url: '/Judgement/Update',
                                 data: fd,
@@ -335,29 +393,19 @@
                                 type: 'POST',
                                 success: function (data) {
                                     alert('Data published successfully');
+                                    debugger;
+                                    var CompanyName = $("#CompanyName").html();
+                                    var ProblemName = $("#ProblemName").val();
+                                    var href = window.location.href.split('contest-admin')[0] +"contest-"+ CompanyName + "-" + ProblemName
+                                    $("#judgmentLink").attr("href", href);
+                                    $("#judgmentLink").text(href)
+                                    $("#judgmentLink").css({ "display": "block" });
                                 }
                             });
 
                         })
                         $('#btnSave').click(function () {
-                            var total = Number.parseInt($("#total").val());
-                            var input = [];
-                            for (var i = 0; i < total; i++) {
-                                var Q = Number.parseInt($("#Q" + result[i].Id).val());
-                                var P1 = null, P2 = null, P3 = null, P4 = null;
-                                if ($("#Q" + result[i].Id + "_P1").val() != undefined)
-                                    P1 = $("#Q" + result[i].Id + "_P1").val();
-                                if ($("#Q" + result[i].Id + "_P2").val() != undefined)
-                                    P2 = $("#Q" + result[i].Id + "_P2").val();
-                                if ($("#Q" + result[i].Id + "_P3").val() != undefined)
-                                    P3 = $("#Q" + result[i].Id + "_P3").val();
-                                if ($("#Q" + result[i].Id + "_P4").val() != undefined)
-                                    P4 = $("#Q" + result[i].Id + "_P4").val();
-
-                                input.push({ Id: Q, P1: P1, P2: P2, P3: P3, P4: P4 })
-                            }
-                            var fd = new FormData();
-                            fd.append('data', JSON.stringify(input));
+                            var fd = CreateUpdateModel();
                             $.ajax({
                                 url: '/Judgement/Update',
                                 data: fd,

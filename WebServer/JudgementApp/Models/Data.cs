@@ -8,6 +8,8 @@ namespace JudgementApp.Models
     public class Data
     {
         public int Id { get; set; }
+        public string FKCompany { get; set; }
+        public string ProblemName { get; set; }
         public int? Row_Num { get; set; }
         public int? Type { get; set; }
         public string SymbolName { get; set; }

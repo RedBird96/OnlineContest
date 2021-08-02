@@ -1,34 +1,38 @@
-﻿@model IEnumerable<JudgementApp.Models.Leaderboard>
+﻿@using JudgementApp.Models; 
+@model IEnumerable<JudgementApp.Models.Leaderboard>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-<body style="background: rgb(24,31,42);color: rgb(133, 135, 150);">
-    <section class="contact-clean" style="background: rgb(24,31,42);">
-        <form method="post" style="text-align: center;background: rgb(17,23,31);">
-            <h2 class="text-center" style="color: rgb(255,255,255);">Leaderboard</h2>
+@{ 
+    Company company = (Company)ViewData["Company"];
+}
+<body style="background: @company.BackgroundColor;color:  @company.TextColor">
+    <section class="contact-clean" style="background: @company.BackgroundColor;">
+        <form method="post" style="text-align: center;background: @company.CardBackgroundColor;">
+            <h2 class="text-center" style="color: @company.HeadingColor;">Leaderboard</h2>
+            <b class="text-center"style="color: @company.HeadingColor;">@ViewData["contestName"]</b>
             <div>
                 <div class="table-responsive">
                     <table class="table table-borderless">
                         <thead>
                             <tr style="color: rgb(133, 135, 150);">
-                                <th style="width: 206px;color: rgb(16,173,137);">Username</th>
-                                <th style="width: 206px;color: rgb(16,173,137);">Contests Attempted</th>
-                                <th style="width: 206px;color: rgb(16,173,137);">Win Percentage</th>
-                                <th style="width: 206px;color: rgb(16,173,137);">Details</th>
+                                <th style="width: 206px;color: @company.TableHeaderColor">Username</th>
+                                <th style="width: 206px;color: @company.TableHeaderColor;">Contests Attempted</th>
+                                <th style="width: 206px;color: @company.TableHeaderColor;">Win Percentage</th>
+                                <th style="width: 206px;color: @company.LinkColor;">Details</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var row in Model)
                             {
-                                <tr style="color: rgb(255,255,255);">
+                                <tr style="color: @company.TextColor;">
                                     <td href="@Url.Action("Index", "Judgement")">@row.Username</td>
                                     <td>@row.ContestAttempted</td>
                                     <td>@row.WinPercentage %</td>
 
-                                    <td>
-                                        @Html.ActionLink("Details", "LeaderboardDetail", new { Name = row.Username })
+                                    <td style="color:@company.LinkColor">
+                                        @Html.ActionLink("Details", "LeaderboardDetail", new { Name = row.Username, FKCompany = company.PKCompany, contestName = ViewData["contestName"] })
                                     </td>
                                 </tr>
                             }
@@ -37,7 +41,7 @@
                     </table>
                 </div>
             </div>
-            <button class="btn btn-primary" type="button" onclick="location.href='@Url.Action("Index", "Judgement")'">Judgement</button>
+            <button class="btn btn-primary" type="button" onclick="location.href = '/contest-@company.CompanyName-@ViewData["contestName"]'">Judgement</button>
 
         </form>
     </section>

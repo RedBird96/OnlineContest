@@ -1,4 +1,5 @@
-﻿using JudgementApp.Models;
+﻿using JudgementApp.Common;
+using JudgementApp.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,22 +9,37 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace JudgementApp.Controllers
 {
     public class JudgementController : Controller
     {
         // GET: Judgement
-        public ActionResult Index()
+        public ActionResult Index(string companyName, string contestName)
         {
-            //var model = new Data();
-            //model.Q1_P1 = Main.GetParameter(1, "p1");
-            return View(GetData());
+            try
+            {
+
+                ViewData["contestName"] = contestName;
+                string id = "";
+                id = SQL.ScalarQuery("Select PKCompany from Company where CompanyName='" + companyName + "' and IsActive=1");
+                long FKCompany = Convert.ToInt64(id);
+
+                //var model = new Data();
+                //model.Q1_P1 = Main.GetParameter(1, "p1");
+                return View(GetData(FKCompany, contestName));
+            }
+            catch(Exception ex)
+            {
+                Exception exception = new Exception("Internal Server Error");
+                throw exception;
+            }
         }
         #region"Create problem"
-        public List<Data> GetData()
+        public List<Data> GetData(long FKCompany,string ProblemName)
         {
-            DataTable dt = Main.GetDataTable("prc_GetProblem");
+            DataTable dt = Main.GetDataTable("prc_GetProblem '"+FKCompany+"','"+ ProblemName + "'");
             //To take the symbol from the website comment the below code 
             var model = new List<Data>();
             string[] symbolNames = { "SPY", "QQQ", "IWM", "TLT", "TSLA", "NFLX", "AAPL", "AMZN", "FB", "GOOGL", "NVDA" };
@@ -37,6 +53,7 @@ namespace JudgementApp.Controllers
                 symbolNameDic.Add(line, line);
 
             }
+        ViewData["Company"]=    GetCompanyInfo(FKCompany);
             foreach (DataRow dr in dt.Rows)
             {
                 Data data = new Data();
@@ -56,14 +73,18 @@ namespace JudgementApp.Controllers
            
 
         }
-        public JsonResult LoadData()
+        public JsonResult LoadData(string id,string ProblemName)
         {
-            return Json(GetData(), JsonRequestBehavior.AllowGet); ;
+            long FKCompany = Convert.ToInt64(id);
+            return Json(GetData(FKCompany, ProblemName), JsonRequestBehavior.AllowGet); ;
         }
-        public ActionResult CreateProblem()
+        [Route("contest-admin/{id?}/{ProblemName?}")]
+        public ActionResult CreateProblem(string id,string ProblemName)
         {
-         
-            return View(GetData());
+       
+
+            long FKCompany = Convert.ToInt64(EncryptUtil.DecryptString(id));
+            return View(GetData(FKCompany, ProblemName));
 
             //uncomment this code to get the symbol from the site
             //var model = new List<Data>();
@@ -86,12 +107,11 @@ namespace JudgementApp.Controllers
         {
             input = Request.Form["data"];
 
-            Data model = new Data();
-
-
+            Data model = new Data();          
 
             model = JsonConvert.DeserializeObject<Data>(input);
-            SQL.NonScalarQuery("exec prc_AddQuestion '" + model.Title + "'," + model.Type );
+            long FKCompany = Convert.ToInt64(model.FKCompany);
+            SQL.NonScalarQuery("exec prc_AddQuestion '" + model.Title + "'," + model.Type +","+ FKCompany+ ",'" + model.ProblemName + "'");
 
             return "save";
         }
@@ -105,7 +125,7 @@ namespace JudgementApp.Controllers
 
             model = JsonConvert.DeserializeObject<Data>(input);
             SQL.NonScalarQuery("Delete from Questions where PKQuestion=" + model.Id);
-            SQL.NonScalarQuery("Delete from CreateProblem where QuestionNo=" + model.Id);
+            SQL.NonScalarQuery("Delete from CreateProblem where QuestionNo=" + model.Id +" and ProblemName='"+model.ProblemName+"' and FKCompany="+model.FKCompany);
             return "Delte";
         }
         public ActionResult Update(string input = "")
@@ -118,21 +138,29 @@ namespace JudgementApp.Controllers
 
             foreach (Data parameter in model)
             {
-                SQL.NonScalarQuery("Update CreateProblem  set p1 = '" + parameter.P1 + "' where QuestionNo =" + parameter.Id);
-                SQL.NonScalarQuery("Update CreateProblem  set p2 = '" + parameter.P2 + "' where QuestionNo =" + parameter.Id);
-                SQL.NonScalarQuery("Update CreateProblem  set p3 = '" + parameter.P3 + "' where QuestionNo =" + parameter.Id);
-                SQL.NonScalarQuery("Update CreateProblem  set p4 = '" + parameter.P4 + "' where QuestionNo =" + parameter.Id);
-
+                if (Main.QuestionExists(parameter.ProblemName, parameter.Id, parameter.FKCompany))
+                {
+                    SQL.NonScalarQuery("Update CreateProblem  set p1 = '" + parameter.P1 + "', p2 = '" + parameter.P2 + "', p3 = '" + parameter.P3 + "', p4 = '" + parameter.P4 + "',ProblemName='" + parameter.ProblemName + "' where QuestionNo =" + parameter.Id);
+                                   }
+                else
+                {
+                    SQL.NonScalarQuery("Insert into CreateProblem([FKCompany],[ProblemName],[QuestionNo],[P1],[P2],[P3],[P4]) values("+ parameter .FKCompany+ ",'" + parameter.ProblemName + "','" + parameter.Id + "','" + parameter.P1 + "','" + parameter.P2 + "','" + parameter.P3 + "' ,'" + parameter.P4 + "')" );
+                  
+                }
             }
             return View("~/Views/Judgement/Success.cshtml");
         }
 
         #endregion
-        public ActionResult Leaderboard()
+        public ActionResult Leaderboard(string companyName, string contestName)
         {
             var leaderboard = new List<Leaderboard>();
-
-            var results = Main.GetDataTable("select Name  from Judgement group by Name");
+            ViewData["contestName"] = contestName;
+            string id = "";
+            id = SQL.ScalarQuery("Select PKCompany from Company where CompanyName='" + companyName + "' and IsActive=1");
+            long FKCompany = Convert.ToInt64(id);
+            ViewData["Company"] = GetCompanyInfo(FKCompany);
+            var results = Main.GetDataTable("select Name  from Judgement where ProblemName='"+contestName+"' and FKCompany='"+FKCompany+"' group by Name");
 
             foreach (DataRow Item in results.Rows)
             {
@@ -140,10 +168,10 @@ namespace JudgementApp.Controllers
                 row.Username = Item["Name"].ToString();
                 int totalCorrect = 0;
                 int totalQuestionCount = 0;
-                int.TryParse(SQL.ScalarQuery("select SUM(TotalCorrect) from Judgement where name = '" + row.Username + "'"), out totalCorrect);
+                int.TryParse(SQL.ScalarQuery("select SUM(TotalCorrect) from Judgement where name = '" + row.Username + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'"), out totalCorrect);
                 row.TotalCorrect = totalCorrect;
-                int.TryParse(SQL.ScalarQuery("select SUM(ProblemNo) from Judgement where name = '" + row.Username + "'"), out totalQuestionCount);
-                row.ContestAttempted = Convert.ToInt32(SQL.ScalarQuery("select Count(*) from Judgement where Name = '" + row.Username + "'"));
+                int.TryParse(SQL.ScalarQuery("select SUM(ProblemNo) from Judgement where name = '" + row.Username + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'"), out totalQuestionCount);
+                row.ContestAttempted = Convert.ToInt32(SQL.ScalarQuery("select Count(*) from Judgement where Name = '" + row.Username + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'"));
                 double winPer = 0;
                 if (totalQuestionCount != 0)
                     winPer = (row.TotalCorrect *100) / (totalQuestionCount);
@@ -157,11 +185,16 @@ namespace JudgementApp.Controllers
         public ActionResult saveJudgement(JudgementParameter result)
         {
            string input = Request.Form["data"];
-            string max = SQL.ScalarQuery("select count(*) from Questions");
+            
             result = JsonConvert.DeserializeObject<JudgementParameter>(input);
+            string max = SQL.ScalarQuery("select isnull(count(*),0)+4 from Questions where ProblemName='"+ result.ProblemName + "' and FKCompany='"+result.FKCompany+"'");
             DateTime dateTime = DateTime.UtcNow.Date;
-            if (Main.CheckUser(result.UserName))
+            long FKCompany = Convert.ToInt64(result.FKCompany);
+
+
+            if (Main.CheckUser(result.UserName,result.ProblemName, FKCompany))
             {
+
                 string query = "update Judgement set ";
                 var i = 0;
                     foreach (JudgmentQ judgment in result.Result)
@@ -173,19 +206,19 @@ namespace JudgementApp.Controllers
                     i++;
                     query += "Q"+ judgment.ID+" = '" + judgment.QResult + "',P"+ judgment.ID+" = '" + judgment.Param + "',T" + judgment.ID + " = '" + judgment.QType + "'";
                 }
-                query += " where Name = '" + result.UserName + "'";
+                query += " where Name = '" + result.UserName + "' and ProblemName = '" + result.ProblemName + "' and FKCompany=" + FKCompany;
                     SQL.NonScalarQuery(query);
             }
             else
             {
-                string query = "Insert into Judgement (Name,date,ProblemNo";
+                string query = "Insert into Judgement (Name,date,ProblemNo,FKCompany,ProblemName";
                 var i = 0;
                 foreach (JudgmentQ judgment in result.Result)
                 {
                    
                     query += ",Q" + judgment.ID + ",P" + judgment.ID + ",T" + judgment.ID;
                 }
-                query += ")values('" + result.UserName + "',GetDate(),"+max;
+                query += ")values('" + result.UserName + "',GetDate(),"+max+ ","+ FKCompany + ",'"+result.ProblemName+"'";
                 foreach (JudgmentQ judgment in result.Result)
                 {
                    
@@ -205,9 +238,12 @@ namespace JudgementApp.Controllers
         public ActionResult LeaderboardDetail()
         {
             string Name = Request.QueryString["Name"];
+            string contestName = Request.QueryString["contestName"];
+            long FKCompany =Convert.ToInt64( Request.QueryString["FKCompany"]);
+            ViewData["Company"] = GetCompanyInfo(FKCompany);
             var leaderboard = new List<Leaderboard>();
 
-            var results = Main.GetDataTable("select Name,Date,IsNull(TotalCorrect,0) as TotalCorrect, ProblemNo  from Judgement where Name = '" + Name.ToString() + "'");
+            var results = Main.GetDataTable("select Name,Date,IsNull(TotalCorrect,0) as TotalCorrect, ProblemNo  from Judgement where Name = '" + Name.ToString() + "' and ProblemName='" + contestName + "' and FKCompany='" + FKCompany + "'");
 
             foreach (DataRow Item in results.Rows)
             {
@@ -230,5 +266,69 @@ namespace JudgementApp.Controllers
 
             return View(leaderboard);
         }
-    }
+
+       public Company GetCompanyInfo(long PKCompany)
+        {
+            Company company = new Company();
+            DataTable dt = Main.GetDataTable("prc_GetCompany '"+PKCompany+"'");
+            if(dt!=null&&dt.Rows.Count>0)
+            foreach (DataRow Item in dt.Rows)
+            {
+                    company.PKCompany = Convert.ToInt64(Item["PKCompany"]);
+                    company.CompanyName = Convert.ToString(Item["CompanyName"]);
+                    company.ProblemName = Convert.ToString(Item["ProblemName"]);
+                    company.Logo= Convert.ToString(Item["Logo"]);
+                    if ((!DBNull.Value.Equals(Item["BackgroundColor"])) && Item["BackgroundColor"].ToString().Length > 0)
+                    {
+                        company.BackgroundColor = Convert.ToString(Item["BackgroundColor"]);
+                    }
+                    else
+                    {
+                        company.BackgroundColor = "rgb(24,31,42)";
+                    }
+                    if ((!DBNull.Value.Equals(Item["CardBackgroundColor"])) && Item["CardBackgroundColor"].ToString().Length > 0)
+                    {
+                        company.CardBackgroundColor = Convert.ToString(Item["CardBackgroundColor"]);
+                    }
+                    else
+                    {
+                        company.CardBackgroundColor = "rgb(17,23,31)";
+                    }
+                    if ((!DBNull.Value.Equals(Item["HeadingColor"])) && Item["HeadingColor"].ToString().Length > 0)
+                    {
+                        company.HeadingColor = Convert.ToString(Item["HeadingColor"]);
+                    }
+                    else
+                    {
+                        company.HeadingColor = "rgb(255,255,255)";
+                    }
+                    if ((!DBNull.Value.Equals(Item["TableHeaderColor"])) && Item["TableHeaderColor"].ToString().Length > 0)
+                    {
+                        company.TableHeaderColor = Convert.ToString(Item["TableHeaderColor"]);
+                    }
+                    else
+                    {
+                        company.TableHeaderColor = "rgb(16,173,137)";
+                    }
+                    if ((!DBNull.Value.Equals(Item["TextColor"])) && Item["TextColor"].ToString().Length > 0)
+                    {
+                        company.TextColor = Convert.ToString(Item["TextColor"]);
+                    }
+                    else
+                    {
+                        company.TextColor = "rgb(255,255,255)";
+                    }
+                    if ((!DBNull.Value.Equals(Item["LinkColor"])) && Item["LinkColor"].ToString().Length > 0)
+                    {
+                        company.LinkColor = Convert.ToString(Item["LinkColor"]);
+                    }
+                    else
+                    {
+                        company.LinkColor = "rgb(133, 135, 150)";
+                    }
+
+                }
+                return company;
+        }
+        }
 }

@@ -1,28 +1,30 @@
-﻿@model IEnumerable<JudgementApp.Models.Leaderboard>
+﻿@using JudgementApp.Models;
+@model IEnumerable<JudgementApp.Models.Leaderboard>
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    Company company = (Company)ViewData["Company"];
 }
 
-<body style="background: rgb(24,31,42);color: rgb(133, 135, 150);">
-    <section class="contact-clean" style="background: rgb(24,31,42);">
-        <form method="post" style="text-align: center;background: rgb(17,23,31);">
-            <h2 class="text-center" style="color: rgb(255,255,255);">Details</h2>
+<body style="background:@company.BackgroundColor;color: @company.TextColor;">
+    <section class="contact-clean" style="background: @company.BackgroundColor;">
+        <form method="post" style="text-align: center;background: @company.CardBackgroundColor;">
+            <h2 class="text-center" style="color: @company.HeadingColor;">Details</h2>
             <div>
                 <div class="table-responsive">
                     <table class="table table-borderless">
                         <thead>
                             <tr style="color: rgb(133, 135, 150);">
-                                <th style="width: 206px;color: rgb(16,173,137);">No</th>
-                                <th style="width: 206px;color: rgb(16,173,137);">Date</th>
-                                <th style="width: 206px;color: rgb(16,173,137);">Win Percentage</th>
+                                <th style="width: 206px;color: @company.TableHeaderColor;">No</th>
+                                <th style="width: 206px;color: @company.TableHeaderColor;">Date</th>
+                                <th style="width: 206px;color: @company.TableHeaderColor;">Win Percentage</th>
                             </tr>
                         </thead>
                         <tbody>
                             @{ int count = 1; }
                             @foreach (var row in Model)
                             {
-                                <tr style="color: rgb(255,255,255);">
+                                <tr style="color: @company.TextColor;">
                                     <td>@count</td>
                                     <td>@row.Date</td>
                                     <td>@row.WinPercentage %</td>

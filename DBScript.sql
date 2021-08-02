@@ -1,20 +1,108 @@
 USE [master]
 GO
-/****** Object:  Database [JudgementApp]    Script Date: 25/07/2021 6:44:05 pm ******/
+/****** Object:  Database [JudgementApp]    Script Date: 02/08/2021 11:28:10 am ******/
 CREATE DATABASE [JudgementApp] 
 GO
-
-
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [JudgementApp].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [JudgementApp] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [JudgementApp] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [JudgementApp] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [JudgementApp] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [JudgementApp] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [JudgementApp] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [JudgementApp] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [JudgementApp] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [JudgementApp] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [JudgementApp] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [JudgementApp] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [JudgementApp] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [JudgementApp] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [JudgementApp] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [JudgementApp] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [JudgementApp] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [JudgementApp] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [JudgementApp] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [JudgementApp] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [JudgementApp] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [JudgementApp] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [JudgementApp] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [JudgementApp] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [JudgementApp] SET  MULTI_USER 
+GO
+ALTER DATABASE [JudgementApp] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [JudgementApp] SET DB_CHAINING OFF 
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'JudgementApp', N'ON'
+GO
 USE [JudgementApp]
 GO
-/****** Object:  Table [dbo].[CreateProblem]    Script Date: 25/07/2021 6:44:06 pm ******/
+/****** Object:  Table [dbo].[Company]    Script Date: 02/08/2021 11:28:10 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Company](
+	[PKCompany] [bigint] IDENTITY(1,1) NOT NULL,
+	[CompanyName] [nvarchar](2000) NULL,
+	[Id] [varchar](2000) NULL,
+	[EmailAddress] [varchar](200) NULL,
+	[Password] [varchar](200) NULL,
+	[Logo] [varchar](500) NULL,
+	[BackgroundColor] [varchar](200) NULL,
+	[CardBackgroundColor] [varchar](200) NULL,
+	[HeadingColor] [varchar](200) NULL,
+	[TableHeaderColor] [varchar](200) NULL,
+	[TextColor] [varchar](200) NULL,
+	[LinkColor] [varchar](200) NULL,
+	[IsActive] [bit] NULL,
+	[CreatedBy] [int] NULL,
+	[CreatedDate] [datetime] NULL,
+	[ModifiedBy] [int] NULL,
+	[ModifiedDate] [datetime] NULL,
+ CONSTRAINT [PK_Company] PRIMARY KEY CLUSTERED 
+(
+	[PKCompany] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[CreateProblem]    Script Date: 02/08/2021 11:28:10 am ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[CreateProblem](
-	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[QuestionNo] [int] NULL,
+	[ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[FKCompany] [bigint] NULL,
+	[ProblemName] [varchar](500) NULL,
+	[QuestionNo] [bigint] NULL,
 	[P1] [varchar](50) NULL,
 	[P2] [varchar](50) NULL,
 	[P3] [varchar](50) NULL,
@@ -25,17 +113,19 @@ CREATE TABLE [dbo].[CreateProblem](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Judgement]    Script Date: 25/07/2021 6:44:06 pm ******/
+/****** Object:  Table [dbo].[Judgement]    Script Date: 02/08/2021 11:28:10 am ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Judgement](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[FKCompany] [bigint] NULL,
 	[Name] [varchar](50) NULL,
+	[ProblemName] [varchar](500) NULL,
 	[ProblemNo] [int] NULL,
 	[TotalCorrect] [int] NULL,
-	[Date] [datetime] NULL,
+	[Date] [date] NULL,
 	[Q1] [varchar](50) NULL,
 	[T1] [int] NULL,
 	[P1] [varchar](500) NULL,
@@ -48,13 +138,22 @@ CREATE TABLE [dbo].[Judgement](
 	[Q4] [varchar](50) NULL,
 	[T4] [int] NULL,
 	[P4] [varchar](500) NULL,
+	[Q5] [varchar](500) NULL,
+	[P5] [varchar](500) NULL,
+	[T5] [int] NULL,
+	[Q6] [varchar](500) NULL,
+	[P6] [varchar](500) NULL,
+	[T6] [int] NULL,
+	[Q7] [varchar](500) NULL,
+	[P7] [varchar](500) NULL,
+	[T7] [int] NULL,
  CONSTRAINT [PK_Judgement] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Questions]    Script Date: 25/07/2021 6:44:06 pm ******/
+/****** Object:  Table [dbo].[Questions]    Script Date: 02/08/2021 11:28:10 am ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -67,13 +166,15 @@ CREATE TABLE [dbo].[Questions](
 	[CreatedDate] [datetime] NULL,
 	[ModifiedBy] [bigint] NULL,
 	[ModifiedDate] [datetime] NULL,
+	[FKCompany] [bigint] NULL,
+	[ProblemName] [varchar](500) NULL,
  CONSTRAINT [PK_Questions] PRIMARY KEY CLUSTERED 
 (
 	[PKQuestion] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Results]    Script Date: 25/07/2021 6:44:06 pm ******/
+/****** Object:  Table [dbo].[Results]    Script Date: 02/08/2021 11:28:10 am ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -84,45 +185,53 @@ CREATE TABLE [dbo].[Results](
 	[Result] [varchar](50) NULL
 ) ON [PRIMARY]
 GO
+SET IDENTITY_INSERT [dbo].[Company] ON 
+GO
+INSERT [dbo].[Company] ([PKCompany], [CompanyName], [Id], [EmailAddress], [Password], [Logo], [BackgroundColor], [CardBackgroundColor], [HeadingColor], [TableHeaderColor], [TextColor], [LinkColor], [IsActive], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (1, N'Test Comp', N'STgyWDVleGpLNDIyRThIK3FaZEFKZz090', NULL, NULL, N'/assets/img/company/1/avatar3.jpeg', N'#bfbc', NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL)
+GO
+INSERT [dbo].[Company] ([PKCompany], [CompanyName], [Id], [EmailAddress], [Password], [Logo], [BackgroundColor], [CardBackgroundColor], [HeadingColor], [TableHeaderColor], [TextColor], [LinkColor], [IsActive], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (2, N'Test 2', N'ZUdmVkNyUFNqM2d1ZUl4MGFUYjBnZz090', NULL, NULL, N'/assets/img/company/2/avatar3.jpeg', N'#bfbc', NULL, NULL, NULL, NULL, NULL, 1, NULL, NULL, NULL, NULL)
+GO
+SET IDENTITY_INSERT [dbo].[Company] OFF
+GO
 SET IDENTITY_INSERT [dbo].[CreateProblem] ON 
 GO
-INSERT [dbo].[CreateProblem] ([ID], [QuestionNo], [P1], [P2], [P3], [P4]) VALUES (1, 1, N'TSLA', N'1122', N'01:00 pm', N'')
+INSERT [dbo].[CreateProblem] ([ID], [FKCompany], [ProblemName], [QuestionNo], [P1], [P2], [P3], [P4]) VALUES (1, NULL, N'Test const', 1, N'QQQ', N'asdas', N'12:00 pm', N'')
 GO
-INSERT [dbo].[CreateProblem] ([ID], [QuestionNo], [P1], [P2], [P3], [P4]) VALUES (2, 2, N'GOOGL', N'below', N'333', N'today')
+INSERT [dbo].[CreateProblem] ([ID], [FKCompany], [ProblemName], [QuestionNo], [P1], [P2], [P3], [P4]) VALUES (2, NULL, N'Test const', 2, N'IWM', N'below', N'asd', N'this week')
 GO
-INSERT [dbo].[CreateProblem] ([ID], [QuestionNo], [P1], [P2], [P3], [P4]) VALUES (3, 3, N'NFLX', N'', N'', N'')
+INSERT [dbo].[CreateProblem] ([ID], [FKCompany], [ProblemName], [QuestionNo], [P1], [P2], [P3], [P4]) VALUES (3, NULL, N'Test const', 3, N'GOOGL', N'', N'', N'')
 GO
-INSERT [dbo].[CreateProblem] ([ID], [QuestionNo], [P1], [P2], [P3], [P4]) VALUES (4, 4, N'NVDA', N'12:00 noon', N'', N'')
+INSERT [dbo].[CreateProblem] ([ID], [FKCompany], [ProblemName], [QuestionNo], [P1], [P2], [P3], [P4]) VALUES (4, NULL, N'Test const', 4, N'AMZN', N'03:30 pm', N'', N'')
 GO
 SET IDENTITY_INSERT [dbo].[CreateProblem] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Judgement] ON 
 GO
-INSERT [dbo].[Judgement] ([Id], [Name], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4]) VALUES (1, N'Abdul', NULL, 3, CAST(N'2021-07-19' AS Date), N'Fact', NULL, NULL, N'Fact', NULL, NULL, N'PM', NULL, NULL, N'Before', NULL, NULL)
+INSERT [dbo].[Judgement] ([Id], [FKCompany], [Name], [ProblemName], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4], [Q5], [P5], [T5], [Q6], [P6], [T6], [Q7], [P7], [T7]) VALUES (1, 1, N'Abdul', N'Test const', 4, 3, CAST(N'2021-07-19' AS Date), N'Fact', NULL, NULL, N'Fact', NULL, NULL, N'PM', NULL, NULL, N'Before', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Judgement] ([Id], [Name], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4]) VALUES (2, N'John', NULL, 2, CAST(N'2021-07-19' AS Date), N'Fact', NULL, NULL, N'Fact', NULL, NULL, N'AM', NULL, NULL, N'Before', NULL, NULL)
+INSERT [dbo].[Judgement] ([Id], [FKCompany], [Name], [ProblemName], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4], [Q5], [P5], [T5], [Q6], [P6], [T6], [Q7], [P7], [T7]) VALUES (2, 1, N'John', N'Test const', 4, 2, CAST(N'2021-07-19' AS Date), N'Fact', NULL, NULL, N'Fact', NULL, NULL, N'AM', NULL, NULL, N'Before', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Judgement] ([Id], [Name], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4]) VALUES (3, N'Mike', NULL, 1, CAST(N'2021-07-19' AS Date), N'Fact', NULL, NULL, N'Fiction', NULL, NULL, N'PM', NULL, NULL, N'After', NULL, NULL)
+INSERT [dbo].[Judgement] ([Id], [FKCompany], [Name], [ProblemName], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4], [Q5], [P5], [T5], [Q6], [P6], [T6], [Q7], [P7], [T7]) VALUES (3, 1, N'Mike', N'Test const', 4, 1, CAST(N'2021-07-19' AS Date), N'Fact', NULL, NULL, N'Fiction', NULL, NULL, N'PM', NULL, NULL, N'After', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Judgement] ([Id], [Name], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4]) VALUES (4, N'Bruce', NULL, 0, CAST(N'2021-07-19' AS Date), N'', NULL, NULL, N'', NULL, NULL, N'', NULL, NULL, N'', NULL, NULL)
+INSERT [dbo].[Judgement] ([Id], [FKCompany], [Name], [ProblemName], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4], [Q5], [P5], [T5], [Q6], [P6], [T6], [Q7], [P7], [T7]) VALUES (4, 1, N'Bruce', N'Test const', 4, 2, CAST(N'2021-07-19' AS Date), N'', NULL, NULL, N'', NULL, NULL, N'', NULL, NULL, N'', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Judgement] ([Id], [Name], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4]) VALUES (5, N'Duck', NULL, 2, CAST(N'2021-07-19' AS Date), N'Fact', NULL, NULL, N'Fiction', NULL, NULL, N'PM', NULL, NULL, N'Before', NULL, NULL)
+INSERT [dbo].[Judgement] ([Id], [FKCompany], [Name], [ProblemName], [ProblemNo], [TotalCorrect], [Date], [Q1], [T1], [P1], [Q2], [T2], [P2], [Q3], [T3], [P3], [Q4], [T4], [P4], [Q5], [P5], [T5], [Q6], [P6], [T6], [Q7], [P7], [T7]) VALUES (5, 1, N'Duck', N'Test const', 4, 2, CAST(N'2021-07-19' AS Date), N'Fact', NULL, NULL, N'Fiction', NULL, NULL, N'PM', NULL, NULL, N'Before', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 GO
 SET IDENTITY_INSERT [dbo].[Judgement] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Questions] ON 
 GO
-INSERT [dbo].[Questions] ([PKQuestion], [Type], [Title], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (1, 1, N'will [P1] hit [P2] by [P3]?', NULL, NULL, NULL, NULL)
+INSERT [dbo].[Questions] ([PKQuestion], [Type], [Title], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate], [FKCompany], [ProblemName]) VALUES (1, 1, N'will [P1] hit [P2] by [P3]?', NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Questions] ([PKQuestion], [Type], [Title], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (2, 2, N'will [P1] close [P2] [P3] [P4]?', NULL, NULL, NULL, NULL)
+INSERT [dbo].[Questions] ([PKQuestion], [Type], [Title], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate], [FKCompany], [ProblemName]) VALUES (2, 2, N'will [P1] close [P2] [P3] [P4]?', NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Questions] ([PKQuestion], [Type], [Title], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (3, 3, N'will [P1] have a higher return in the AM or PM?', NULL, NULL, NULL, NULL)
+INSERT [dbo].[Questions] ([PKQuestion], [Type], [Title], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate], [FKCompany], [ProblemName]) VALUES (3, 3, N'will [P1] have a higher return in the AM or PM?', NULL, NULL, NULL, NULL, NULL, NULL)
 GO
-INSERT [dbo].[Questions] ([PKQuestion], [Type], [Title], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate]) VALUES (4, 4, N'will [P1] have a higher return before or after [P2]?', NULL, NULL, NULL, NULL)
+INSERT [dbo].[Questions] ([PKQuestion], [Type], [Title], [CreatedBy], [CreatedDate], [ModifiedBy], [ModifiedDate], [FKCompany], [ProblemName]) VALUES (4, 4, N'will [P1] have a higher return before or after [P2]?', NULL, NULL, NULL, NULL, NULL, NULL)
 GO
 SET IDENTITY_INSERT [dbo].[Questions] OFF
 GO
-/****** Object:  StoredProcedure [dbo].[prc_AddJudgmentColumn]    Script Date: 25/07/2021 6:44:06 pm ******/
+/****** Object:  StoredProcedure [dbo].[prc_AddJudgmentColumn]    Script Date: 02/08/2021 11:28:11 am ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -149,7 +258,7 @@ BEGIN
 END
 END
 GO
-/****** Object:  StoredProcedure [dbo].[prc_AddQuestion]    Script Date: 25/07/2021 6:44:06 pm ******/
+/****** Object:  StoredProcedure [dbo].[prc_AddQuestion]    Script Date: 02/08/2021 11:28:11 am ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -162,29 +271,33 @@ GO
 CREATE PROCEDURE [dbo].[prc_AddQuestion]
 	-- Add the parameters for the stored procedure here
 	@Title as nvarchar(2000),
-	@type as int
+	@type as int,
+	@FKCompany as bigint,
+	@ProblemName as nvarchar(2000)
 AS
 BEGIN
-	Insert into Questions(title,type) values(@Title,@type)
+	Insert into Questions(title,type,FKCompany,ProblemName) values(@Title,@type,@FKCompany,@ProblemName)
 	declare @id as int=(select @@IDENTITY)
 	INSERT INTO [dbo].[CreateProblem]
            ([QuestionNo]
            ,[P1]
            ,[P2]
            ,[P3]
-           ,[P4])
+           ,[P4]
+		   ,FKCompany,ProblemName
+		   )
    Select top 1 @id
            ,[P1]
            ,[P2]
            ,[P3]
-           ,[P4] from Questions as Q 
-		   Left join  [dbo].[CreateProblem] C on C.QuestionNo=Q.PKQuestion
+           ,[P4],@FKCompany,@ProblemName from Questions as Q 
+		   Left join  [dbo].[CreateProblem] C on C.QuestionNo=Q.PKQuestion and C.FKCompany=@FKCompany
 		   where Q.[Type]=@type
 	print cast(@id as varchar(50))
 	exec prc_AddJudgmentColumn @id
 END
 GO
-/****** Object:  StoredProcedure [dbo].[prc_GetProblem]    Script Date: 25/07/2021 6:44:06 pm ******/
+/****** Object:  StoredProcedure [dbo].[prc_GetCompany]    Script Date: 02/08/2021 11:28:11 am ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -194,16 +307,41 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE [dbo].[prc_GetProblem]
-	-- Add the parameters for the stored procedure here
-	
+CREATE PROCEDURE [dbo].[prc_GetCompany]
+	@id as bigint
 AS
 BEGIN
-	
-	Select Q.Title,Q.[Type],ROW_NUMBER() OVER(ORDER BY [Type]) as Row_Num,  PKQuestion as ID
+declare @ProblemName as varchar(500)='';
+Select @ProblemName=ProblemName from CreateProblem where FKCompany=@id 
+Select *,@ProblemName as ProblemName from Company where IsActive=1 and PKCompany=@id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[prc_GetProblem]    Script Date: 02/08/2021 11:28:11 am ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- ============================================= [dbo].[prc_GetProblem] 1
+CREATE PROCEDURE [dbo].[prc_GetProblem]
+	-- Add the parameters for the stored procedure here
+	@FKCompany as bigint,
+	@ProblemName as varchar(500)=null
+AS
+BEGIN
+	if (len(ltrim(rtrim(@ProblemName)))<1 or @ProblemName='')
+	begin
+	set @ProblemName=null;
+	end
+
+	Select Q.Title,Q.[Type],ROW_NUMBER() OVER(ORDER BY [Type]) as Row_Num,C.ProblemName,  PKQuestion as ID
 	,C.P1,C.P2,C.P3,C.P4
 	from Questions as Q
-	Left Join CreateProblem as C on C.QuestionNo=Q.PKQuestion
+	Left Join CreateProblem as C on C.QuestionNo=Q.PKQuestion and C.FKCompany=@FKCompany and (@ProblemName is null or C.ProblemName=@ProblemName)
+	Where C.FKCompany=@FKCompany or Q.PKQuestion in (1,2,3,4)
 	Order By [Type],Row_Num
 END
 GO
