@@ -7,7 +7,7 @@
 }
 <body>
 
-    <div class="popup card shadow"  id="myPopup" popup-name="popup-1">
+    <div class="popup card shadow"  id="myPopup" style="display:none;" popup-name="popup-1">
         <div class="popup-content">
             <h4 class="modal-title">Add New Question</h4>
 
@@ -286,6 +286,7 @@
                      }
                     function Close() {
                         $('#myPopup').fadeOut(300);
+                     
                         document.getElementById("mainContent").style.display = "block";
                     }
                      function ShowAdd(id) {
@@ -299,6 +300,7 @@
                        
                             $("#NewQuestion").val(model.Type + '')
                             $("#QuestionID").val(id + '')
+                      $('#myPopup').css({"display":"block"});
                             $('#myPopup').fadeIn(300);
                             document.getElementById("mainContent").style.display = "none";
                         } else {
