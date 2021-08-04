@@ -25,8 +25,8 @@ namespace PolygonUse
                 string txt_log = "";
                 int txt_log_question_index = 0;
                 //Getting Judgement data from yesterday
-                //DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE TotalCorrect IS NULL");
-                DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE Name='DavidTest7.29'");
+                DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE TotalCorrect IS NULL");
+                //DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE Name='DavidTest7.29'");
 
                 txt_log = "[David Test 7.28] ";
                 //Evaluating for each user from yesterday
