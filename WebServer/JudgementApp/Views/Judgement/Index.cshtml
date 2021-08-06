@@ -103,6 +103,14 @@
                                 <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="After"><label class="form-check-label" for="formCheck-2">After</label></div>
                             </div>
                         }
+                        @if (item.Type == 5)
+                        {
+                            <div class="card-body" style="text-align: left;">
+                                <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) outperform  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany) @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="@Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany)"><label class="form-check-label" for="formCheck-1">@Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany)</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="@Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)"><label class="form-check-label" for="formCheck-2">@Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)</label></div>
+                            </div>
+                        }
 
                     </div>
                 }
@@ -152,7 +160,7 @@
                         item.P4 = "null"
                     }
                     var QResult = $("input[name='Q" + item.Id + "_R']:checked").val();
-                    judgment.push({ ID: item.Id, QResult: QResult, QType: item.Type, Param: item.P1 + "," + item.P2 + "," + item.P3 + "," + item.P4 })
+                    judgment.push({ ID: item.Id, QResult: QResult, QType: item.Type, Param: item.P1 + "," + item.P2 + "," + item.P3 + "," + item.P4  })
                     var q = "Q" + item.Id;
                 })
                 model.UserName = $("#UserName").val();

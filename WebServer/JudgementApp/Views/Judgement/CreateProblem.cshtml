@@ -20,6 +20,7 @@
                             <option value="2">Question 2</option>
                             <option value="3">Question 3</option>
                             <option value="4">Question 4</option>
+                            <option value="5">Question 5</option>
                         </select>
                     </td>
                 </tr>
@@ -34,7 +35,7 @@
 
     <section class="contact-clean" id="mainContent">
         <form style="text-align: center;">
-            <h2 class="text-center">Create Problem</h2>
+            <h2 class="text-center">Create Contest</h2>
             <div>
                 <div style="text-align:left !important">
                     @{
@@ -79,15 +80,14 @@
                         string p2 = "Q" + item.Id + "_P2";
                         string p3 = "Q" + item.Id + "_P3";
                         string p4 = "Q" + item.Id + "_P4";
+                        string p5 = "Q" + item.Id + "_P5";
 
                         <div class="card shadow mb-4" id="Question-1">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <h6 class="text-primary col-md-11 text-left fw-bold m-0"><span class="pull-left">Question @item.Row_Num</span></h6>
                                 <i class="pull-right fa fa-plus" title="Add New" onclick="ShowAdd( @item.Id)"></i>
-                                @if (item.Id != 1 && item.Id != 2 && item.Id != 3 && item.Id != 4)
-                                {
-                                    <i class="pull-right fa fa-minus" title="Remove" onclick="RemoveQuestion( @item.Id)"></i>
-                                }
+                                <i class="pull-right fa fa-minus" title="Remove" onclick="RemoveQuestion( @item.Id)"></i>
+                                
                             </div>
                             <div class="card-body" style="text-align: left;">
                                 <label class="form-label" style="font-style: normal;font-weight: bold;">@item.Title</label>
@@ -253,6 +253,47 @@
                                         </table>
                                     </div>
                                 }
+
+                                @*type 5*@
+                                @if (item.Type == 5)
+                                {
+                                    <div style="width: 290px;">
+                                        <table>
+                                            <tr>
+                                                <td>P1</td>
+                                                <td>
+                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                    <div style="width: 290px;">
+                                        <table>
+                                            <tr>
+                                                <td>P2</td>
+                                                <td>
+                                                    @Html.DropDownList(p2, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p2 })
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                    <div style="width: 290px;">
+                                        <table>
+                                            <tr>
+                                                <td>P3</td>
+                                                <td>
+                                                    <select name="@p3" id="@p3" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                        <option value="today" selected="">today</option>
+                                                        <option value="this week">this week</option>
+                                                        <option value="this month">this month</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                }
                             </div>
                         </div>
 
@@ -331,26 +372,32 @@
                         this.onChangeContest();
                     }, 50)
                     alert('Question added successfully');
-
                 }
             });
         }
         function RemoveQuestion(id) {
-            var model = result.filter(x => x.Id == id);
-            model = model[0];
-            var fd = new FormData();
-            fd.append('data', JSON.stringify(model));
-            $.ajax({
-                url: '/Judgement/RemoveQuestion',
-                data: fd,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                success: function (data) {
-                    alert('Question removed successfully');
-                    onChangeContest();
-                }
-            });
+            var PKCompany = $("#PKCompany").val();
+            var ProblemName = $("#ProblemName").val();
+            if (PKCompany > 0) {
+                var model = result.filter(x => x.Id == id);
+                model = model[0];
+                var fd = new FormData();
+                fd.append('data', JSON.stringify(model));
+                $.ajax({
+                    url: '/Judgement/RemoveQuestion',
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (data) {
+                        alert('Question removed successfully');
+                        onChangeContest();
+                    }
+                });
+            }
+            else {
+                alert("Please enter the company id")
+            }
         }
         function onLoad() {
             var ProblemName = $("#ProblemName").val();
@@ -367,6 +414,8 @@
                             $("#Q" + x.Id + "_P3").val(x.P3);
                         if ($("#Q" + x.Id + "_P4") != undefined)
                             $("#Q" + x.Id + "_P4").val(x.P4);
+                        if ($("#Q" + x.Id + "_P5") != undefined)
+                            $("#Q" + x.Id + "_P5").val(x.P5);
                     })
                 }
             })
@@ -389,7 +438,7 @@
                     Q = Number.parseInt($("#Q" + result[i].Id).val());
                 }
 
-                var P1 = null, P2 = null, P3 = null, P4 = null;
+                var P1 = null, P2 = null, P3 = null, P4 = null, P5 = null;
                 if ($("#Q" + result[i].Id + "_P1").val() != undefined)
                     P1 = $("#Q" + result[i].Id + "_P1").val();
                 if ($("#Q" + result[i].Id + "_P2").val() != undefined)
@@ -398,8 +447,10 @@
                     P3 = $("#Q" + result[i].Id + "_P3").val();
                 if ($("#Q" + result[i].Id + "_P4").val() != undefined)
                     P4 = $("#Q" + result[i].Id + "_P4").val();
+                if ($("#Q" + result[i].Id + "_P5").val() != undefined)
+                    P5 = $("#Q" + result[i].Id + "_P5").val();
 
-                input.push({ Id: Q, P1: P1, P2: P2, P3: P3, P4: P4, FKCompany: PKCompany, ProblemName: ProblemName })
+                input.push({ Id: Q, P1: P1, P2: P2, P3: P3, P4: P4, P5: P5, FKCompany: PKCompany, ProblemName: ProblemName })
             }
             var fd = new FormData();
             fd.append('data', JSON.stringify(input));

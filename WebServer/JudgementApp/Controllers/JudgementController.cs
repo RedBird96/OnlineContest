@@ -71,9 +71,6 @@ namespace JudgementApp.Controllers
                 model.Add(data);
             }
             return model;
-
-           
-
         }
         public JsonResult LoadData(string id,string ProblemName)
         {
@@ -215,15 +212,16 @@ namespace JudgementApp.Controllers
            string input = Request.Form["data"];
             
             result = JsonConvert.DeserializeObject<JudgementParameter>(input);
-            string max = SQL.ScalarQuery("select isnull(count(*),0)+4 from Questions where ProblemName='"+ result.ProblemName + "' and FKCompany='"+result.FKCompany+"'");
+            string max = SQL.ScalarQuery("select isnull(count(*),0)+ 5 from Questions where ProblemName='"+ result.ProblemName + "' and FKCompany='"+result.FKCompany+"'");
             DateTime dateTime = DateTime.UtcNow.Date;
             long FKCompany = Convert.ToInt64(result.FKCompany);
 
 
             if (Main.CheckUser(result.UserName,result.ProblemName, FKCompany, result.UserEmail))
             {
-
-                string query = "update Judgement set ";
+                string del_query = "delete from Judgement where Name = '" + result.UserName + "' and UserEmail='" + result.UserEmail + "' and ProblemName = '" + result.ProblemName + "' and FKCompany=" + FKCompany;
+                SQL.NonScalarQuery(del_query);
+                /*string query = $"update Judgement set ProblemNo = {max}, ";
                 var i = 0;
                     foreach (JudgmentQ judgment in result.Result)
                 {
@@ -236,11 +234,9 @@ namespace JudgementApp.Controllers
                 }
                 query += " where Name = '" + result.UserName + "' and UserEmail='"+result.UserEmail+"' and ProblemName = '" + result.ProblemName + "' and FKCompany=" + FKCompany;
                     SQL.NonScalarQuery(query);
-            }
-            else
-            {
+                }
+                else*/
                 string query = "Insert into Judgement (Name,UserEmail,date,ProblemNo,FKCompany,ProblemName";
-                var i = 0;
                 foreach (JudgmentQ judgment in result.Result)
                 {
                    
