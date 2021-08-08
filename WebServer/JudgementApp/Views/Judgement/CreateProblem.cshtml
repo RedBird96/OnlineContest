@@ -352,7 +352,11 @@
             var PKCompany = $("#PKCompany").val();
             var ProblemName = $("#ProblemName").val();
             var model = result.filter(x => x.Id == id);
-            model = model[0];
+            if (model != undefined && model != null && model.length > 0) {
+                model = model[0];
+            } else {
+                model = {}
+            }
             model.FKCompany = PKCompany;
             model.ProblemName = ProblemName;
             model.Type = Number.parseInt($("#NewQuestion").val())
@@ -379,8 +383,16 @@
             var PKCompany = $("#PKCompany").val();
             var ProblemName = $("#ProblemName").val();
             if (PKCompany > 0) {
+                debugger;
                 var model = result.filter(x => x.Id == id);
-                model = model[0];
+                //if (model != undefined && model != null && model.length > 0) {
+                //    model = model[0];
+                //} else {
+                    model = {}
+                    model.FKCompany = PKCompany;
+                    model.ProblemName = ProblemName;
+                    model.Id = id;
+                
                 var fd = new FormData();
                 fd.append('data', JSON.stringify(model));
                 $.ajax({

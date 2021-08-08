@@ -124,7 +124,8 @@ namespace JudgementApp.Controllers
 
 
             model = JsonConvert.DeserializeObject<Data>(input);
-            SQL.NonScalarQuery("Delete from Questions where PKQuestion=" + model.Id);
+            //  SQL.NonScalarQuery("Delete from Questions where PKQuestion=" + model.Id);
+            SQL.NonScalarQuery("INSERT INTO [dbo].[CreateProblemArchive](ID,[FKCompany],[ProblemName] ,[QuestionNo]) values( " + model.Id + "," + model.FKCompany + ",'" + model.ProblemName + "'," + model.Id + ") ");
             SQL.NonScalarQuery("Delete from CreateProblem where QuestionNo=" + model.Id +" and ProblemName='"+model.ProblemName+"' and FKCompany="+model.FKCompany);
             return "Delte";
         }
