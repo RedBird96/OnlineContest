@@ -411,6 +411,7 @@
                 alert("Please enter the company id")
             }
         }
+        var IsPublish = false;
         function onLoad() {
             var ProblemName = $("#ProblemName").val();
             var PKCompany = $("#PKCompany").val();
@@ -418,6 +419,15 @@
                 debugger;
                 result = s;
                 if (result.length > 0) {
+                    IsPublish = this.result[0].IsPublish;
+                    if (IsPublish == true) {
+                        var CompanyName = $("#CompanyName").html();
+                        var ProblemName = $("#ProblemName").val();
+                        var href = window.location.href.toLowerCase().split('contest-admin')[0] + "contest-" + CompanyName + "-" + ProblemName
+                        $("#judgmentLink").attr("href", href);
+                        $("#judgmentLink").text(href)
+                        $("#judgmentLink").css({ "display": "block" });
+                    }
                     result.forEach(x => {
                         $("#Q" + x.Id + "_P1").val(x.P1);
                         if ($("#Q" + x.Id + "_P2") != undefined)
@@ -438,7 +448,7 @@
         function isNumeric(n) {
             return !isNaN(parseFloat(n)) && isFinite(n);
         }
-        function CreateUpdateModel() {
+        function CreateUpdateModel(IsPublish=false) {
             var total = Number.parseInt($("#total").val());
             var PKCompany = $("#PKCompany").val();
             var ProblemName = $("#ProblemName").val();
@@ -461,8 +471,8 @@
                     P4 = $("#Q" + result[i].Id + "_P4").val();
                 if ($("#Q" + result[i].Id + "_P5").val() != undefined)
                     P5 = $("#Q" + result[i].Id + "_P5").val();
-
-                input.push({ Id: Q, P1: P1, P2: P2, P3: P3, P4: P4, P5: P5, FKCompany: PKCompany, ProblemName: ProblemName })
+                
+                input.push({ Id: Q, P1: P1, P2: P2, P3: P3, P4: P4, P5: P5, FKCompany: PKCompany, ProblemName: ProblemName, IsPublish: IsPublish })
             }
             var fd = new FormData();
             fd.append('data', JSON.stringify(input));
@@ -482,7 +492,7 @@
                 } else if (ProblemName.length < 1) {
                     alert("Please enter the contest name")
                 } else {
-                    var fd = CreateUpdateModel();
+                    var fd = CreateUpdateModel(true);
                     $.ajax({
                         url: '/Judgement/Update',
                         data: fd,
@@ -510,7 +520,7 @@
                 } else if (ProblemName.length < 1) {
                     alert("Please enter the contest name")
                 } else {
-                    var fd = CreateUpdateModel();
+                    var fd = CreateUpdateModel(false);
                     $.ajax({
                         url: '/Judgement/Update',
                         data: fd,
