@@ -11,13 +11,13 @@
         <form name="form" id="JudgementForm" style="text-align: center;">
             <h2 class="text-center" id="ProblemName">@ViewData["contestName"]</h2>
             @{
-
-                <table style="width:100%;">
+                <img class="img-responsive" src="@company.Logo" style="width:200px;" />
+                <table style="width:100%;display:none">
 
                     <tr>
 
                         <td width="100px">
-                            <img src="@company.Logo" style="width:100px;" />
+                            @*<img src="@company.Logo" style="width:100px;" />*@
                         </td>
 
                         <td>
@@ -51,7 +51,7 @@
             <div class="mb-3">
                 <br />
                 <input class="form-control" type="text" id="UserName" name="UserName" required="required" placeholder="Name">
-                
+
             </div>
             <div class="mb-3">
                 <br />

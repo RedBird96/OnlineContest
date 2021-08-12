@@ -131,7 +131,7 @@
                                                         <option value="01:30 pm">01:30 pm</option>
                                                         <option value="02:00 pm">02:00 pm</option>
                                                         <option value="02:30 pm">02:30 pm</option>
-                                                        <option value="03:30 pm">03:00 pm</option>
+                                                        <option value="03:00 pm">03:00 pm</option>
                                                         <option value="03:30 pm">03:30 pm</option>
                                                     </select>
                                                 </td>
@@ -195,7 +195,6 @@
                                     </div>
                                 }
 
-
                                 @*type 3*@
                                 @if (item.Type == 3)
                                 {
@@ -245,7 +244,7 @@
                                                         <option value="01:30 pm">01:30 pm</option>
                                                         <option value="02:00 pm">02:00 pm</option>
                                                         <option value="02:30 pm">02:30 pm</option>
-                                                        <option value="03:30 pm">03:00 pm</option>
+                                                        <option value="03:00 pm">03:00 pm</option>
                                                         <option value="03:30 pm">03:30 pm</option>
                                                     </select>
                                                 </td>
@@ -307,11 +306,20 @@
 
             <button class="btn btn-primary" type="button" id="btnSave">Save</button>
             <button class="btn btn-primary" type="button" id="btnUpdate">Publish</button>
-            <div class="col-md-12">
-                <a id="judgmentLink" style="display:none;color: rgb(16,173,137)">Judgment Link</a>
-            </div>
+            <div class="row col-md-12">
+                <div class="pull-left">
 
-        </form>
+                    <a id="judgmentLink" class="pull-left" style="display:none;color: rgb(16,173,137); margin-top:10px;">Judgment Link</a>
+                    <b id="btnCopy" class="pull-right btn" style="display:none; margin-left:5px;">copy Url</b>
+                </div>
+                <div class=" pull-left">
+                    
+                    <input id="linkINput" width="1px" style="display:none" />
+                    </div>
+                <br />
+                </div>
+
+</form>
     </section>
 
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
@@ -426,7 +434,9 @@
                         var href = window.location.href.toLowerCase().split('contest-admin')[0] + "contest-" + CompanyName + "-" + ProblemName
                         $("#judgmentLink").attr("href", href);
                         $("#judgmentLink").text(href)
+                        $("#btnCopy").val(href)
                         $("#judgmentLink").css({ "display": "block" });
+                        $("#btnCopy").css({ "display": "block" });
                     }
                     result.forEach(x => {
                         $("#Q" + x.Id + "_P1").val(x.P1);
@@ -448,7 +458,8 @@
         function isNumeric(n) {
             return !isNaN(parseFloat(n)) && isFinite(n);
         }
-        function CreateUpdateModel(IsPublish=false) {
+        function CreateUpdateModel(IsPublish = false) {
+            debugger;
             var total = Number.parseInt($("#total").val());
             var PKCompany = $("#PKCompany").val();
             var ProblemName = $("#ProblemName").val();
@@ -508,6 +519,7 @@
                             $("#judgmentLink").attr("href", href);
                             $("#judgmentLink").text(href)
                             $("#judgmentLink").css({ "display": "block" });
+                            $("#btnCopy").css({ "display": "block" });
                         }
                     });
                 }
@@ -538,7 +550,17 @@
                     });
                 }
             })
+            $('#btnCopy').click(function () {
+                debugger;
+                $("#linkINput").css({ "display": "block" });
+                $("#linkINput").val(  $("#judgmentLink").attr("href"))
+                var copyText = document.getElementById("linkINput");
+                copyText.select();
 
+                document.execCommand("copy");
+                $("#linkINput").css({ "display": "none" });
+               
+            });
 
         })
 

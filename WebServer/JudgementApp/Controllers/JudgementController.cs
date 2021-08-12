@@ -64,6 +64,10 @@ namespace JudgementApp.Controllers
                 data.P2 = dr["P2"].ToString();
                 data.P3 = dr["P3"].ToString();
                 data.P4 = dr["P4"].ToString();
+                if (!DBNull.Value.Equals(dr["IsPublish"]))
+                {
+                    data.IsPublish = Convert.ToBoolean(dr["IsPublish"]);
+                }
                 data.Row_Num = Convert.ToInt32(dr["Row_Num"]);
                 data.SymbolList = symbolNameDic;
                 data.Title = dr["Title"].ToString();
@@ -136,12 +140,12 @@ namespace JudgementApp.Controllers
 
             model = JsonConvert.DeserializeObject<List<Data>>(input);
 
-            foreach (Data parameter in model)
+            foreach (Data parameter in model)   
             {
                 if (Main.QuestionExists(parameter.ProblemName, parameter.Id, parameter.FKCompany))
                 {
-                    SQL.NonScalarQuery("Update CreateProblem  set p1 = '" + parameter.P1 + "', p2 = '" + parameter.P2 + "', p3 = '" + parameter.P3 + "', p4 = '" + parameter.P4 + "',ProblemName='" + parameter.ProblemName + "',IsPublish='"+ parameter .IsPublish+ "' where QuestionNo =" + parameter.Id);
-                                   }
+                    SQL.NonScalarQuery("Update CreateProblem  set p1 = '" + parameter.P1 + "', p2 = '" + parameter.P2 + "', p3 = '" + parameter.P3 + "', p4 = '" + parameter.P4 + "',ProblemName='" + parameter.ProblemName + "',IsPublish='"+ parameter .IsPublish+ "' where QuestionNo =" + parameter.Id+" and FKCompany='"+ parameter.FKCompany + "' and ProblemName='" + parameter.ProblemName + "'");
+                }
                 else
                 {
                     SQL.NonScalarQuery("Insert into CreateProblem([FKCompany],[ProblemName],[QuestionNo],[P1],[P2],[P3],[P4],IsPublish) values(" + parameter .FKCompany+ ",'" + parameter.ProblemName + "','" + parameter.Id + "','" + parameter.P1 + "','" + parameter.P2 + "','" + parameter.P3 + "' ,'" + parameter.P4 + "','" + parameter.IsPublish + "')");
@@ -149,7 +153,7 @@ namespace JudgementApp.Controllers
                 }
             }
             
-          
+
             string folderName = "assets/img/company/" + model[0].FKCompany;
 
 
@@ -168,9 +172,6 @@ namespace JudgementApp.Controllers
                 file.SaveAs(filePath +"/"+ fileName);
                 SQL.NonScalarQuery("Update Company set Logo='" + fullPath + "' where PKCompany=" + model[0].FKCompany);
             }
-                           
-                       
-                
             
             return View("~/Views/Judgement/Success.cshtml");
         }
@@ -218,7 +219,7 @@ namespace JudgementApp.Controllers
             long FKCompany = Convert.ToInt64(result.FKCompany);
 
 
-            if (Main.CheckUser(result.UserName,result.ProblemName, FKCompany, result.UserEmail))
+            //if (Main.CheckUser(result.UserName,result.ProblemName, FKCompany, result.UserEmail))
             {
                 string del_query = "delete from Judgement where Name = '" + result.UserName + "' and UserEmail='" + result.UserEmail + "' and ProblemName = '" + result.ProblemName + "' and FKCompany=" + FKCompany;
                 SQL.NonScalarQuery(del_query);
