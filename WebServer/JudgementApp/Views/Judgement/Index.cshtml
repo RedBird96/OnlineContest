@@ -75,16 +75,16 @@
                         {
                             <div class="card-body" style="text-align: left;">
                                 <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) hit  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany) by  @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fiction"><label class="form-check-label" for="formCheck-2">Fiction</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Yes"><label class="form-check-label" for="formCheck-1">Yes</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="No"><label class="form-check-label" for="formCheck-2">No</label></div>
                             </div>
                         }
                         @if (item.Type == 2)
                         {
                             <div class="card-body" style="text-align: left;">
                                 <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) close  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)  @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)  @Main.GetParameter(item.Id, "p4", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fiction"> <label class="form-check-label" for="formCheck-2">Fiction</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Yes"><label class="form-check-label" for="formCheck-1">Yes</label></div>
+                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="No"> <label class="form-check-label" for="formCheck-2">No</label></div>
                             </div>
                         }
                         @if (item.Type == 3)
@@ -141,12 +141,11 @@
             }
             else if (model.UserEmail.length < 1) {
                 alert("Please enter the Email Address")
-
             }
-              else {
+            else {
+
                 var judgment = [];
                 result.forEach(item => {
-                    debugger;
                     if (item.P1 == null || item.P1 == undefined) {
                         item.P1 = "null"
                     }
@@ -167,21 +166,34 @@
                 model.UserEmail = $("#UserEmail").val();
                 model.ProblemName = $("#ProblemName").html();
                 model.FKCompany = $("#PKCompany").html();
-                debugger;
                 model.Result = judgment;
-                var fd = new FormData();
-                fd.append('data', JSON.stringify(model));
-                $.ajax({
-                    url: '/Judgement/saveJudgement',
-                    data: fd,
-                    processData: false,
-                    contentType: false,
-                    type: 'POST',
-                    success: function (data) {
-                        window.location = "/Judgement/ResponseSubmitted"
 
+                $.get("/Judgement/CheckUserEmail?UserName=" + model.UserName + '&ProblemName=' + model.ProblemName + '&FKCompanyID=' + model.FKCompany + '&UserEmail=' + model.UserEmail).then(s => {
+
+                    debugger;
+                    var exist = s;
+                    if (exist == true) {
+                        if (confirm("Do you want to overwrite your results?")) {
+                            var da = 1;
+                        } else {
+                            return;
+                        }
                     }
-                });
+                    var fd = new FormData();
+                    fd.append('data', JSON.stringify(model));
+                    $.ajax({
+                        url: '/Judgement/saveJudgement',
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        type: 'POST',
+                        success: function (data) {
+                            window.location = "/Judgement/ResponseSubmitted"
+                        }
+                    });
+                })
+
+                
             } 
         }
         $(function () {
@@ -190,7 +202,6 @@
             var PKCompany = Number.parseInt($("#PKCompany").html());
             $.get("/Judgement/LoadData?id=" + PKCompany + '&ProblemName=' + ProblemName).then(s => {
 
-                debugger;
                 result = s;
 
             })

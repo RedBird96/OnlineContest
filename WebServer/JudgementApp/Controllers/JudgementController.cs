@@ -156,7 +156,6 @@ namespace JudgementApp.Controllers
 
             string folderName = "assets/img/company/" + model[0].FKCompany;
 
-
             if (file != null)
             {
                 List<string> LastFiles = new List<string>();
@@ -209,6 +208,13 @@ namespace JudgementApp.Controllers
 
             return View(leaderboard);
         }
+
+        public JsonResult CheckUserEmail(string UserName, string ProblemName, string FKCompanyID, string UserEmail)
+        {
+            long FKCompany = Convert.ToInt64(FKCompanyID);
+            bool res = Main.CheckUser(UserName, ProblemName, FKCompany, UserEmail);
+            return Json(res, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult saveJudgement(JudgementParameter result)
         {
            string input = Request.Form["data"];
@@ -218,7 +224,10 @@ namespace JudgementApp.Controllers
             DateTime dateTime = DateTime.UtcNow.Date;
             long FKCompany = Convert.ToInt64(result.FKCompany);
 
+            if (Main.CheckUser(result.UserName, result.ProblemName, FKCompany, result.UserEmail))
+            {
 
+            }
             //if (Main.CheckUser(result.UserName,result.ProblemName, FKCompany, result.UserEmail))
             {
                 string del_query = "delete from Judgement where Name = '" + result.UserName + "' and UserEmail='" + result.UserEmail + "' and ProblemName = '" + result.ProblemName + "' and FKCompany=" + FKCompany;
