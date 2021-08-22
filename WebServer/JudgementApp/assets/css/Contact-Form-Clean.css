@@ -84,3 +84,30 @@
   color: #fff;
 }
 
+.contact-clean {
+    background-color: rgb(24,31,42);
+}
+    .contact-clean form {
+        background-color: rgb(17,23,31);
+        color:white;
+    }
+        .contact-clean form .card {
+            background-color: rgb(24,31,42);
+            border: 1px solid rgb(24,31,42);
+        }
+            .contact-clean form .card .card-header {
+                color: rgb(16,173,137);
+                background-color: rgb(53 54 56);
+                border: 1px solid rgb(24,31,42);
+            }
+            .text-primary {
+                color: rgb(16,173,137) !important;
+            }
+input, select {
+    color: rgb(24,31,42) !important
+}
+    input[type="file"] {
+        color: white !important;
+      
+    }
+ 

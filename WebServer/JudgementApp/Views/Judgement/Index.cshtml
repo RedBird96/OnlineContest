@@ -27,7 +27,7 @@
                                 <tr>
 
                                     <td>
-                                        <label id="CompanyName">@company.EmailAddress</label>
+                                        <label id="EmailAddress">@company.EmailAddress</label>
                                         <label style="display:none;" id="PKCompany">@company.PKCompany</label>
                                     </td>
                                 </tr>
@@ -48,79 +48,99 @@
 
 
             }
-            <div class="mb-3">
-                <br />
-                <input class="form-control" type="text" id="UserName" name="UserName" required="required" placeholder="Name">
-
-            </div>
-            <div class="mb-3">
-                <br />
-                <input class="form-control" type="email" id="UserEmail" name="UserEmail" required="required" placeholder="Email Address">
-                <div class="mb-3"><br /></div>
-            </div>
+            <br />
             <div>
-                @foreach (JudgementApp.Models.Data item in Model)
+                @if (Model.Count > 0)
                 {
-
-                    string QResult = "Q" + item.Id + "_R";
-
-                    var q = "Q" + item.Id;
-                    <input id="@q" value="@item.Id" style="display:none;" />
-
-                    <div class="card shadow mb-4" id="Question-1">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h6 class="text-primary fw-bold m-0">Question @item.Row_Num</h6>
-                        </div>
-                        @if (item.Type == 1)
-                        {
-                            <div class="card-body" style="text-align: left;">
-                                <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) hit  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany) by  @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fiction"><label class="form-check-label" for="formCheck-2">Fiction</label></div>
-                            </div>
-                        }
-                        @if (item.Type == 2)
-                        {
-                            <div class="card-body" style="text-align: left;">
-                                <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) close  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)  @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)  @Main.GetParameter(item.Id, "p4", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fiction"> <label class="form-check-label" for="formCheck-2">Fiction</label></div>
-                            </div>
-                        }
-                        @if (item.Type == 3)
-                        {
-                            <div class="card-body" style="text-align: left;">
-                                <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) have a higher return in the AM or PM?</label>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="AM"><label class="form-check-label" for="formCheck-1">AM</label></div>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="PM"><label class="form-check-label" for="formCheck-2">PM</label></div>
-                            </div>
-                        }
-                        @if (item.Type == 4)
-                        {
-                            <div class="card-body" style="text-align: left;">
-                                <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) have a higher return before or after  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Before"><label class="form-check-label" for="formCheck-1">Before</label></div>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="After"><label class="form-check-label" for="formCheck-2">After</label></div>
-                            </div>
-                        }
-                        @if (item.Type == 5)
-                        {
-                            <div class="card-body" style="text-align: left;">
-                                <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) outperform  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany) @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="@Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany)"><label class="form-check-label" for="formCheck-1">@Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany)</label></div>
-                                <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="@Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)"><label class="form-check-label" for="formCheck-2">@Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)</label></div>
-                            </div>
-                        }
+                    <div class="mb-3">
+                       
+                        <input class="form-control" type="text" id="UserName" name="UserName" required="required" placeholder="Name">
 
                     </div>
+                    <div class="mb-3">
+                        <br />
+                        <input class="form-control" type="email" id="UserEmail" name="UserEmail" required="required" placeholder="Email Address">
+                        <div class="mb-3"><br /></div>
+                    </div>
+                    <div>
+                        @foreach (JudgementApp.Models.Data item in Model)
+                        {
+
+                            string QResult = "Q" + item.Id + "_R";
+
+                            var q = "Q" + item.Id;
+                            <input id="@q" value="@item.Id" style="display:none;" />
+
+                            <div class="card shadow mb-4" id="Question-1">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h6 class="text-primary fw-bold m-0">Question @item.Row_Num</h6>
+                                </div>
+                                @if (item.Type == 1)
+                                {
+                                    <div class="card-body" style="text-align: left;">
+                                        <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) hit  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany) by  @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fiction"><label class="form-check-label" for="formCheck-2">Fiction</label></div>
+                                    </div>
+                                }
+                                @if (item.Type == 2)
+                                {
+                                    <div class="card-body" style="text-align: left;">
+                                        <label class="form-label" style="text-align: left;font-weight: bold;">will @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) close  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)  @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)  @Main.GetParameter(item.Id, "p4", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fact"><label class="form-check-label" for="formCheck-1">Fact</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Fiction"> <label class="form-check-label" for="formCheck-2">Fiction</label></div>
+                                    </div>
+                                }
+                                @if (item.Type == 3)
+                                {
+                                    <div class="card-body" style="text-align: left;">
+                                        <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) have a higher return in the AM or PM?</label>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="AM"><label class="form-check-label" for="formCheck-1">AM</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="PM"><label class="form-check-label" for="formCheck-2">PM</label></div>
+                                    </div>
+                                }
+                                @if (item.Type == 4)
+                                {
+                                    <div class="card-body" style="text-align: left;">
+                                        <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) have a higher return before or after  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="Before"><label class="form-check-label" for="formCheck-1">Before</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="After"><label class="form-check-label" for="formCheck-2">After</label></div>
+                                    </div>
+                                }
+                                @if (item.Type == 5)
+                                {
+                                    <div class="card-body" style="text-align: left;">
+                                        <label class="form-label" style="text-align: left;font-weight: bold;">will  @Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany) outperform  @Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany) @Main.GetParameter(item.Id, "p3", Convert.ToString(ViewData["contestName"]), company.PKCompany)?</label>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="@Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany)"><label class="form-check-label" for="formCheck-1">@Main.GetParameter(item.Id, "p1", Convert.ToString(ViewData["contestName"]), company.PKCompany)</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio" name="@QResult" value="@Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)"><label class="form-check-label" for="formCheck-2">@Main.GetParameter(item.Id, "p2", Convert.ToString(ViewData["contestName"]), company.PKCompany)</label></div>
+                                    </div>
+                                }
+
+                            </div>
+                        }
+
+
+                        <input id="total" value="@Model.Count" style="display:none;" />
+                    </div>
+
+                    if (Model[0].IsExpired == true)
+                    {
+                        <span style="color:rgb(16,173,137); margin-top: 10px;">This contest is completed. Please go here to view results.</span>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary" type="button" onclick="onUpdate();" style="width: 170px">Submit</button>
+
+                    }
                 }
+                else
+                {
+                    <span style="color:rgb(16,173,137); margin-top: 10px;">This contest is completed. Please go here to view results.</span>
 
-
-                <input id="total" value="@Model.Count" style="display:none;" />
-            </div><button class="btn btn-primary" type="button" onclick="onUpdate();" style="width: 170px">Submit</button>
-            <br />
-            <button class="btn btn-primary" type="button" onclick="location.href = '/leaderboard-@company.CompanyName-@ViewData["contestName"]'">Leaderboard</button>
-
+                }
+                <br />
+                <button class="btn btn-primary" type="button" onclick="location.href = '/leaderboard-@company.CompanyName-@ViewData["contestName"]'">Leaderboard</button>
+                </div>
 
         </form>
     </section>
@@ -166,6 +186,8 @@
                 model.UserName = $("#UserName").val();
                 model.UserEmail = $("#UserEmail").val();
                 model.ProblemName = $("#ProblemName").html();
+                debugger;
+                var CompanyName = $("#CompanyName").html();
                 model.FKCompany = $("#PKCompany").html();
                 debugger;
                 model.Result = judgment;
@@ -178,7 +200,7 @@
                     contentType: false,
                     type: 'POST',
                     success: function (data) {
-                        window.location = "/Judgement/ResponseSubmitted"
+                        window.location = "/Judgement/ResponseSubmitted?ProblemName=" + model.ProblemName + '&CompanyName=' + CompanyName
 
                     }
                 });

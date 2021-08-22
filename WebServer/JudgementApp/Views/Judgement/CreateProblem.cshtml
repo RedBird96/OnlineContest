@@ -3,11 +3,11 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-
+    Company company = (Company)ViewData["Company"];
 }
-<body>
+<body style="background: @company.BackgroundColor;color:  @company.TextColor">
 
-    <div class="popup card shadow" id="myPopup" style="display:none;" popup-name="popup-1">
+    <div class="popup card shadow" style="background: @company.CardBackgroundColor;" id="myPopup" style="display:none;" popup-name="popup-1">
         <div class="popup-content">
             <h4 class="modal-title">Add New Question</h4>
 
@@ -39,7 +39,7 @@
             <div>
                 <div style="text-align:left !important">
                     @{
-                        Company company = (Company)ViewData["Company"];
+                        
                         <table style="width:100%;">
                             <tr>
                                 <td style="width:20%"><b>Company ID</b> </td>
@@ -56,7 +56,7 @@
                             <tr>
                                 <td><b>Company Logo</b> </td>
                                 <td>
-                                    <img id="CompanyLogo" src="@company.Logo" style="width:100px;" />
+                                    <img id="CompanyLogo" src="@company.Logo" style="width:100px;background-color:rgb(16,173,137);color:white;" />
                                     <input type="file" id="file" />
                                 </td>
                             </tr>
@@ -365,32 +365,51 @@
             } else {
                 model = {}
             }
-            model.FKCompany = PKCompany;
-            model.ProblemName = ProblemName;
-            model.Type = Number.parseInt($("#NewQuestion").val())
-            var fd = new FormData();
-            fd.append('data', JSON.stringify(model));
-
-            $.ajax({
-                url: '/Judgement/AddQuestion',
-                data: fd,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                success: function (data) {
-                    $('#myPopup').fadeOut(300);
-                    document.getElementById("mainContent").style.display = "block";
-                    setTimeout(function () {
-                        this.onChangeContest();
-                    }, 50)
-                    alert('Question added successfully');
-                }
-            });
+            if (PKCompany < 1) {
+                alert("Please enter the company id")
+            } else if (ProblemName.length < 1) {
+                alert("Please enter the contest name")
+            } else {
+                model.FKCompany = PKCompany;
+                model.ProblemName = ProblemName;
+                model.Type = Number.parseInt($("#NewQuestion").val())
+                var fd = new FormData();
+                fd.append('data', JSON.stringify(model));
+                var fd2 = CreateUpdateModel(false);
+                $.ajax({
+                    url: '/Judgement/Update',
+                    data: fd2,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (data) {
+                        $.ajax({
+                            url: '/Judgement/AddQuestion',
+                            data: fd,
+                            processData: false,
+                            contentType: false,
+                            type: 'POST',
+                            success: function (data) {
+                                $('#myPopup').fadeOut(300);
+                                document.getElementById("mainContent").style.display = "block";
+                                setTimeout(function () {
+                                    this.onChangeContest();
+                                }, 50)
+                                alert('Question added successfully');
+                            }
+                        });
+                    }
+                })
+            }
         }
         function RemoveQuestion(id) {
             var PKCompany = $("#PKCompany").val();
             var ProblemName = $("#ProblemName").val();
-            if (PKCompany > 0) {
+            if (PKCompany < 1) {
+                alert("Please enter the company id")
+            } else if (ProblemName.length < 1) {
+                alert("Please enter the contest name")
+            } else {
                 debugger;
                 var model = result.filter(x => x.Id == id);
                 //if (model != undefined && model != null && model.length > 0) {
@@ -403,21 +422,29 @@
                 
                 var fd = new FormData();
                 fd.append('data', JSON.stringify(model));
+                var fd2 = CreateUpdateModel(false);
                 $.ajax({
-                    url: '/Judgement/RemoveQuestion',
-                    data: fd,
+                    url: '/Judgement/Update',
+                    data: fd2,
                     processData: false,
                     contentType: false,
                     type: 'POST',
                     success: function (data) {
-                        alert('Question removed successfully');
-                        onChangeContest();
+                        $.ajax({
+                            url: '/Judgement/RemoveQuestion',
+                            data: fd,
+                            processData: false,
+                            contentType: false,
+                            type: 'POST',
+                            success: function (data) {
+                                alert('Question removed successfully');
+                                onChangeContest();
+                            }
+                        });
                     }
                 });
-            }
-            else {
-                alert("Please enter the company id")
-            }
+                    }
+           
         }
         var IsPublish = false;
         function onLoad() {

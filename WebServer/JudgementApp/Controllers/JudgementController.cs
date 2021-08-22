@@ -68,6 +68,10 @@ namespace JudgementApp.Controllers
                 {
                     data.IsPublish = Convert.ToBoolean(dr["IsPublish"]);
                 }
+                if (!DBNull.Value.Equals(dr["IsExpired"]))
+                {
+                    data.IsExpired = Convert.ToBoolean(dr["IsExpired"]);
+                }
                 data.Row_Num = Convert.ToInt32(dr["Row_Num"]);
                 data.SymbolList = symbolNameDic;
                 data.Title = dr["Title"].ToString();
@@ -259,6 +263,8 @@ namespace JudgementApp.Controllers
 
        public ActionResult ResponseSubmitted()
         {
+          ViewData["contestName"] =  Request.QueryString["ProblemName"];
+            ViewData["companyName"] = Request.QueryString["CompanyName"];
             return View();
         }
         public ActionResult LeaderboardDetail()
