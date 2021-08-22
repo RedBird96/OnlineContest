@@ -10,7 +10,18 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h6 class="text-primary fw-bold m-0">Information&nbsp;</h6>
                     </div>
-                    <div class="card-body" style="text-align: left;"><label class="form-label" style="font-style: normal;font-weight: bold;">Your response has been submitted successfully</label></div>
+                    <div class="card-body text-center">
+                        <label class="form-label" style="font-style: normal;font-weight: bold;">Your response has been submitted successfully</label>
+                        <br />
+                        <div class=" text-center">
+                            <button class="btn btn-primary" type="button" onclick="window.history.back()">back</button>
+                            <button class="btn btn-primary" type="button" onclick="location.href = '/leaderboard-@ViewData["companyName"]-@ViewData["contestName"]'">Leaderboard</button>
+                            <br />
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        
+                    </div>
                 </div>
         </form>
     </section>

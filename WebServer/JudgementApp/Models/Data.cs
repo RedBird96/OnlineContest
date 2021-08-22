@@ -20,7 +20,7 @@ namespace JudgementApp.Models
         public string P3 { get; set; }
         public string P4 { get; set; }
         public bool? IsPublish { get; set; }
-
+        public bool? IsExpired { get; set; }
 
 
 

@@ -24,36 +24,58 @@ namespace PolygonUse
 
                 string txt_log = "";
                 int txt_log_question_index = 0;
+                
                 //Getting Judgement data from yesterday
                 DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE TotalCorrect IS NULL");
-                //DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE Name='DavidTest7.29'");
+                //DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE Name='DaveTest'");
 
                 txt_log = "[David Test 7.28] ";
                 //Evaluating for each user from yesterday
                 foreach (DataRow row in judgementTable.Rows)
                 {
+                    bool skipFlag = false;
                     int totalCorrect = 0;
+                    int totalquestions = 0;
                     string submit_datetime = row["Date"].ToString();
                     int question_cnt = int.Parse(row["ProblemNo"].ToString());
                     DateTime submit_DT = Convert.ToDateTime(submit_datetime);
                     int col_cnt = (row.Table.Columns.Count - 5) / 3;
 
-                    for(int question_index = 1; question_index <= col_cnt; question_index ++)
+                    for(int question_index = 1; question_index < col_cnt; question_index ++)
                     {
+                        int QIndex = (question_index * 3) + 5; 
                         string Qtag_Name = "Q" + question_index.ToString();
                         string Ttag_Name = "T" + question_index.ToString();
                         string Ptag_Name = "P" + question_index.ToString();
 
                         
-                        if (row.IsNull(Qtag_Name) || row.IsNull(Ttag_Name) || row.IsNull(Ptag_Name))
+                        /*if (row.IsNull(Qtag_Name) || row.IsNull(Ttag_Name) || row.IsNull(Ptag_Name))
+                            continue;*/
+                        if (row.ItemArray.ElementAt(QIndex).ToString().Length == 0)
+                        {
                             continue;
+                        }
 
-                        string question_answer = row[Qtag_Name].ToString();
-                        int question_type = int.Parse(row[Ttag_Name].ToString());
-                        string[] parameter_arr = row[Ptag_Name].ToString().Split(',');
+                        string question_answer;//[Qtag_Name].ToString();
+                        int question_type;// int.Parse(row[Ttag_Name].ToString());
+                        string[] parameter_arr;// row[Ptag_Name].ToString().Split(',');
+
+                        if (question_index > 5)
+                        {
+                            question_answer = row.ItemArray.ElementAt(QIndex).ToString();//[Qtag_Name].ToString();
+                            parameter_arr = row.ItemArray.ElementAt(QIndex + 1).ToString().Split(',');// row[Ptag_Name].ToString().Split(',');
+                            question_type = int.Parse(row.ItemArray.ElementAt(QIndex + 2).ToString());// int.Parse(row[Ttag_Name].ToString());
+                            
+                        }
+                        else
+                        {
+                            question_answer = row.ItemArray.ElementAt(QIndex).ToString();//[Qtag_Name].ToString();
+                            question_type = int.Parse(row.ItemArray.ElementAt(QIndex + 1).ToString());// int.Parse(row[Ttag_Name].ToString());
+                            parameter_arr = row.ItemArray.ElementAt(QIndex + 2).ToString().Split(',');// row[Ptag_Name].ToString().Split(',');
+                        }
 
                         txt_log_question_index++;
-
+                        totalquestions++;
                         if (question_type == 1)
                         {
                             //Assessing Question 1
@@ -100,9 +122,29 @@ namespace PolygonUse
 
                             rate = Convert.ToDouble(P3);
 
-                            if (P4 == "today") days = 1;
-                            else if (P4 == "this week") days = 7;
-                            else if (P4 == "this month") days = 30;
+                            if (P4 == "today")
+                            {
+                                days = 1;
+                            }
+                            else if (P4 == "this week")
+                            {
+                                days = 7;
+                                if (DateTime.Now.DayOfWeek != DayOfWeek.Saturday)
+                                {
+                                    skipFlag = true;
+                                    continue;
+                                }
+                            }
+                            else if (P4 == "this month")
+                            {
+                                days = 30;
+                                var lastDayOfMonth = new DateTime(submit_DT.Year, submit_DT.Month, DateTime.DaysInMonth(submit_DT.Year, submit_DT.Month));
+                                if (DateTime.Now < lastDayOfMonth)
+                                {
+                                    skipFlag = true;
+                                    continue;
+                                }
+                            }
 
                             if (assessment.AssessQ2(P1, isAbove, days, rate, submit_DT).Equals(question_answer))
                             {
@@ -160,10 +202,29 @@ namespace PolygonUse
                                 txt_log = txt_log + $",Question{question_index}:Wrong";
                             }
                         }
+                        else if (question_type == 5)
+                        {
+                            //Assessing Question 5
+                            P1 = parameter_arr[0];
+                            P2 = parameter_arr[1];
+                            P3 = parameter_arr[2];
+
+                            if (assessment.AssessQ5(P1, P2, submit_DT).Equals(question_answer))
+                            {
+                                totalCorrect++;
+                                txt_log = txt_log + $",Question{question_index}:Right";
+                            }
+                            else
+                            {
+                                txt_log = txt_log + $",Question{question_index}:Wrong";
+                            }
+
+                        }
                         
                     }
                     //Updating Score
-                    SQL.NonScalarQuery("UPDATE Judgement SET TotalCorrect = " + totalCorrect + " WHERE Id = " + row["Id"]);
+                    //if (!skipFlag)
+                    SQL.NonScalarQuery("UPDATE Judgement SET TotalCorrect = " + totalCorrect + " , ProblemNo = " + totalquestions + " WHERE Id = " + row["Id"]);
                 }
                 Console.WriteLine("Score updated successfully!");
             }
