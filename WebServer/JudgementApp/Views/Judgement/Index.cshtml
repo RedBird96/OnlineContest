@@ -228,8 +228,15 @@
 
                 debugger;
                 result = s;
-
+                setTimeout(y => {
+                    setHeight();
+                },50)
             })
         })
+        function setHeight() {
+            var height = $(window).height();
+            $("#mainSection").css({ "min-height": height+"px"})
+        }
     </script>
 </body>
+
