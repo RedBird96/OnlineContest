@@ -2,13 +2,14 @@
 using PolygonIO.Client;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PolygonUse
 {
-    class Interval 
+    class Interval
     {
         private DateTime timestamp { get; set; }
         private double Open { get; set; }
@@ -17,7 +18,7 @@ namespace PolygonUse
         private double Close { get; set; }
 
 
-        public Interval(DateTime timestamp, double open, double high, double low, double close) 
+        public Interval(DateTime timestamp, double open, double high, double low, double close)
         {
             this.timestamp = timestamp;
             this.Open = open;
@@ -26,7 +27,7 @@ namespace PolygonUse
             this.Close = close;
         }
 
-        public DateTime GetTimestamp() 
+        public DateTime GetTimestamp()
         {
             return timestamp;
         }
@@ -43,7 +44,7 @@ namespace PolygonUse
         {
             return Low;
         }
-        public double GetClose() 
+        public double GetClose()
         {
             return Close;
         }
@@ -119,7 +120,7 @@ namespace PolygonUse
                 if (interval.GetTimestamp() >= dateTime)
                 {
                     if (IsHigh)
-                    { 
+                    {
                         if (high_low_price > rate) return "Yes";
                         else return "No";
                     }
@@ -139,7 +140,7 @@ namespace PolygonUse
                     if (interval.GetLow() < high_low_price)
                         high_low_price = interval.GetLow();
                 }
-                
+
             }
             //Interval not found (maybe symbol is not correct).
             return "No";
@@ -147,14 +148,15 @@ namespace PolygonUse
 
         //isAbove = True (Above)
         //isAbove = False (Below)
-        public string AssessQ2(string symbol, bool isAbove, int days, double rate, DateTime historyDateTime) 
+        public string AssessQ2(string symbol, bool isAbove, int days, double rate, DateTime historyDateTime)
         {
+
             if (days == 1)
-                LoadHistoryBar(symbol, historyDateTime, days, "day");
+                LoadHistoryBar(symbol, historyDateTime, 1, "day");
             else if (days == 7)
-                LoadHistoryBar(symbol, historyDateTime, days, "week");
+                LoadHistoryBar(symbol, historyDateTime, 1, "week");
             else if (days == 30)
-                LoadHistoryBar(symbol, historyDateTime, days, "month");
+                LoadHistoryBar(symbol, historyDateTime, 1, "month");
 
             if (isAbove)
             {
@@ -165,7 +167,7 @@ namespace PolygonUse
                 }
             }
 
-            else 
+            else
             {
                 foreach (Interval interval in intervals)
                 {
@@ -173,7 +175,7 @@ namespace PolygonUse
                         if (interval.GetClose() < rate) return "Yes";
                 }
             }
-            
+
             return "No";
         }
 
@@ -200,7 +202,7 @@ namespace PolygonUse
             }
 
             am_val = ((close_1130 - open_0930) / open_0930) * 100;
-            pm_val = ((close_1530 - open_1200) / open_1200) * 100; 
+            pm_val = ((close_1530 - open_1200) / open_1200) * 100;
 
             if (am_val > pm_val) return "AM";
             else return "PM";
@@ -237,24 +239,36 @@ namespace PolygonUse
             else return "After";
         }
 
-        public string AssessQ5(string symbol1, string symbol2, DateTime dateTime)
+        public string AssessQ5(string symbol1, string symbol2, DateTime dateTime, int days)
         {
+            double open_rate1 = 0, close_rate1 = 0;
+            double open_rate2 = 0, close_rate2 = 0;
+
             LoadHistoryBar(symbol1, dateTime, 1, "day");
             LoadHistoryBar(symbol2, dateTime, 1, "day", true);
 
-            double open_rate1 = 0, close_rate1 = 0;
-            double open_rate2 = 0, close_rate2 = 0;
             foreach (Interval interval in intervals)
-            {
                 open_rate1 = interval.GetOpen();
-                close_rate1 = interval.GetClose();
-            }
 
             foreach (Interval interval in intervals2)
-            {
                 open_rate2 = interval.GetOpen();
-                close_rate2 = interval.GetClose();
+
+            if (days == 7)
+            {
+                LoadHistoryBar(symbol1, dateTime, 1, "week");
+                LoadHistoryBar(symbol2, dateTime, 1, "week", true);
             }
+            else if (days == 30)
+            {
+                LoadHistoryBar(symbol1, dateTime, 1, "month");
+                LoadHistoryBar(symbol2, dateTime, 1, "month", true);
+            }
+
+            foreach (Interval interval in intervals)
+                close_rate1 = interval.GetClose();
+
+            foreach (Interval interval in intervals2)
+                close_rate2 = interval.GetClose();
 
             double per1 = (close_rate1 - open_rate1) / open_rate1 * 100;
             double per2 = (close_rate2 - open_rate2) / open_rate2 * 100;
@@ -263,6 +277,26 @@ namespace PolygonUse
                 return symbol1;
 
             return symbol2;
+        }
+
+        public DateTime GetWeekendDate(DateTime inputDate)
+        {
+            DayOfWeek currentDay = inputDate.DayOfWeek;
+            int daysTillCurrentDay = DayOfWeek.Friday - currentDay;
+            DateTime currentWeekendDate = inputDate.AddDays(daysTillCurrentDay);
+            DateTime output = new DateTime(currentWeekendDate.Year, currentWeekendDate.Month, currentWeekendDate.Day, 16, 30, 0);
+
+            return output;
+        }
+        public DateTime GetMonthendDate(DateTime inputDate)
+        {
+            DateTime lastDayOfMonth = new DateTime(inputDate.Year, inputDate.Month, DateTime.DaysInMonth(inputDate.Year, inputDate.Month));
+            if (lastDayOfMonth.DayOfWeek != DayOfWeek.Saturday && lastDayOfMonth.DayOfWeek != DayOfWeek.Sunday)
+            {
+                lastDayOfMonth = lastDayOfMonth.AddHours(16.5);
+            }
+
+            return lastDayOfMonth;
         }
     }
 }

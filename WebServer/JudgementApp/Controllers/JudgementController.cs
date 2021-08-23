@@ -152,8 +152,8 @@ namespace JudgementApp.Controllers
                 }
                 else
                 {
-                    SQL.NonScalarQuery("Insert into CreateProblem([FKCompany],[ProblemName],[QuestionNo],[P1],[P2],[P3],[P4],IsPublish) values(" + parameter .FKCompany+ ",'" + parameter.ProblemName + "','" + parameter.Id + "','" + parameter.P1 + "','" + parameter.P2 + "','" + parameter.P3 + "' ,'" + parameter.P4 + "','" + parameter.IsPublish + "')");
-                  
+                    SQL.NonScalarQuery("Insert into CreateProblem([FKCompany],[ProblemName],[QuestionNo],[P1],[P2],[P3],[P4],IsPublish, CreatedDate, IsExpired) values(" + parameter .FKCompany+ ",'" + parameter.ProblemName + "','" + parameter.Id + "','" + parameter.P1 + "','" + parameter.P2 + "','" + parameter.P3 + "' ,'" + parameter.P4 + "','" + parameter.IsPublish + "',GetDate(),'False'" +")");
+                    
                 }
             }
             
@@ -213,10 +213,10 @@ namespace JudgementApp.Controllers
             return View(leaderboard);
         }
 
-        public JsonResult CheckUserEmail(string UserName, string ProblemName, string FKCompanyID, string UserEmail)
+        public JsonResult CheckUserEmail(string UserName, string ProblemName, string FKCompanyID)
         {
             long FKCompany = Convert.ToInt64(FKCompanyID);
-            bool res = Main.CheckUser(UserName, ProblemName, FKCompany, UserEmail);
+            bool res = Main.CheckUser(UserName, ProblemName, FKCompany);
             return Json(res, JsonRequestBehavior.AllowGet);
         }
         public ActionResult saveJudgement(JudgementParameter result)
@@ -228,10 +228,6 @@ namespace JudgementApp.Controllers
             DateTime dateTime = DateTime.UtcNow.Date;
             long FKCompany = Convert.ToInt64(result.FKCompany);
 
-            if (Main.CheckUser(result.UserName, result.ProblemName, FKCompany, result.UserEmail))
-            {
-
-            }
             //if (Main.CheckUser(result.UserName,result.ProblemName, FKCompany, result.UserEmail))
             {
                 string del_query = "delete from Judgement where Name = '" + result.UserName + "' and UserEmail='" + result.UserEmail + "' and ProblemName = '" + result.ProblemName + "' and FKCompany=" + FKCompany;

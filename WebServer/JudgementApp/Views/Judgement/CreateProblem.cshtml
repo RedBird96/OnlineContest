@@ -7,7 +7,7 @@
 }
 <body style="background: @company.BackgroundColor;color:  @company.TextColor">
 
-    <div class="popup card shadow" style="background: @company.CardBackgroundColor;" id="myPopup" style="display:none;" popup-name="popup-1">
+    <div class="popup card shadow" style="background: @company.CardBackgroundColor; display:none;" id="myPopup" popup-name="popup-1">
         <div class="popup-content">
             <h4 class="modal-title">Add New Question</h4>
 
@@ -530,6 +530,10 @@
                 } else if (ProblemName.length < 1) {
                     alert("Please enter the contest name")
                 } else {
+
+                    if (ProblemName.includes("-") || ProblemName.includes("=") || ProblemName.includes("<") || ProblemName.includes(">") || ProblemName.includes("+") || ProblemName.includes("-") || ProblemName.includes("_")) {
+                        alert("Unexpected character at URL")
+                    }
                     var fd = CreateUpdateModel(true);
                     $.ajax({
                         url: '/Judgement/Update',
@@ -539,7 +543,6 @@
                         type: 'POST',
                         success: function (data) {
                             alert('Data published successfully');
-                            debugger;
                             var CompanyName = $("#CompanyName").html();
                             var ProblemName = $("#ProblemName").val();
                             var href = window.location.href.toLowerCase().split('contest-admin')[0] + "contest-" + CompanyName + "-" + ProblemName

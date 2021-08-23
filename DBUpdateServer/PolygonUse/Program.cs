@@ -37,20 +37,22 @@ namespace PolygonUse
                     int totalCorrect = 0;
                     int totalquestions = 0;
                     string submit_datetime = row["Date"].ToString();
+                    string fkCompany = row["FKCompany"].ToString();
+                    string problemName = row["ProblemName"].ToString();
                     int question_cnt = int.Parse(row["ProblemNo"].ToString());
                     DateTime submit_DT = Convert.ToDateTime(submit_datetime);
+                    DateTime weekend_DT = assessment.GetWeekendDate(submit_DT);
+                    DateTime monthend_DT = assessment.GetMonthendDate(submit_DT);
                     int col_cnt = (row.Table.Columns.Count - 5) / 3;
 
                     for(int question_index = 1; question_index < col_cnt; question_index ++)
                     {
+
                         int QIndex = (question_index * 3) + 5; 
                         string Qtag_Name = "Q" + question_index.ToString();
                         string Ttag_Name = "T" + question_index.ToString();
                         string Ptag_Name = "P" + question_index.ToString();
 
-                        
-                        /*if (row.IsNull(Qtag_Name) || row.IsNull(Ttag_Name) || row.IsNull(Ptag_Name))
-                            continue;*/
                         if (row.ItemArray.ElementAt(QIndex).ToString().Length == 0)
                         {
                             continue;
@@ -129,20 +131,19 @@ namespace PolygonUse
                             else if (P4 == "this week")
                             {
                                 days = 7;
-                                if (DateTime.Now.DayOfWeek != DayOfWeek.Saturday)
+                                if (DateTime.Now < weekend_DT)
                                 {
                                     skipFlag = true;
-                                    continue;
+                                    break;
                                 }
                             }
                             else if (P4 == "this month")
                             {
                                 days = 30;
-                                var lastDayOfMonth = new DateTime(submit_DT.Year, submit_DT.Month, DateTime.DaysInMonth(submit_DT.Year, submit_DT.Month));
-                                if (DateTime.Now < lastDayOfMonth)
+                                if (DateTime.Now < monthend_DT)
                                 {
                                     skipFlag = true;
-                                    continue;
+                                    break;
                                 }
                             }
 
@@ -209,7 +210,30 @@ namespace PolygonUse
                             P2 = parameter_arr[1];
                             P3 = parameter_arr[2];
 
-                            if (assessment.AssessQ5(P1, P2, submit_DT).Equals(question_answer))
+                            if (P3 == "today")
+                            {
+                                days = 1;
+                            }
+                            else if (P3 == "this week")
+                            {
+                                days = 7;
+                                if (DateTime.Now < weekend_DT)
+                                {
+                                    skipFlag = true;
+                                    break;
+                                }
+                            }
+                            else if (P3 == "this month")
+                            {
+                                days = 30;
+                                if (DateTime.Now < monthend_DT)
+                                {
+                                    skipFlag = true;
+                                    break;
+                                }
+                            }
+
+                            if (assessment.AssessQ5(P1, P2, submit_DT, days).Equals(question_answer))
                             {
                                 totalCorrect++;
                                 txt_log = txt_log + $",Question{question_index}:Right";
@@ -223,8 +247,11 @@ namespace PolygonUse
                         
                     }
                     //Updating Score
-                    //if (!skipFlag)
-                    SQL.NonScalarQuery("UPDATE Judgement SET TotalCorrect = " + totalCorrect + " , ProblemNo = " + totalquestions + " WHERE Id = " + row["Id"]);
+                    if (!skipFlag)
+                    { 
+                        SQL.NonScalarQuery("UPDATE Judgement SET TotalCorrect = " + totalCorrect + " , ProblemNo = " + totalquestions + " WHERE Id = " + row["Id"]);
+                        SQL.NonScalarQuery("UPDATE CreateProblem SET IsExpired = 'True'" + " WHERE FKCompany = " + fkCompany + "and ProblemName = '" + problemName + "'");
+                    }
                 }
                 Console.WriteLine("Score updated successfully!");
             }

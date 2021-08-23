@@ -13,11 +13,11 @@ namespace JudgementApp
         {
             return SQL.ScalarQuery("select " + ParameterNo + " from CreateProblem where questionNo = " + questionNo + " and ProblemName='" + ProblemName + "' and FKCompany=" + FKCompany + "");
         }
-        public static bool CheckUser(string name,string ProblemName,long FKCompany, string UserEmail)
+        public static bool CheckUser(string name,string ProblemName,long FKCompany)
         {
             string check = "";
             DateTime dateTime = DateTime.UtcNow.Date;
-            check = SQL.ScalarQuery("SELECT CASE WHEN EXISTS (SELECT TOP 1 * FROM Judgement  WHERE Name = '" + name + "' and UserEmail='"+ UserEmail + "' and ProblemName='" + ProblemName + "' and FKCompany=" + FKCompany + "and TotalCorrect is NULL" /*" and date = (select CONVERT(datetime, '" + dateTime.ToString("yyyy/MM/dd") + "', 20))*/+") THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END");
+            check = SQL.ScalarQuery("SELECT CASE WHEN EXISTS (SELECT TOP 1 * FROM Judgement  WHERE Name = '" + name + "' and ProblemName='" + ProblemName + "' and FKCompany=" + FKCompany + "and TotalCorrect is NULL" /*" and date = (select CONVERT(datetime, '" + dateTime.ToString("yyyy/MM/dd") + "', 20))*/+") THEN CAST (1 AS BIT) ELSE CAST (0 AS BIT) END");
             if (string.Equals("True", check))
             {
                 return true;
