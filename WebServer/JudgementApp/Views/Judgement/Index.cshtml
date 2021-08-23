@@ -7,7 +7,7 @@
 }
 
 <body>
-    <section class="contact-clean">
+    <section class="contact-clean" id="mainSection">
         <form name="form" id="JudgementForm" style="text-align: center;">
             <h2 class="text-center" id="ProblemName">@ViewData["contestName"]</h2>
             @{
@@ -214,8 +214,15 @@
 
                 debugger;
                 result = s;
-
+                setTimeout(y => {
+                    setHeight();
+                },50)
             })
         })
+        function setHeight() {
+            var height = $(window).height();
+            $("#mainSection").css({ "min-height": height+"px"})
+        }
     </script>
 </body>
+
