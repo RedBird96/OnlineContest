@@ -54,16 +54,21 @@ namespace PolygonUse
         private readonly string AccessToken = "K6CD972EJqZjLSQ6UNjRIYu78e8_tSLK";
         private string symbol { get; set; }
         private List<Interval> intervals { get; set; }
+        private List<Interval> intervals2 { get; set; }
 
         public Assessment()
         {
             intervals = new List<Interval>();
+            intervals2 = new List<Interval>();
         }
 
-        private void LoadHistoryBar(string symbol, DateTime startDT, int nuit, string unit_string)
+        private void LoadHistoryBar(string symbol, DateTime startDT, int nuit, string unit_string, bool bSecondInterval = false)
         {
             this.symbol = symbol;
-            intervals.Clear();
+            if (!bSecondInterval)
+                intervals.Clear();
+
+            intervals2.Clear();
 
             //You have to set here yesterday date
             DateTime endDT = DateTime.Now;
@@ -81,7 +86,10 @@ namespace PolygonUse
                 {
                     System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
                     dtDateTime = dtDateTime.AddSeconds((double)item.T / 1000).ToLocalTime();
-                    intervals.Add(new Interval(dtDateTime, Convert.ToDouble(item.O), Convert.ToDouble(item.H), Convert.ToDouble(item.L), Convert.ToDouble(item.C)));
+                    if (!bSecondInterval)
+                        intervals.Add(new Interval(dtDateTime, Convert.ToDouble(item.O), Convert.ToDouble(item.H), Convert.ToDouble(item.L), Convert.ToDouble(item.C)));
+
+                    intervals2.Add(new Interval(dtDateTime, Convert.ToDouble(item.O), Convert.ToDouble(item.H), Convert.ToDouble(item.L), Convert.ToDouble(item.C)));
                 }
             }
         }
@@ -112,13 +120,13 @@ namespace PolygonUse
                 {
                     if (IsHigh)
                     { 
-                        if (high_low_price > rate) return "Fact";
-                        else return "Fiction";
+                        if (high_low_price > rate) return "Yes";
+                        else return "No";
                     }
                     else
                     {
-                        if (high_low_price < rate) return "Fact";
-                        else return "Fiction";
+                        if (high_low_price < rate) return "Yes";
+                        else return "No";
                     }
                 }
                 if (IsHigh)
@@ -134,21 +142,26 @@ namespace PolygonUse
                 
             }
             //Interval not found (maybe symbol is not correct).
-            return "Fiction";
+            return "No";
         }
 
         //isAbove = True (Above)
         //isAbove = False (Below)
         public string AssessQ2(string symbol, bool isAbove, int days, double rate, DateTime historyDateTime) 
         {
-            LoadHistoryBar(symbol, historyDateTime, days, "day");
+            if (days == 1)
+                LoadHistoryBar(symbol, historyDateTime, days, "day");
+            else if (days == 7)
+                LoadHistoryBar(symbol, historyDateTime, days, "week");
+            else if (days == 30)
+                LoadHistoryBar(symbol, historyDateTime, days, "month");
 
             if (isAbove)
             {
                 foreach (Interval interval in intervals)
                 {
                     if (historyDateTime.Day == interval.GetTimestamp().Day)
-                        if (interval.GetClose() > rate) return "Fact";
+                        if (interval.GetClose() > rate) return "Yes";
                 }
             }
 
@@ -157,11 +170,11 @@ namespace PolygonUse
                 foreach (Interval interval in intervals)
                 {
                     if (historyDateTime.Day == interval.GetTimestamp().Day)
-                        if (interval.GetClose() < rate) return "Fact";
+                        if (interval.GetClose() < rate) return "Yes";
                 }
             }
             
-            return "Fiction";
+            return "No";
         }
 
         public string AssessQ3(string symbol, DateTime historyDateTime)
@@ -222,6 +235,34 @@ namespace PolygonUse
 
             if (before_val > after_val) return "Before";
             else return "After";
+        }
+
+        public string AssessQ5(string symbol1, string symbol2, DateTime dateTime)
+        {
+            LoadHistoryBar(symbol1, dateTime, 1, "day");
+            LoadHistoryBar(symbol2, dateTime, 1, "day", true);
+
+            double open_rate1 = 0, close_rate1 = 0;
+            double open_rate2 = 0, close_rate2 = 0;
+            foreach (Interval interval in intervals)
+            {
+                open_rate1 = interval.GetOpen();
+                close_rate1 = interval.GetClose();
+            }
+
+            foreach (Interval interval in intervals2)
+            {
+                open_rate2 = interval.GetOpen();
+                close_rate2 = interval.GetClose();
+            }
+
+            double per1 = (close_rate1 - open_rate1) / open_rate1 * 100;
+            double per2 = (close_rate2 - open_rate2) / open_rate2 * 100;
+
+            if (per1 > per2)
+                return symbol1;
+
+            return symbol2;
         }
     }
 }
