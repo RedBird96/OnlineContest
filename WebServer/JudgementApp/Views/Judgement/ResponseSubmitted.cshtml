@@ -3,7 +3,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <body style="background: rgb(241,247,252);">
-    <section class="contact-clean">
+    <section class="contact-clean" id="mainSection">
         <form method="post" style="text-align: center;">
             <h2 class="text-center">Thank You!</h2>
                 <div class="card shadow mb-4" id="Question-1">
@@ -27,4 +27,15 @@
     </section>
     <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="~/assets/js/theme.js"></script>
+    <script>
+        $(function () {
+            setTimeout(y => {
+                setHeight();
+            }, 50)
+        });
+        function setHeight() {
+            var height = $(window).height();
+            $("#mainSection").css({ "min-height": height + "px" })
+        }
+    </script>
 </body>

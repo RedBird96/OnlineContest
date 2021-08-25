@@ -8,19 +8,19 @@
 <body style="background: @company.BackgroundColor;color:  @company.TextColor">
 
     <div class="popup card shadow" style="background: @company.CardBackgroundColor; display:none;" id="myPopup" popup-name="popup-1">
-        <div class="popup-content">
-            <h4 class="modal-title">Add New Question</h4>
+        <div class="popup-content" style="width: 600px">
+            <h4 class="modal-title" style="color: black">Add New Question</h4>
 
             <table>
                 <tr>
-                    <td>Type</td>
+                    <td style="color: black">Type</td>
                     <td>
-                        <select name="NewQuestion" id="NewQuestion" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
-                            <option value="1">Question 1</option>
-                            <option value="2">Question 2</option>
-                            <option value="3">Question 3</option>
-                            <option value="4">Question 4</option>
-                            <option value="5">Question 5</option>
+                        <select name="NewQuestion" id="NewQuestion" class="form-select" style="width: 500px;margin-top: 10px;display: inline;margin-left: 10px">
+                            <option value="1">1. will [Symbol] hit [Price] by [Time]? </option>
+                            <option value="2">2. will [Symbol] close [Above/Below] [Price] by [Time]? </option>
+                            <option value="3">3. will [Symbol] have a higher return in the AM or PM? </option>
+                            <option value="4">4. will [Symbol] have a higher return before or after [Time]? </option>
+                            <option value="5">5. will [Symbol1] outperform [Symbol2] [Time]? </option>
                         </select>
                     </td>
                 </tr>
@@ -39,7 +39,7 @@
             <div>
                 <div style="text-align:left !important">
                     @{
-                        
+
                         <table style="width:100%;">
                             <tr>
                                 <td style="width:20%"><b>Company ID</b> </td>
@@ -87,40 +87,40 @@
                                 <h6 class="text-primary col-md-11 text-left fw-bold m-0"><span class="pull-left">Question @item.Row_Num</span></h6>
                                 <i class="pull-right fa fa-plus" title="Add New" onclick="ShowAdd( @item.Id)"></i>
                                 <i class="pull-right fa fa-minus" title="Remove" onclick="RemoveQuestion( @item.Id)"></i>
-                                
+
                             </div>
                             <div class="card-body" style="text-align: left;">
                                 <label class="form-label" style="font-style: normal;font-weight: bold;">@item.Title</label>
 
                                 @if (item.Type == 1)
                                 {
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P1</td>
+                                                <td style="width: 30%">Symbol</td>
                                                 <td>
-                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 10px;display: inline;margin-left: 15px;", @id = p1 })
                                                 </td>
                                             </tr>
                                         </table>
 
                                     </div>
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P2</td>
+                                                <td style="width: 30%">Price</td>
                                                 <td>
-                                                    <input type="number" name="@p2" id="@p2" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                    <input type="number" name="@p2" id="@p2" class="form-control" type="text" style="width: 250px;margin-top: 10px;display: inline;margin-left: 15px;">
                                                 </td>
                                             </tr>
                                         </table>
                                     </div>
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P3</td>
+                                                <td style="width: 30%">Time</td>
                                                 <td>
-                                                    <select name="@p3" id="@p3" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                    <select name="@p3" id="@p3" class="form-select" style="width: 250px;margin-top: 10px;display: inline;margin-left: 15px;">
                                                         <option value="10:00 am" selected="">10:00 am</option>
                                                         <option value="10:30 am">10:30 am</option>
                                                         <option value="11:00 am">11:00 am</option>
@@ -145,23 +145,23 @@
                                 @if (item.Type == 2)
                                 {
 
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P1</td>
+                                                <td style="width: 30%">Symbol</td>
                                                 <td>
-                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 10px;display: inline;margin-left: 15px;", @id = p1 })
                                                 </td>
                                             </tr>
                                         </table>
 
                                     </div>
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P2</td>
+                                                <td style="width: 30%">Above/Below</td>
                                                 <td>
-                                                    <select name="@p2" id="@p2" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                    <select name="@p2" id="@p2" class="form-select" style="width: 250px;margin-top: 10px;display: inline;margin-left: 15px;">
                                                         <option value="above">above</option>
                                                         <option value="below">below</option>
                                                     </select>
@@ -169,22 +169,22 @@
                                             </tr>
                                         </table>
                                     </div>
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P3</td>
+                                                <td style="width: 30%">Price</td>
                                                 <td>
-                                                    <input type="number" name="@p3" id="@p3" class="form-control" type="text" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                    <input type="number" name="@p3" id="@p3" class="form-control" type="text" style="width: 250px;margin-top: 10px;display: inline;margin-left: 15px;">
                                                 </td>
                                             </tr>
                                         </table>
                                     </div>
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P4</td>
+                                                <td style="width: 30%">Time</td>
                                                 <td>
-                                                    <select name="@p4" id="@p4" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                    <select name="@p4" id="@p4" class="form-select" style="width: 250px;margin-top: 10px;display: inline;margin-left: 15px;">
                                                         <option value="today" selected="">today</option>
                                                         <option value="this week">this week</option>
                                                         <option value="this month">this month</option>
@@ -198,12 +198,12 @@
                                 @*type 3*@
                                 @if (item.Type == 3)
                                 {
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P1</td>
+                                                <td style="width: 30%">Symbol</td>
                                                 <td>
-                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 10px;display: inline;margin-left: 15px;", @id = p1 })
                                                 </td>
                                             </tr>
                                         </table>
@@ -217,23 +217,23 @@
                                 @*type 4*@
                                 @if (item.Type == 4)
                                 {
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P1</td>
+                                                <td style="width: 30%">Symbol</td>
                                                 <td>
-                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-control", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-control", @style = "width: 250px;margin-top: 10px;display: inline;margin-left: 15px;", @id = p1 })
                                                 </td>
                                             </tr>
                                         </table>
 
                                     </div>
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P2</td>
+                                                <td style="width: 30%">Time</td>
                                                 <td>
-                                                    <select name="@p2" id="@p2" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                    <select name="@p2" id="@p2" class="form-select" style="width: 250px;margin-top: 10px;display: inline;margin-left: 15px;">
                                                         <option value="10:00 am">10:00 am</option>
                                                         <option value="10:30 am">10:30 am</option>
                                                         <option value="11:00 am">11:00 am</option>
@@ -256,34 +256,34 @@
                                 @*type 5*@
                                 @if (item.Type == 5)
                                 {
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P1</td>
+                                                <td style="width: 30%">Symbol1</td>
                                                 <td>
-                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p1 })
+                                                    @Html.DropDownList(p1, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 10px;display: inline;margin-left: 15px;", @id = p1 })
                                                 </td>
                                             </tr>
                                         </table>
 
                                     </div>
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P2</td>
+                                                <td style="width: 30%">Symbol2</td>
                                                 <td>
-                                                    @Html.DropDownList(p2, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 15px;display: inline;margin-left: 15px;", @id = p2 })
+                                                    @Html.DropDownList(p2, new SelectList(item.SymbolList, "Value", "Key"), htmlAttributes: new { @class = "form-select", @style = "width: 250px;margin-top: 10px;display: inline;margin-left: 15px;", @id = p2 })
                                                 </td>
                                             </tr>
                                         </table>
 
                                     </div>
-                                    <div style="width: 290px;">
+                                    <div style="width: 100%">
                                         <table>
                                             <tr>
-                                                <td>P3</td>
+                                                <td style="width: 30%">Time</td>
                                                 <td>
-                                                    <select name="@p3" id="@p3" class="form-select" style="width: 250px;margin-top: 15px;display: inline;margin-left: 15px;">
+                                                    <select name="@p3" id="@p3" class="form-select" style="width: 250px;margin-top: 10px;display: inline;margin-left: 15px;">
                                                         <option value="today" selected="">today</option>
                                                         <option value="this week">this week</option>
                                                         <option value="this month">this month</option>
@@ -304,6 +304,7 @@
                 <input id="QuestionID" style="display:none;" />
             </div>
 
+            <button class="btn btn-primary" type="button" id="btnReset">Reset</button>
             <button class="btn btn-primary" type="button" id="btnSave">Save</button>
             <button class="btn btn-primary" type="button" id="btnUpdate">Publish</button>
             <div class="row col-md-12">
@@ -313,13 +314,13 @@
                     <b id="btnCopy" class="pull-right btn" style="display:none; margin-left:5px;">copy Url</b>
                 </div>
                 <div class=" pull-left">
-                    
-                    <input id="linkINput" width="1px" style="display:none" />
-                    </div>
-                <br />
-                </div>
 
-</form>
+                    <input id="linkINput" width="1px" style="display:none" />
+                </div>
+                <br />
+            </div>
+
+        </form>
     </section>
 
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
@@ -327,6 +328,8 @@
     <script type="text/javascript">
         var result = [];
         function onChangeContest() {
+            debugger;
+           // if ($("#ProblemName").val().length > 0 && $("#PKCompany").val()>0)
             window.location = "/contest-admin/" + $("#PKCompany").val() + "/" + $("#ProblemName").val()
 
         }
@@ -415,11 +418,11 @@
                 //if (model != undefined && model != null && model.length > 0) {
                 //    model = model[0];
                 //} else {
-                    model = {}
-                    model.FKCompany = PKCompany;
-                    model.ProblemName = ProblemName;
-                    model.Id = id;
-                
+                model = {}
+                model.FKCompany = PKCompany;
+                model.ProblemName = ProblemName;
+                model.Id = id;
+
                 var fd = new FormData();
                 fd.append('data', JSON.stringify(model));
                 var fd2 = CreateUpdateModel(false);
@@ -443,8 +446,8 @@
                         });
                     }
                 });
-                    }
-           
+            }
+
         }
         var IsPublish = false;
         function onLoad() {
@@ -509,7 +512,7 @@
                     P4 = $("#Q" + result[i].Id + "_P4").val();
                 if ($("#Q" + result[i].Id + "_P5").val() != undefined)
                     P5 = $("#Q" + result[i].Id + "_P5").val();
-                
+
                 input.push({ Id: Q, P1: P1, P2: P2, P3: P3, P4: P4, P5: P5, FKCompany: PKCompany, ProblemName: ProblemName, IsPublish: IsPublish })
             }
             var fd = new FormData();
@@ -533,6 +536,7 @@
 
                     if (ProblemName.includes("-") || ProblemName.includes("=") || ProblemName.includes("<") || ProblemName.includes(">") || ProblemName.includes("+") || ProblemName.includes("-") || ProblemName.includes("_")) {
                         alert("Unexpected character at URL")
+                        return;
                     }
                     var fd = CreateUpdateModel(true);
                     $.ajax({
@@ -580,16 +584,42 @@
                     });
                 }
             })
+            $('#btnReset').click(function () {
+                var PKCompany = $("#PKCompany").val();
+                var ProblemName = $("#ProblemName").val();
+                if (PKCompany < 1) {
+                    alert("Please enter the company id")
+                } else if (ProblemName.length < 1) {
+                    alert("Please enter the contest name")
+                } else {
+                    var fd = CreateUpdateModel(false);
+                    $.ajax({
+                        url: '/Judgement/ResetContest',
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        type: 'POST',
+                        success: function (data) {
+
+                            setTimeout(r => {
+                                onChangeContest()
+                            }, 20)
+
+                            alert('Data reset successfully');
+                        }
+                    });
+                }
+            })
             $('#btnCopy').click(function () {
                 debugger;
                 $("#linkINput").css({ "display": "block" });
-                $("#linkINput").val(  $("#judgmentLink").attr("href"))
+                $("#linkINput").val($("#judgmentLink").attr("href"))
                 var copyText = document.getElementById("linkINput");
                 copyText.select();
 
                 document.execCommand("copy");
                 $("#linkINput").css({ "display": "none" });
-               
+
             });
 
         })

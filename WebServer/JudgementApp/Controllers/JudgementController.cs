@@ -41,6 +41,10 @@ namespace JudgementApp.Controllers
         #region"Create problem"
         public List<Data> GetData(long FKCompany,string ProblemName)
         {
+            //if (ProblemName == "")
+            //{
+            //    ProblemName = "-1";
+            //}
             DataTable dt = Main.GetDataTable("prc_GetProblem '"+FKCompany+"','"+ ProblemName + "'");
             //To take the symbol from the website comment the below code 
             var model = new List<Data>();
@@ -83,12 +87,32 @@ namespace JudgementApp.Controllers
         public JsonResult LoadData(string id,string ProblemName)
         {
             long FKCompany = Convert.ToInt64(id);
-            return Json(GetData(FKCompany, ProblemName), JsonRequestBehavior.AllowGet); ;
+            return Json(GetData(FKCompany, ProblemName), JsonRequestBehavior.AllowGet);
         }
+
+        public string ResetContest(string input = "")
+        {
+            input = Request.Form["data"];
+            List<Data> model = new List<Data>();
+
+            model = JsonConvert.DeserializeObject<List<Data>>(input);
+
+            long FKCompany = Convert.ToInt64(model.ElementAt(0).FKCompany);
+
+            SQL.NonScalarQuery("DELETE FROM [dbo].[CreateProblem] WHERE FKCompany=" + FKCompany + " and ProblemName='" + model.ElementAt(0).ProblemName + "'");
+
+            SQL.NonScalarQuery("INSERT into [dbo].[CreateProblem] (FKCompany, ProblemName, QuestionNo,  P1, P2, P3, P4, IsPublish, CreatedDate, IsExpired) values (" + FKCompany + ",'" + model.ElementAt(0).ProblemName + "', 1, '', '', '', '', 'False', GetDate(), 'False')");
+            SQL.NonScalarQuery("INSERT into [dbo].[CreateProblem] (FKCompany, ProblemName, QuestionNo,  P1, P2, P3, P4, IsPublish, CreatedDate, IsExpired) values (" + FKCompany + ",'" + model.ElementAt(0).ProblemName + "', 2, '', '', '', '', 'False', GetDate(), 'False')");
+            SQL.NonScalarQuery("INSERT into [dbo].[CreateProblem] (FKCompany, ProblemName, QuestionNo,  P1, P2, P3, P4, IsPublish, CreatedDate, IsExpired) values (" + FKCompany + ",'" + model.ElementAt(0).ProblemName + "', 3, '', '', '', '', 'False', GetDate(), 'False')");
+            SQL.NonScalarQuery("INSERT into [dbo].[CreateProblem] (FKCompany, ProblemName, QuestionNo,  P1, P2, P3, P4, IsPublish, CreatedDate, IsExpired) values (" + FKCompany + ",'" + model.ElementAt(0).ProblemName + "', 4, '', '', '', '', 'False', GetDate(), 'False')");
+            SQL.NonScalarQuery("INSERT into [dbo].[CreateProblem] (FKCompany, ProblemName, QuestionNo,  P1, P2, P3, P4, IsPublish, CreatedDate, IsExpired) values (" + FKCompany + ",'" + model.ElementAt(0).ProblemName + "', 5, '', '', '', '', 'False', GetDate(), 'False')");
+
+            return "reset";
+        }
+
         [Route("contest-admin/{id?}/{ProblemName?}")]
         public ActionResult CreateProblem(string id="0",string ProblemName="")
         {
-           
             ViewData["contestName"] = ProblemName;
 
             long FKCompany = Convert.ToInt64(id);
@@ -129,8 +153,6 @@ namespace JudgementApp.Controllers
 
             Data model = new Data();
 
-
-
             model = JsonConvert.DeserializeObject<Data>(input);
             //  SQL.NonScalarQuery("Delete from Questions where PKQuestion=" + model.Id);
             SQL.NonScalarQuery("INSERT INTO [dbo].[CreateProblemArchive](ID,[FKCompany],[ProblemName] ,[QuestionNo]) values( " + model.Id + "," + model.FKCompany + ",'" + model.ProblemName + "'," + model.Id + ") ");
@@ -156,7 +178,6 @@ namespace JudgementApp.Controllers
                     
                 }
             }
-            
 
             string folderName = "assets/img/company/" + model[0].FKCompany;
 
