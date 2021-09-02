@@ -42,6 +42,7 @@ namespace RegisterCompanyID
             this.label4 = new System.Windows.Forms.Label();
             this.dtExpir = new System.Windows.Forms.DateTimePicker();
             this.btnUpdate = new System.Windows.Forms.Button();
+            this.btnCollection = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -106,7 +107,7 @@ namespace RegisterCompanyID
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(167, 168);
+            this.btnRemove.Location = new System.Drawing.Point(122, 168);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(75, 32);
             this.btnRemove.TabIndex = 7;
@@ -145,7 +146,7 @@ namespace RegisterCompanyID
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Location = new System.Drawing.Point(167, 209);
+            this.btnUpdate.Location = new System.Drawing.Point(122, 209);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(75, 33);
             this.btnUpdate.TabIndex = 12;
@@ -153,11 +154,22 @@ namespace RegisterCompanyID
             this.btnUpdate.UseVisualStyleBackColor = true;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
             // 
+            // btnCollection
+            // 
+            this.btnCollection.Location = new System.Drawing.Point(207, 168);
+            this.btnCollection.Name = "btnCollection";
+            this.btnCollection.Size = new System.Drawing.Size(66, 74);
+            this.btnCollection.TabIndex = 13;
+            this.btnCollection.Text = "Collection";
+            this.btnCollection.UseVisualStyleBackColor = true;
+            this.btnCollection.Click += new System.EventHandler(this.btnCollection_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(298, 254);
+            this.Controls.Add(this.btnCollection);
             this.Controls.Add(this.btnUpdate);
             this.Controls.Add(this.dtExpir);
             this.Controls.Add(this.label4);
@@ -172,7 +184,6 @@ namespace RegisterCompanyID
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "RegisterCompanyID";
@@ -196,6 +207,7 @@ namespace RegisterCompanyID
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DateTimePicker dtExpir;
         private System.Windows.Forms.Button btnUpdate;
+        private System.Windows.Forms.Button btnCollection;
     }
 }
 

@@ -49,7 +49,6 @@ namespace JudgementApp.Controllers
             //To take the symbol from the website comment the below code 
             var model = new List<Data>();
             string[] symbolNames = { "SPY", "QQQ", "IWM", "TLT", "TSLA", "NFLX", "AAPL", "AMZN", "FB", "GOOGL", "NVDA" };
-            int id = 0;
             ViewData["symbolNames"] = symbolNames;
             var symbolNameDic = new Dictionary<string, string>();
             symbolNameDic.Add("", "--Select--");
@@ -272,13 +271,13 @@ namespace JudgementApp.Controllers
                 foreach (JudgmentQ judgment in result.Result)
                 {
                    
-                    query += ",Q" + judgment.ID + ",P" + judgment.ID + ",T" + judgment.ID;
+                    query += ",Q" + judgment.ID + ",P" + judgment.ID + ",T" + judgment.ID + ",R" + judgment.ID;
                 }
                 query += ")values('" + result.UserName + "','"+result.UserEmail+"',GetDate(),"+max+ ","+ FKCompany + ",'"+result.ProblemName+"'";
                 foreach (JudgmentQ judgment in result.Result)
                 {
                    
-                    query += ",'" + judgment.QResult + "', '" + judgment.Param + "','" + judgment.QType + "'";
+                    query += ",'" + judgment.QResult + "', '" + judgment.Param + "','" + judgment.QType + "','False'";
                 }
                 query += ")";
                 

@@ -221,5 +221,11 @@ namespace RegisterCompanyID
 
             MessageBox.Show("It updated successfully!", "Info");
         }
+
+        private void btnCollection_Click(object sender, EventArgs e)
+        {
+            CollectionForm colForm = new CollectionForm();
+            colForm.ShowDialog();
+        }
     }
 }
