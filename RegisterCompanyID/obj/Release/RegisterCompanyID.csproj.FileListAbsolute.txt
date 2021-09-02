@@ -1,9 +1,0 @@
-U:\04_UpWork\10_AnalyzerPrice(ASP)\02_OnlineContest\OnlineContest\OnlineContest.git\RegisterCompanyID\bin\Release\RegisterCompanyID.exe.config
-U:\04_UpWork\10_AnalyzerPrice(ASP)\02_OnlineContest\OnlineContest\OnlineContest.git\RegisterCompanyID\bin\Release\RegisterCompanyID.exe
-U:\04_UpWork\10_AnalyzerPrice(ASP)\02_OnlineContest\OnlineContest\OnlineContest.git\RegisterCompanyID\bin\Release\RegisterCompanyID.pdb
-U:\04_UpWork\10_AnalyzerPrice(ASP)\02_OnlineContest\OnlineContest\OnlineContest.git\RegisterCompanyID\obj\Release\RegisterCompanyID.Form1.resources
-U:\04_UpWork\10_AnalyzerPrice(ASP)\02_OnlineContest\OnlineContest\OnlineContest.git\RegisterCompanyID\obj\Release\RegisterCompanyID.Properties.Resources.resources
-U:\04_UpWork\10_AnalyzerPrice(ASP)\02_OnlineContest\OnlineContest\OnlineContest.git\RegisterCompanyID\obj\Release\RegisterCompanyID.csproj.GenerateResource.cache
-U:\04_UpWork\10_AnalyzerPrice(ASP)\02_OnlineContest\OnlineContest\OnlineContest.git\RegisterCompanyID\obj\Release\RegisterCompanyID.csproj.CoreCompileInputs.cache
-U:\04_UpWork\10_AnalyzerPrice(ASP)\02_OnlineContest\OnlineContest\OnlineContest.git\RegisterCompanyID\obj\Release\RegisterCompanyID.exe
-U:\04_UpWork\10_AnalyzerPrice(ASP)\02_OnlineContest\OnlineContest\OnlineContest.git\RegisterCompanyID\obj\Release\RegisterCompanyID.pdb
