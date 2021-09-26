@@ -27,7 +27,7 @@ namespace PolygonUse
                 
                 //Getting Judgement data from yesterday
                 DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE TotalCorrect IS NULL");
-                //DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE Name='DaveTest'");
+                //DataTable judgementTable = SQL.GetDataTable("SELECT * FROM Judgement WHERE Name='David'");
 
                 txt_log = "[David Test 7.28] ";
                 //Evaluating for each user from yesterday
@@ -39,30 +39,36 @@ namespace PolygonUse
                     string submit_datetime = row["Date"].ToString();
                     string fkCompany = row["FKCompany"].ToString();
                     string problemName = row["ProblemName"].ToString();
+                    string userName = row["Name"].ToString();
+                    string userEmailAdd = row["UserEmail"].ToString();
                     int question_cnt = int.Parse(row["ProblemNo"].ToString());
                     DateTime submit_DT = Convert.ToDateTime(submit_datetime);
                     DateTime weekend_DT = assessment.GetWeekendDate(submit_DT);
                     DateTime monthend_DT = assessment.GetMonthendDate(submit_DT);
-                    int col_cnt = (row.Table.Columns.Count - 5) / 3;
+                    int col_cnt = (row.Table.Columns.Count - 8) / 4;
 
-                    for(int question_index = 1; question_index < col_cnt; question_index ++)
+                    for(int question_index = 0; question_index < col_cnt; question_index ++)
                     {
 
-                        int QIndex = (question_index * 3) + 5; 
+                        int QIndex = (question_index * 4) + 8;
                         string Qtag_Name = "Q" + question_index.ToString();
                         string Ttag_Name = "T" + question_index.ToString();
                         string Ptag_Name = "P" + question_index.ToString();
+                        string Rtag_Name = "R" + question_index.ToString();
 
                         if (row.ItemArray.ElementAt(QIndex).ToString().Length == 0)
                         {
                             continue;
                         }
 
+                        string RcolumnHeaderName = row.Table.Columns[QIndex + 3].ColumnName;
                         string question_answer;//[Qtag_Name].ToString();
                         int question_type;// int.Parse(row[Ttag_Name].ToString());
                         string[] parameter_arr;// row[Ptag_Name].ToString().Split(',');
-
-                        if (question_index > 5)
+                        string strSQLFront = "update Judgement set " + RcolumnHeaderName + "=";
+                        string strSQLBack = " where FKCompany = '" + fkCompany + "' and Name = '" + userName + "' and UserEmail='" + userEmailAdd + "' and ProblemName='" + problemName + "'";
+                        string strSQL = "";
+                        if (question_index > 4)
                         {
                             question_answer = row.ItemArray.ElementAt(QIndex).ToString();//[Qtag_Name].ToString();
                             parameter_arr = row.ItemArray.ElementAt(QIndex + 1).ToString().Split(',');// row[Ptag_Name].ToString().Split(',');
@@ -98,17 +104,21 @@ namespace PolygonUse
                             else if (P3 == "02:00 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 14, 0, 0);
                             else if (P3 == "02:30 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 14, 30, 0);
                             else if (P3 == "03:00 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 15, 0, 0);
-                            else if (P3 == "03:30 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 13, 30, 0);
+                            else if (P3 == "03:30 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 15, 30, 0);
 
                             if (assessment.AssessQ1(P1, rate, dateTime, submit_DT).Equals(question_answer))
                             {
                                 totalCorrect++;
                                 txt_log = txt_log + $", Question{question_index}:Right";
+                                strSQL = strSQLFront + "'True'" + strSQLBack;
                             }
                             else
                             {
                                 txt_log = txt_log + $", Question{question_index}:Wrong";
+                                strSQL = strSQLFront + "'False'" + strSQLBack;
                             }
+
+                            SQL.NonScalarQuery(strSQL);
                         }
                         
                         else if(question_type == 2)
@@ -151,11 +161,15 @@ namespace PolygonUse
                             {
                                 totalCorrect++;
                                 txt_log = txt_log + $",Question{question_index}:Right";
+                                strSQL = strSQLFront + "'True'" + strSQLBack;
                             }
                             else
                             {
                                 txt_log = txt_log + $",Question{question_index}:Wrong";
+                                strSQL = strSQLFront + "'False'" + strSQLBack;
                             }
+
+                            SQL.NonScalarQuery(strSQL);
                         }
                         
                         else if(question_type == 3)
@@ -167,11 +181,15 @@ namespace PolygonUse
                             {
                                 totalCorrect++;
                                 txt_log = txt_log + $",Question{question_index}:Right";
+                                strSQL = strSQLFront + "'True'" + strSQLBack;
                             }
                             else
                             {
                                 txt_log = txt_log + $",Question{question_index}:Wrong";
+                                strSQL = strSQLFront + "'False'" + strSQLBack;
                             }
+
+                            SQL.NonScalarQuery(strSQL);
                         }
                         
                         else if(question_type == 4)
@@ -191,17 +209,21 @@ namespace PolygonUse
                             else if (P2 == "02:00 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 14, 0, 0);
                             else if (P2 == "02:30 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 14, 30, 0);
                             else if (P2 == "03:00 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 15, 0, 0);
-                            else if (P2 == "03:30 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 13, 30, 0);
+                            else if (P2 == "03:30 pm") dateTime = new DateTime(submit_DT.Year, submit_DT.Month, submit_DT.Day, 15, 30, 0);
 
                             if (assessment.AssessQ4(P1, dateTime, submit_DT).Equals(question_answer))
                             {
                                 totalCorrect++;
                                 txt_log = txt_log + $",Question{question_index}:Right";
+                                strSQL = strSQLFront + "'True'" + strSQLBack;
                             }
                             else
                             {
                                 txt_log = txt_log + $",Question{question_index}:Wrong";
+                                strSQL = strSQLFront + "'False'" + strSQLBack;
                             }
+
+                            SQL.NonScalarQuery(strSQL);
                         }
                         else if (question_type == 5)
                         {
@@ -237,18 +259,22 @@ namespace PolygonUse
                             {
                                 totalCorrect++;
                                 txt_log = txt_log + $",Question{question_index}:Right";
+                                strSQL = strSQLFront + "'True'" + strSQLBack;
                             }
                             else
                             {
                                 txt_log = txt_log + $",Question{question_index}:Wrong";
+                                strSQL = strSQLFront + "'False'" + strSQLBack;
                             }
+
+                            SQL.NonScalarQuery(strSQL);
 
                         }
                         
                     }
                     //Updating Score
                     if (!skipFlag)
-                    { 
+                    {
                         SQL.NonScalarQuery("UPDATE Judgement SET TotalCorrect = " + totalCorrect + " , ProblemNo = " + totalquestions + " WHERE Id = " + row["Id"]);
                         SQL.NonScalarQuery("UPDATE CreateProblem SET IsExpired = 'True'" + " WHERE FKCompany = " + fkCompany + "and ProblemName = '" + problemName + "'");
                     }
