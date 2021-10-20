@@ -127,12 +127,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assessment.cs" />
+    <Compile Include="CustomContest.cs" />
+    <Compile Include="ExContest.cs" />
     <Compile Include="HttpClientHelper.cs" />
     <Compile Include="PolygonIO.cs" />
     <Compile Include="PolygonIOWebSocketDataObjects.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQL.cs" />
+    <Compile Include="StreakContest.cs" />
     <Compile Include="TickerData.cs" />
   </ItemGroup>
   <ItemGroup>

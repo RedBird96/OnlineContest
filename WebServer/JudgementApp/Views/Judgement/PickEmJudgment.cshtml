@@ -1,0 +1,229 @@
+﻿@model JudgementApp.Models.PickEmContest
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "PickEmContest1";
+}
+
+<body style="background: ;color:  ">
+
+    @if (false)
+    {
+        <section style="height: 100%" class="contact-clean" id="mainContent">
+            <div class="row">
+                <div class="col-md-3">
+
+                </div>
+                <div class="col-md-6">
+                    <h1 style="color: white">This contest has been expired.</h1>
+                </div>
+                <div class="col-md-3">
+
+                </div>
+            </div>
+
+        </section>
+    }
+    else
+    {
+        <section class="contact-clean" id="mainContent">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                    @if (Model.StyleType == 1)
+                    {
+                    <p style="color: white">
+                        Please select <b>@Model.StockNumber</b> stocks below. Each stock’s percentage return will be summed and the contestant with the highest sum will win the contest.<br>
+                        Example:<br>
+                        User1: +2.4%, -1.2%, +3.1% = 2.4 -1.2 + 3.1 = 4.3<br>
+                        User2: +1.8%, +2.9%, -0.5% = 1.8 + 2.9 – 0.5 = 4.2<br>
+
+                        User1 has outperformed User2 and would rank higher on the Contest Leaderboard.
+                    </p>
+                    }
+                    else
+                    {
+                        <p style="color: white">
+                            Please select <b>@Model.StockNumber</b> stocks below. You can allocate <b>@(@Model.DollarsPerPoint/@Model.StockNumber)</b> dollars per stock. Contest winner will be based on total dollar return.
+                        </p>
+                    }
+
+                </div>
+                <div class="col-md-4"></div>
+
+            </div>
+            <form style="text-align: center;">
+                <h2 class="text-center">@Model.ContestName</h2>
+                <img class="img-responsive" src="/assets/CompanyLogos/@Model.Logo" style="width: 200px;" />
+                <input type="hidden" value="@Model.CompanyId" id="companyId" />
+                <input type="hidden" value="@Model.Id" id="id" />
+                <input type="hidden" value="@Model.ContestId" id="contestId" />
+                <input type="hidden" value="@Model.DollarsPerPoint" id="maxValue" />
+                <input type="hidden" value="@Model.MaxDollars" id="totalValue" />
+                <div>
+                    <div>
+                        <div class="mb-3">
+
+                            <input class="form-control" type="text" id="UserName" name="UserName" required="required" placeholder="Name">
+
+                        </div>
+                        <div class="mb-3">
+                            <br />
+                            <input class="form-control" type="email" id="UserEmail" name="UserEmail" required="required" placeholder="Email Address">
+                            <div class="mb-3"><br /></div>
+                        </div>
+                        <input type="hidden" id="stockNumbers" value="@Model.StockNumber" />
+                        <input type="hidden" id="styleType" value="@Model.StyleType" />
+                        @if (Model.StyleType == 1)
+                        {
+                            <div class="row">
+                                <div class=" col-md-3"></div>
+
+                                <table class=" col-md-6">
+                                    @for (var i = 0; i < Model.StockNumber; i++)
+                                    {
+                                        <tr>
+                                            <td style="width: 20%"><b>Stock @(@i + 1)</b> </td>
+                                            <td>
+
+                                                <select style="margin: 15px;" id="st-@i" class="form-control">
+                                                    @foreach (var row in Model.Stocks)
+                                                    {
+                                                        <option value="@row.Name">@row.Name</option>
+                                                    }
+                                                </select>
+
+                                            </td>
+                                        </tr>
+
+                                    }
+                                </table>
+                                <div class=" col-md-3"></div>
+                            </div>
+                            
+                        }
+                        else
+                        {
+                            <table class="row col-md-6" style="float: left">
+                                @for (var i = 0; i < Model.StockNumber; i++)
+                                {
+
+                                    <tr>
+                                        <td><b>Stock @(@i + 1)</b> </td>
+                                        <td>
+
+                                            <select style="margin: 15px;" id="st-@i" style="width: 175px; margin-left: 15px" class="form-control">
+                                                @foreach (var row in Model.Stocks)
+                                                {
+                                                    <option value="@row.Name">@row.Name</option>
+                                                }
+                                            </select>
+
+                                        </td>
+                                    </tr>
+
+                                }
+                            </table>
+                            <table width="100%" class="row col-md-6">
+                                @for (var i = 0; i < Model.StockNumber; i++)
+                                {
+
+                                    <tr>
+                                        <td style="width: 30%"><span>Amount</span> </td>
+                                        <td>
+                                            <input style="margin: 15px;" id="am-@i" style="margin-left: 15px; width: 200px" class="form-control" type="number" id="UserEmail" name="UserEmail" required="required" placeholder="Amont">
+
+                                        </td>
+                                    </tr>
+
+                                }
+                            </table>
+
+
+                        }
+
+
+
+
+                    </div>
+
+
+                </div>
+
+                <button class="btn btn-primary" type="button" id="submit">Submit</button>
+                <button class="btn btn-primary" type="button" onclick="location.href = '/pickem-leaderboad-@Model.CompanyName-@Model.ContestName/@Model.ContestId-@Model.Id'">LeaderBoard</button>
+
+            </form>
+        </section>
+    }
+
+
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/theme.js"></script>
+
+    <script src="~/assets/js/StockEmJudgment.js"></script>
+</body>
+<style>
+    p {
+        font-size: 16px;
+        line-height: 26px;
+        letter-spacing: 0.5px;
+        color: #484848;
+    }
+
+    /* Popup Open button */
+    .open-button {
+        color: #FFF;
+        background: #0066CC;
+        padding: 10px;
+        text-decoration: none;
+        border: 1px solid #0157ad;
+        border-radius: 3px;
+    }
+
+        .open-button:hover {
+            background: #01478e;
+        }
+
+    .popup {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
+
+    /* Popup inner div */
+    .popup-content {
+        width: 500px;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 40px;
+        margin-top: 20px;
+        box-shadow: 0px 2px 6px rgba(0,0,0,1);
+        border-radius: 3px;
+        background: #fff;
+        position: relative;
+    }
+
+    /* Popup close button */
+    .close-button {
+        width: 25px;
+        height: 25px;
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        border-radius: 20px;
+        background: rgba(0,0,0,0.8);
+        font-size: 20px;
+        text-align: center;
+        color: #fff;
+        text-decoration: none;
+    }
+
+        .close-button:hover {
+            background: rgba(0,0,0,1);
+        }
+</style>
+

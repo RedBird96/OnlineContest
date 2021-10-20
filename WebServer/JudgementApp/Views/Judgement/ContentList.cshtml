@@ -1,0 +1,283 @@
+﻿@model JudgementApp.Models.ContestList
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "PickEmContest1";
+}
+
+<body style="background: ; color: ">
+    <section class="contact-clean" id="mainContent">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <h4 style="text-align: center; color: white">@ViewBag.CompanyName</h4>
+                <div class="table-responsive" style="border: 1px solid; height:450px">
+                    <table id="table" class="table table-borderless">
+                        <thead>
+                            <tr style="color: rgb(37 140 75);">
+                                <th style="color:; width: 206px; cursor: pointer;" onclick="sortTable(0, false)">Contest Name <span style="color: lightgray">▲▼</span></th>
+                                <th style="color:; width: 206px; cursor: pointer;" onclick="sortTable(1, false)">Contest Type <span style="color: lightgray">▲▼</span></th>
+                                <th style="color:; width: 206px; cursor: pointer;" onclick="sortTable(2, false)">Contest Url <span style="color: lightgray">▲▼</span></th>
+                                <th style="color:; width: 206px; cursor: pointer;" onclick="sortTable(3, false)">Created Date <span style="color: lightgray">▲▼</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var row in Model.List)
+                            {
+                                <tr style="color: white">
+                                    <td>@row.Name</td>
+                                    <td>@row.Type</td>
+                                    <td><a href="@row.Url" style="color: white">@row.Url</a></td>
+                                    <td>@row.CreatedDate</td>
+
+
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 50px; text-align:center">
+                    <button style="width: 150px; background-color: #055ada; color:white; " onclick="goBack()" class="btn btn-primary" type="button" id="btnSave">BACK</button>
+                </div>
+                
+            </div>
+            <div class="col-md-2"></div>
+
+        </div>
+       
+
+
+    </section>
+
+
+
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/theme.js"></script>
+    <script src="~/assets/js/StreakJudgement.js"></script>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+    function sortTable(n, isNum) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("table");
+        switching = true;
+        //Set the sorting direction to ascending:
+        dir = "asc";
+        /*Make a loop that will continue until
+        no switching has been done:*/
+        while (switching) {
+            //start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /*Loop through all table rows (except the
+            first, which contains table headers):*/
+            for (i = 1; i < (rows.length - 1); i++) {
+                //start by saying there should be no switching:
+                shouldSwitch = false;
+                /*Get the two elements you want to compare,
+                one from current row and one from the next:*/
+                x = rows[i].getElementsByTagName("TD")[n];
+                y = rows[i + 1].getElementsByTagName("TD")[n];
+                /*check if the two rows should switch place,
+                based on the direction, asc or desc:*/
+                if (dir == "asc") {
+                    if (isNum) {
+                        if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+
+                } else if (dir == "desc") {
+                    if (isNum) {
+                        if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            //if so, mark as a switch and break the loop:
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+
+                }
+            }
+            if (shouldSwitch) {
+                /*If a switch has been marked, make the switch
+                and mark that a switch has been done:*/
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                //Each time a switch is done, increase this count by 1:
+                switchcount++;
+            } else {
+                /*If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again.*/
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+</script>
+
+</body>
+<style>
+    p {
+        font-size: 16px;
+        line-height: 26px;
+        letter-spacing: 0.5px;
+        color: #484848;
+    }
+
+    /* Popup Open button */
+    .open-button {
+        color: #FFF;
+        background: #0066CC;
+        padding: 10px;
+        text-decoration: none;
+        border: 1px solid #0157ad;
+        border-radius: 3px;
+    }
+
+        .open-button:hover {
+            background: #01478e;
+        }
+
+    .popup {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
+
+    /* Popup inner div */
+    .popup-content {
+        width: 500px;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 40px;
+        margin-top: 20px;
+        box-shadow: 0px 2px 6px rgba(0,0,0,1);
+        border-radius: 3px;
+        background: #fff;
+        position: relative;
+    }
+
+    /* Popup close button */
+    .close-button {
+        width: 25px;
+        height: 25px;
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        border-radius: 20px;
+        background: rgba(0,0,0,0.8);
+        font-size: 20px;
+        text-align: center;
+        color: #fff;
+        text-decoration: none;
+    }
+
+        .close-button:hover {
+            background: rgba(0,0,0,1);
+        }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 90px;
+        height: 34px;
+    }
+
+        .switch input {
+            display: none;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ca2222;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+    input:checked + .slider {
+        background-color: #2ab934;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(55px);
+        -ms-transform: translateX(55px);
+        transform: translateX(55px);
+    }
+
+    /*------ ADDED CSS ---------*/
+    .on {
+        display: none;
+    }
+
+    .on, .off {
+        color: white;
+        position: absolute;
+        transform: translate(-50%,-50%);
+        top: 50%;
+        left: 50%;
+        font-size: 10px;
+        font-family: Verdana, sans-serif;
+    }
+
+    input:checked + .slider .on {
+        display: block;
+    }
+
+    input:checked + .slider .off {
+        display: none;
+    }
+
+    /*--------- END --------*/
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+</style>
+

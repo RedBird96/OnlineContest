@@ -1,0 +1,80 @@
+﻿@model JudgementApp.Models.StreakHistory
+
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<body style="background: ;color:  ">
+    <section class="contact-clean" style="background:">
+        <form method="post" style="text-align: center; background: ;max-width: 1200px">
+            <h2 class="text-center">@ViewBag.ContestName</h2>
+            <img class="img-responsive" src="/assets/CompanyLogos/@ViewBag.Logo" style="width:200px;" />
+            <h4 class="text-center" id="ProblemName" style="color:">@ViewBag.email - Current Streak</h4>
+            <div>
+                <div class="row">
+                    <div class="col-md-5 table-responsive" style="border: 1px gray solid;">
+                        <h3>User History</h3>
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr style="color: rgb(0,227,174);">
+                                    <th style="width: 206px;">Date</th>
+                                    <th style="width: 206px;">Stock</th>
+                                    <th style="width: 206px;">Direction</th>
+                                    <th style="width: 206px;">Streak</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in Model.UserHistory)
+                                {
+                                    <tr style="color: white">
+                                        <td>@a.Date</td>
+                                        <td>@a.Stock</td>
+                                        <td>@a.Direction</td>
+                                        <td>@a.Streak</td>
+                                    </tr>
+                                }
+
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="col-md-2"></div>
+                    <div class="col-md-5 table-responsive" style="border:1px gray solid">
+                        <h3>Today History</h3>
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr style="color: rgb(0,227,174) ">
+                                    <th style="width: 206px;">Symbol</th>
+                                    <th style="width: 206px;">Up</th>
+                                    <th style="width: 206px;">Down</th>
+                                    <th style="width: 206px;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in Model.TodayHistory)
+                                {
+                                    <tr style="color: white">
+                                        <td>@a.Symbol</td>
+                                        <td>@a.UpCount</td>
+                                        <td>@a.DownCount</td>
+                                        <td>@a.Total</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </form>
+    </section>
+    <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/theme.js"></script>
+</body>

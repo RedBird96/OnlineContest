@@ -1,0 +1,242 @@
+﻿@model JudgementApp.Models.StreakContext
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "PickEmContest1";
+}
+
+<body style="background: ;color:  ">
+    @if (false)
+    {
+        <section class="contact-clean" id="mainContent">
+            <div class="row">
+                <div class="col-md-3">
+
+                </div>
+                <div class="col-md-6">
+                    <h1 style="color: white">This contest has been expired.</h1>
+                </div>
+                <div class="col-md-3">
+
+                </div>
+            </div>
+
+        </section>
+    }
+    else
+    {
+        <section class="contact-clean" id="mainContent">
+            <form style="text-align: center;">
+                <h2 id="contestName" class="text-center">@Model.ContestName</h2>
+                <img class="img-responsive" src="/assets/CompanyLogos/@Model.Logo" style="width:200px;" />
+                <input type="hidden" value="@Model.CompanyId" id="companyId" />
+                <input type="hidden" value="@Model.Id" id="id" />
+                <input type="hidden" value="@Model.ContestId" id="contestId" />
+                <input type="hidden" value="@Model.CompanyName" id="companyName" />
+
+                <div>
+                    <div style="text-align: left !important">
+                        <div class="mb-3">
+
+                            <input class="form-control" type="text" id="UserName"   placeholder="Name">
+
+                        </div>
+                        <div class="mb-3">
+                            <br />
+                            <input class="form-control" type="text" id="UserEmail"  placeholder="Email Address">
+                            <div class="mb-3"><br /></div>
+                        </div>
+                        <table style="width:100%;">
+
+                            <tr id="endDate">
+                                <td style="width:100%"><b>Select Stock For @DateTime.Now.Date.ToString("d")</b><br> </td>
+
+                            </tr>
+                            <tr id="endDate">
+                                <td>
+                                    <br />
+                                    <select id="stock" class="form-control">
+                                        @foreach (var a in Model.Stocks)
+                                        {
+                                            <option value="@a.Name">@a.Name</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr id="endDate">
+
+                                <td>
+                                    <br />
+                                    <label style="margin-left: 250px;" class="switch"><input type="checkbox" id="togBtn"><div class="slider round"><!--ADDED HTML --><span class="on">Up</span><span class="off">Down</span><!--END--></div></label>
+                                </td>
+                            </tr>
+
+                        </table>
+
+
+
+
+
+                    </div>
+
+
+                </div>
+
+                <button class="btn btn-primary" type="button" id="submit">Submit</button>
+                <button class="btn btn-primary" id="hitbtn">History</button>
+
+            </form>
+        </section>
+    }
+
+
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/theme.js"></script>
+    <script src="~/assets/js/StreakJudgement.js"></script>
+
+</body>
+<style>
+    p {
+        font-size: 16px;
+        line-height: 26px;
+        letter-spacing: 0.5px;
+        color: #484848;
+    }
+
+    /* Popup Open button */
+    .open-button {
+        color: #FFF;
+        background: #0066CC;
+        padding: 10px;
+        text-decoration: none;
+        border: 1px solid #0157ad;
+        border-radius: 3px;
+    }
+
+        .open-button:hover {
+            background: #01478e;
+        }
+
+    .popup {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
+
+    /* Popup inner div */
+    .popup-content {
+        width: 500px;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 40px;
+        margin-top: 20px;
+        box-shadow: 0px 2px 6px rgba(0,0,0,1);
+        border-radius: 3px;
+        background: #fff;
+        position: relative;
+    }
+
+    /* Popup close button */
+    .close-button {
+        width: 25px;
+        height: 25px;
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        border-radius: 20px;
+        background: rgba(0,0,0,0.8);
+        font-size: 20px;
+        text-align: center;
+        color: #fff;
+        text-decoration: none;
+    }
+
+        .close-button:hover {
+            background: rgba(0,0,0,1);
+        }
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 90px;
+        height: 34px;
+    }
+
+    .switch input {display:none;}
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ca2222;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: #2ab934;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(55px);
+        -ms-transform: translateX(55px);
+        transform: translateX(55px);
+    }
+
+    /*------ ADDED CSS ---------*/
+    .on
+    {
+        display: none;
+    }
+
+    .on, .off
+    {
+        color: white;
+        position: absolute;
+        transform: translate(-50%,-50%);
+        top: 50%;
+        left: 50%;
+        font-size: 10px;
+        font-family: Verdana, sans-serif;
+    }
+
+    input:checked+ .slider .on
+    {display: block;}
+
+    input:checked + .slider .off
+    {display: none;}
+
+    /*--------- END --------*/
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;}
+</style>
+

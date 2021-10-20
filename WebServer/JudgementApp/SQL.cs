@@ -12,8 +12,8 @@ namespace JudgementApp
 {
     public static class SQL
     {
-        private static SqlConnection con = new SqlConnection(@"Data Source=localhost;Initial Catalog=JudgementAppNew;Integrated Security=True;Pooling=False");// ReadCS().ToString()); 
-        //private static SqlConnection con = new SqlConnection(@"workstation id=OnlineContest.mssql.somee.com;packet size=4096;user id=Bruce9623_SQLLogin_1;pwd=slwgidap1;data source=OnlineContest.mssql.somee.com;persist security info=False;initial catalog=OnlineContest");// ReadCS().ToString()); 
+        //private static SqlConnection con = new SqlConnection(@"Data Source=localhost;Initial Catalog=JudgementAppNew;Integrated Security=True;Pooling=False");// ReadCS().ToString()); 
+        private static SqlConnection con = new SqlConnection(@"workstation id=OnlineContest.mssql.somee.com;packet size=4096;user id=Bruce9623_SQLLogin_1;pwd=slwgidap1;data source=OnlineContest.mssql.somee.com;persist security info=False;initial catalog=OnlineContest");// ReadCS().ToString()); 
         //private static SqlConnection con = new SqlConnection(@"workstation id=CompanyOnlineContest.mssql.somee.com;packet size=4096;user id=cjs9623_SQLLogin_1;pwd=9f8oably5f;data source=CompanyOnlineContest.mssql.somee.com;persist security info=False;initial catalog=CompanyOnlineContest");// ReadCS().ToString()); 
 
         public static bool IsServerConnected(string connectionString)
@@ -43,13 +43,16 @@ namespace JudgementApp
             String Result = string.Empty;
             try
             {
-                if (Con.State == ConnectionState.Open)
+                using (SqlConnection con = new SqlConnection(SQL.Con.ConnectionString))
                 {
-                    Con.Close();
+                    using (SqlCommand cmd = new SqlCommand(Query))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Connection = con;
+                        con.Open();
+                        Result = cmd.ExecuteScalar().ToString();
+                    }
                 }
-                Con.Open();
-                SqlCommand cmd = new SqlCommand(Query, Con);
-                Result = cmd.ExecuteScalar().ToString();
             }
             catch (SqlException ex)
             {
@@ -71,14 +74,18 @@ namespace JudgementApp
             bool queryStatus = false;
             try
             {
-                if (Con.State == ConnectionState.Open)
+
+                using (SqlConnection con = new SqlConnection(SQL.Con.ConnectionString))
                 {
-                    Con.Close();
+                    using (SqlCommand cmd = new SqlCommand(Query))
+                    {
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Connection = con;
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                        queryStatus = true;
+                    }
                 }
-                Con.Open();
-                SqlCommand cmd = new SqlCommand(Query, Con);
-                cmd.ExecuteNonQuery();
-                queryStatus = true;
             }
             catch (SqlException ex)
             {

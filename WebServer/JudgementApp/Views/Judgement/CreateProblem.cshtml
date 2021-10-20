@@ -10,7 +10,10 @@
     <div class="popup card shadow" style="background: @company.CardBackgroundColor; display:none;" id="myPopup" popup-name="popup-1">
         <div class="popup-content" style="width: 600px">
             <h4 class="modal-title" style="color: black">Add New Question</h4>
-
+            <input type="hidden" id="PKCompany" value="@ViewBag.companyId"/>
+            <input type="hidden" id="ProblemName" value="@ViewData["contestName"]"/>
+            <input type="hidden" id="CompanyName" value="@ViewBag.companyName"/>
+            <input type="hidden" id="contestId" value="@ViewBag.contestid"/>
             <table>
                 <tr>
                     <td style="color: black">Type</td>
@@ -35,43 +38,9 @@
 
     <section class="contact-clean" id="mainContent">
         <form style="text-align: center;">
-            <h2 class="text-center">Create Contest</h2>
+            <h2 class="text-center">@ViewData["contestName"]</h2>
             <div>
-                <div style="text-align:left !important">
-                    @{
-
-                        <table style="width:100%;">
-                            <tr>
-                                <td style="width:20%"><b>Company ID</b> </td>
-                                <td>
-                                    <input type="number" id="PKCompany" onchange="onChangeContest()" class="form-control" width="250px" value="@company.PKCompany" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><b>Company Name</b> </td>
-                                <td>
-                                    <label id="CompanyName">@company.CompanyName</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><b>Company Logo</b> </td>
-                                <td>
-                                    <img id="CompanyLogo" src="@company.Logo" style="width:100px;background-color:rgb(16,173,137);color:white;" />
-                                    <input type="file" id="file" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><b>Contest Name</b> </td>
-                                <td>
-                                    <br />
-
-                                    <input class="form-control" onchange="onChangeContest()" type="text" id="ProblemName" name="ProblemName" value="@company.ProblemName" required="required" placeholder="Name">
-                                    <br />
-                                </td>
-                            </tr>
-                        </table>
-                    }
-                </div>
+            <img class="img-responsive" src="/assets/CompanyLogos/@company.Logo" style="width:200px;" />
 
                 @{
                     foreach (JudgementApp.Models.Data item in Model)
@@ -330,7 +299,7 @@
         function onChangeContest() {
             debugger;
            // if ($("#ProblemName").val().length > 0 && $("#PKCompany").val()>0)
-            window.location = "/contest-admin/" + $("#PKCompany").val() + "/" + $("#ProblemName").val()
+            window.location = "/contest-admin/" + $("#contestId").val() + "/" + $("#ProblemName").val()
 
         }
         function Close() {
@@ -459,7 +428,7 @@
                 if (result.length > 0) {
                     IsPublish = this.result[0].IsPublish;
                     if (IsPublish == true) {
-                        var CompanyName = $("#CompanyName").html();
+                        var CompanyName = $("#CompanyName").val();
                         var ProblemName = $("#ProblemName").val();
                         var href = window.location.href.toLowerCase().split('contest-admin')[0] + "contest-" + CompanyName + "-" + ProblemName
                         $("#judgmentLink").attr("href", href);
@@ -517,8 +486,7 @@
             }
             var fd = new FormData();
             fd.append('data', JSON.stringify(input));
-            var file = document.getElementById("file").files[0];
-            fd.append('file', file);
+            
             return fd;
         }
         $(function () {
@@ -547,7 +515,7 @@
                         type: 'POST',
                         success: function (data) {
                             alert('Data published successfully');
-                            var CompanyName = $("#CompanyName").html();
+                            var CompanyName = $("#CompanyName").val();
                             var ProblemName = $("#ProblemName").val();
                             var href = window.location.href.toLowerCase().split('contest-admin')[0] + "contest-" + CompanyName + "-" + ProblemName
                             $("#judgmentLink").attr("href", href);

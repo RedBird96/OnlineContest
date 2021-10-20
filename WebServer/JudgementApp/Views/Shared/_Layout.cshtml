@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html style="background-color: rgb(24,31,42)">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
@@ -10,7 +10,45 @@
     <link rel="stylesheet" href="~/assets/css/x-dropdown.css">
     <script src="~/Scripts/jquery-3.3.1.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        select {
+            appearance: auto !important;
+            -webkit-appearance: auto !important;
+            -moz-appearance: auto !important;
+            background-image: none !important
+        }
 
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+  
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -60px;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+
+        .img-responsive {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 @RenderBody()
 </html>

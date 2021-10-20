@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PolygonUse
 {
-    class Interval
+    public class Interval
     {
         private DateTime timestamp { get; set; }
         private double Open { get; set; }
@@ -50,7 +50,7 @@ namespace PolygonUse
         }
     }
 
-    class Assessment
+    public class Assessment
     {
         private readonly string AccessToken = "K6CD972EJqZjLSQ6UNjRIYu78e8_tSLK";
         private string symbol { get; set; }
@@ -277,6 +277,102 @@ namespace PolygonUse
                 return symbol1;
 
             return symbol2;
+        }
+
+        public double AssessPickA(List<string> symbol, DateTime dtStart, DateTime dtEnd)
+        {
+            double rise_percent = 0;
+            double sum = 0;
+
+            foreach(string symbol_one in symbol)
+            { 
+                double close_st = 0, close_en = 0;
+                LoadHistoryBar(symbol_one, dtStart, 1, "day");
+                close_st = intervals.ElementAt(0).GetClose();
+                LoadHistoryBar(symbol_one, dtEnd, 1, "day");
+                close_en = intervals.ElementAt(0).GetClose();
+
+                rise_percent = (close_en - close_st) / close_st;
+                sum += rise_percent;
+            }
+            return sum;
+        }
+
+        public double AssessPickB(List<string> symbol, DateTime dtStart, DateTime dtEnd, List<double> symbol_amount)
+        {
+            double sum = 0;
+            int index = 0;
+            List<Tuple<string, double, double, double>> lstRemainSymbol = new List<Tuple<string, double, double, double>>();
+            List<Tuple<string, double, double, double>> lstLessSymbol = new List<Tuple<string, double, double, double>>();
+            for(index = 0; index < symbol.Count; index ++)
+            {
+                string symbol_one = symbol[index];
+                double open_st, close_en;
+                LoadHistoryBar(symbol_one, dtStart, 1, "day");
+                open_st = intervals[0].GetOpen();
+                LoadHistoryBar(symbol_one, dtEnd, 1, "day");
+                close_en = intervals[0].GetClose();
+                if (open_st >= symbol_amount[index])
+                {
+                    lstLessSymbol.Add(Tuple.Create(symbol_one, symbol_amount[index], open_st, close_en));
+                }
+                else
+                {
+                    lstRemainSymbol.Add(Tuple.Create(symbol_one, symbol_amount[index], open_st, close_en));
+                }
+            }
+
+            for(index = 0; index < lstLessSymbol.Count; index ++)
+            {
+                if (lstLessSymbol[index].Item2 == lstLessSymbol[index].Item3)
+                    continue;
+
+                double lack_money = lstLessSymbol[index].Item3 - lstLessSymbol[index].Item2;
+                
+                for(int indexRemain = 0; indexRemain < lstRemainSymbol.Count; indexRemain ++)
+                {
+                    double temp_money = lstRemainSymbol[indexRemain].Item2 - lstRemainSymbol[indexRemain].Item3;
+                    lack_money = lack_money - temp_money;
+                    if (lack_money <= 0)
+                    {
+                        lstRemainSymbol[indexRemain] = Tuple.Create(lstRemainSymbol[indexRemain].Item1, lstRemainSymbol[indexRemain].Item2 - lack_money, lstRemainSymbol[indexRemain].Item3, lstRemainSymbol[indexRemain].Item4);
+                        lstLessSymbol[index] = Tuple.Create(lstLessSymbol[index].Item1, lstLessSymbol[index].Item2 + lack_money, lstLessSymbol[index].Item3, lstLessSymbol[index].Item4);
+                        break;
+                    }
+
+                    lstRemainSymbol[indexRemain] = Tuple.Create(lstRemainSymbol[indexRemain].Item1, lstRemainSymbol[indexRemain].Item2 - temp_money, lstRemainSymbol[indexRemain].Item3, lstRemainSymbol[indexRemain].Item4);
+                    lstLessSymbol[index] = Tuple.Create(lstLessSymbol[index].Item1, lstLessSymbol[index].Item2 + temp_money, lstLessSymbol[index].Item3, lstLessSymbol[index].Item4);
+                }
+
+            }
+
+            for (index = 0; index < lstRemainSymbol.Count; index++)
+            {
+                sum = sum + (int)(lstRemainSymbol[index].Item2 / lstRemainSymbol[index].Item3) * (lstRemainSymbol[index].Item4 - lstRemainSymbol[index].Item3);
+            }
+
+            for (index = 0; index < lstLessSymbol.Count; index++)
+            {
+                sum = sum + (int)(lstLessSymbol[index].Item2 / lstLessSymbol[index].Item3) * (lstLessSymbol[index].Item4 - lstLessSymbol[index].Item3);
+            }
+
+            return sum;
+        }
+
+        public string AssessStreak(string symbol, DateTime date)
+        {
+
+            string res = "Down";
+            double open_st, close_en;
+
+            LoadHistoryBar(symbol, date, 1, "day");
+            open_st = intervals[0].GetOpen();
+            close_en = intervals[0].GetClose();
+
+            if (open_st <= close_en)
+                res = "Up";
+
+            return res;
         }
 
         public DateTime GetWeekendDate(DateTime inputDate)

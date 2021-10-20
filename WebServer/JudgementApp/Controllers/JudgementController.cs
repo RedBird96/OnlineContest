@@ -1,17 +1,12 @@
-﻿using JudgementApp.Common;
-using JudgementApp.Models;
+﻿using JudgementApp.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
 
 namespace JudgementApp.Controllers
 {
@@ -41,11 +36,12 @@ namespace JudgementApp.Controllers
         #region"Create problem"
         public List<Data> GetData(long FKCompany,string ProblemName)
         {
-            //if (ProblemName == "")
-            //{
-            //    ProblemName = "-1";
-            //}
-            DataTable dt = Main.GetDataTable("prc_GetProblem '"+FKCompany+"','"+ ProblemName + "'");
+            string tempv = ProblemName;
+            if (tempv == "")
+            {
+                tempv = "-1";
+            }
+            DataTable dt = Main.GetDataTable("prc_GetProblem '"+FKCompany+"','"+ tempv + "'");
             //To take the symbol from the website comment the below code 
             var model = new List<Data>();
             string[] symbolNames = { "SPY", "QQQ", "IWM", "TLT", "TSLA", "NFLX", "AAPL", "AMZN", "FB", "GOOGL", "NVDA" };
@@ -112,10 +108,27 @@ namespace JudgementApp.Controllers
         [Route("contest-admin/{id?}/{ProblemName?}")]
         public ActionResult CreateProblem(string id="0",string ProblemName="")
         {
-            ViewData["contestName"] = ProblemName;
 
-            long FKCompany = Convert.ToInt64(id);
-            return View(GetData(FKCompany, ProblemName));
+            var results = Main.GetDataTable("select *  from Contest where Id = " + Convert.ToInt64(id));
+
+            if (results.Rows.Count > 0)
+            {
+                
+                var row = results.Rows[0];
+                ViewData["contestName"] = (string)row["ContestName"];
+
+                ViewBag.companyId = (long) row["CompanyId"];
+                ViewBag.contestid = id;
+                
+                var companyInfo = GetCompanyInfo((long)row["CompanyId"], null);
+                ViewBag.companyName = companyInfo.CompanyName;
+                return View(GetData((long)row["CompanyId"], ProblemName));
+            }
+            else
+            {
+                return RedirectToAction("NotFound");
+            }
+            
 
             //uncomment this code to get the symbol from the site
             //var model = new List<Data>();
@@ -286,7 +299,7 @@ namespace JudgementApp.Controllers
             return View("~/Views/Judgement/ResponseSubmitted.cshtml");
         }
 
-       public ActionResult ResponseSubmitted()
+        public ActionResult ResponseSubmitted()
         {
           ViewData["contestName"] =  Request.QueryString["ProblemName"];
             ViewData["companyName"] = Request.QueryString["CompanyName"];
@@ -326,7 +339,7 @@ namespace JudgementApp.Controllers
             return View(leaderboard);
         }
 
-       public Company GetCompanyInfo(long PKCompany,string problemName)
+        public Company GetCompanyInfo(long PKCompany,string problemName)
         {
             Company company = new Company();
             DataTable dt = Main.GetDataTable("prc_GetCompany '"+PKCompany+"'");
@@ -404,5 +417,644 @@ namespace JudgementApp.Controllers
             long FKCompany = Convert.ToInt64(id);
             return Json(GetCompanyInfo( id, prob), JsonRequestBehavior.AllowGet); ;
         }
-    }
+
+
+        #region New Work
+
+        [HttpGet]
+        [Route("create-contest-admin")]
+        public ActionResult ContestAdmin()
+        {
+            return View(new Contest());
+        }
+
+        [HttpPost]
+        public ActionResult CreateContest(Contest contest)
+        {
+            int insertedVal = 0;
+            var results = Main.GetDataTable("select *  from Contest where CompanyId = "+contest.CompanyId+ " and ContestName='" + contest.ContestName + "'");
+            if (results.Rows.Count > 0)
+            {
+                return Json(new
+                {
+                    isError=true,
+                    message="Contest Name with same name already exist for selected company"
+                });
+            }
+            else
+            {
+                var query = @"
+                        Insert Into Contest (companyId,CompanayName,Logo,ContestName,CreatedDate,ContestType,IsPublished)
+                        Values("+contest.CompanyId+ ",'" + contest.ContestName + "','" + contest.LogoPath + "','" + contest.ContestName + "',getdate(),"+contest.ContestType+ ",0);SELECT SCOPE_IDENTITY()";
+                var val =SQL.ScalarQuery(query);
+                insertedVal = int.Parse(val);
+
+                var updateLogoQuery = @" Update Company
+                                         set logo = '" + contest.LogoPath + @"'
+                                            where id = "+contest.CompanyId;
+
+                SQL.NonScalarQuery(updateLogoQuery);
+            }
+            return Json(new
+            {
+                isError = false,
+                data = contest.ContestType,
+                id = insertedVal
+            });
+        }
+
+
+        [HttpPost]
+        public ActionResult UploadFile()
+        {
+            // Checking no of files injected in Request object  
+            if (Request.Files.Count > 0)
+            {
+                try
+                {
+                    //  Get all files from Request object  
+                    string fname=string.Empty;
+                    string path = string.Empty;
+                    HttpFileCollectionBase files = Request.Files;
+                    for (int i = 0; i < files.Count; i++)
+                    {
+                        //string path = AppDomain.CurrentDomain.BaseDirectory + "Uploads/";  
+                        //string filename = Path.GetFileName(Request.Files[i].FileName);  
+
+                        HttpPostedFileBase file = files[i];
+                        
+
+                        // Checking for Internet Explorer  
+                        if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
+                        {
+                            string[] testfiles = file.FileName.Split(new char[] { '\\' });
+                            fname = testfiles[testfiles.Length - 1];
+                        }
+                        else
+                        {
+                            fname = file.FileName;
+                        }
+
+                        // Get the complete folder path and store the file inside it.  
+                        path = $"{Guid.NewGuid()}-{fname}";
+                        fname = Path.Combine(Server.MapPath("~/assets/CompanyLogos"), path);
+                        file.SaveAs(fname);
+                    }
+                    // Returns message that successfully uploaded  
+                    return Json(path);
+                }
+                catch (Exception ex)
+                {
+                    return Json("Error occurred. Error details: " + ex.Message);
+                }
+            }
+            else
+            {
+                return Json("No files selected.");
+            }
+        }
+        [Route("contest-pickem-{companyName}-{contestName}/{id}")]
+        public ActionResult PickEmContest(int id)
+        {
+            var pickEmContest = new PickEmContest();
+            var results = Main.GetDataTable("select *  from Contest where Id = " + id);
+            if (results.Rows.Count > 0)
+            {
+                var row = results.Rows[0];
+                var isPublished = (bool)row["IsPublished"];
+                pickEmContest.Logo = (string)row["Logo"];
+                pickEmContest.CompanyId = (long)row["CompanyId"];
+                pickEmContest.ContestName = (string)row["ContestName"];
+                pickEmContest.ContestId = id;
+                var companyInfo = GetCompanyInfo(pickEmContest.CompanyId, null);
+                pickEmContest.CompanyName = companyInfo.CompanyName;
+                if (isPublished)
+                {
+                    var pickEmContestResult = Main.GetDataTable("select * from PickEmQuestions where contestId  = " + id);
+                    var dr = pickEmContestResult.Rows[0];
+                    pickEmContest.Id = (long)dr["Id"];
+                    pickEmContest.StockNumber = (int)dr["StockNumber"];
+                    pickEmContest.ExpirationType = (int)dr["ExpirationType"];
+                    pickEmContest.StyleType = (int)dr["Style"];
+                    pickEmContest.ExpirationDate = (DateTime)dr["ContestExpiration"];
+                    pickEmContest.DollarsPerPoint = dr["TotalDollars"]==DBNull.Value?0: (int)dr["TotalDollars"];
+                    pickEmContest.MaxDollars = dr["MaxDollars"] == DBNull.Value ? 0 : (int)dr["MaxDollars"];
+                    pickEmContest.IsPublished = true;
+                }
+            }
+            else
+            {
+                return RedirectToAction("NotFound");
+            }
+
+            var request = HttpContext.Request;
+            var appUrl = HttpRuntime.AppDomainAppVirtualPath;
+
+            if (appUrl != "/")
+                appUrl = "/" + appUrl;
+
+            ViewBag.url = string.Format("{0}://{1}{2}", request.Url.Scheme, request.Url.Authority, appUrl);
+
+            return View(pickEmContest);
+        }
+
+        [HttpPost]
+        public ActionResult CreateAndPublishPickEmQuestion(PickEmContest model)
+        {
+           
+            DateTime time = DateTime.Now.AddDays(1);
+            if (model.ExpirationType == 2)
+            {
+                time =time.AddDays(7);
+            }
+            else if(model.ExpirationType==3)
+            {
+                time = time.AddDays(30);
+            }
+            else if (model.ExpirationType == 4)
+            {
+                time = model.ExpirationDate;
+            }
+            string format = "yyyy-MM-dd HH:mm:ss";
+            var finalDate = time.ToString(format);
+            if (model.Id > 0)
+            {
+               
+                var query = @"
+                        Update PickEmQuestions
+                        set StockNumber ="+model.StockNumber+@",ExpirationType="+ model.ExpirationType + @",ContestExpiration='"+finalDate+ @"',Style=" + model.StyleType + @", TotalDollars =" + model.DollarsPerPoint + @",MaxDollars=" + model.MaxDollars + @"
+                         where Id =" + model.Id;
+                SQL.NonScalarQuery(query);
+            }
+            else
+            {
+               
+                var query = @"
+                         Insert Into PickEmQuestions(CompanyId,ContestId,StockNumber,ExpirationType,ContestExpiration,Style,TotalDollars,MaxDollars,CreatedDate)
+                         Values("+model.CompanyId+ "," + model.ContestId + "," + model.StockNumber + "," + model.ExpirationType + ",'"+ finalDate + "'," + model.StyleType + "," + model.DollarsPerPoint + "," + model.MaxDollars + ",getdate());SELECT SCOPE_IDENTITY()";
+                var val = SQL.ScalarQuery(query);
+               
+                var updateQuery = @"Update Contest set IsPublished = 1 where Id =" + model.ContestId;
+                SQL.NonScalarQuery(updateQuery);
+            }
+
+           
+           
+            return Json(new
+            {
+                isError=false,
+               
+            });
+        }
+
+        public ActionResult PickEmJudgment(long id)
+        {
+            var pickEmContest = new PickEmContest();
+            var pickEmContestResult = Main.GetDataTable("select * from PickEmQuestions where id  = " + id);
+
+            if (pickEmContestResult.Rows.Count > 0)
+            {
+                var dr = pickEmContestResult.Rows[0];
+                pickEmContest.Id = (long)dr["Id"];
+                pickEmContest.StockNumber = (int)dr["StockNumber"];
+                pickEmContest.ExpirationType = (int)dr["ExpirationType"];
+                pickEmContest.StyleType = (int)dr["Style"];
+                pickEmContest.ExpirationDate = (DateTime)dr["ContestExpiration"];
+                pickEmContest.DollarsPerPoint = dr["TotalDollars"] == DBNull.Value ? 0 : (int)dr["TotalDollars"];
+                pickEmContest.MaxDollars = dr["MaxDollars"] == DBNull.Value ? 0 : (int)dr["MaxDollars"];
+                pickEmContest.IsPublished = true;
+
+                var contestId = (long) dr["ContestId"];
+                var results = Main.GetDataTable("select *  from Contest where Id = " + contestId);
+                var row = results.Rows[0];
+                pickEmContest.Logo = (string)row["Logo"];
+                pickEmContest.CompanyId = (long)row["CompanyId"];
+                pickEmContest.ContestName = (string)row["ContestName"];
+                pickEmContest.ContestId = contestId;
+                var companyInfo = GetCompanyInfo(pickEmContest.CompanyId, null);
+                pickEmContest.CompanyName = companyInfo.CompanyName;
+                pickEmContest.Stocks = GetStocks();
+
+                ViewBag.isExpired = DateTime.Now>pickEmContest.ExpirationDate;
+            }
+            else
+            {
+                return RedirectToAction("NotFound");
+            }
+            
+            return View(pickEmContest);
+        }
+
+        [HttpPost]
+        public ActionResult SavePickEmJudgment(PickEmJudgment model)
+        {
+            var pickEmContestResult = Main.GetDataTable("select * from PickEmQuestions where contestId  = " + model.ContestId);
+            var re = Main.GetDataTable("select * from PickEmJudgment where iscalculated=0 and email = '"+model.Email+"' and contestId ="+model.ContestId);
+           
+            var dr = pickEmContestResult.Rows[0];
+            var expirayDate = (DateTime)dr["ContestExpiration"];
+            if (DateTime.Now > expirayDate)
+            {
+                return Json(new
+                {
+                    message = "Contest has been expired",
+                    isError = true,
+
+                });
+            }
+
+            if (re.Rows.Count > 0)
+            {
+                return Json(new
+                {
+                    message = "Your results are not calculated yet",
+                    isError = true,
+
+                });
+            }
+            else
+            {
+                var query = @"
+                         Insert into PickEmJudgment(Username,Email,CompanyId,ContestId,QuestionId,Stocks,Amount,CreatedDate,iscalculated)
+                         values('" + model.Username + "','" + model.Email + "'," + model.CompanyId + "," + model.ContestId + "," + model.QuestionId + ",'" + model.Stocks + "','" + model.Amounts + "',getdate(),0)";
+                SQL.NonScalarQuery(query);
+
+                var query1 = @"                     
+Insert into PickEmResults (contestId,Ranking,Username,Score,date)
+Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
+                SQL.NonScalarQuery(query1);
+
+                return Json(new
+                {
+                    isError = false,
+
+                });
+            }
+
+          
+
+
+           
+        }
+
+        public ActionResult PickEmLeadBoard(string id)
+        {
+            var data = id.Split('-');
+            var results = Main.GetDataTable("Select * from PickEmResults where ContestId ="+ data[0]);
+            var response = new PickemResults();
+            ViewBag.questionId = data[1];
+            var pickEmContestResult = Main.GetDataTable("select * from PickEmQuestions where id  = " + data[1]);
+            var dr = pickEmContestResult.Rows[0];
+
+            var contestId = (long)dr["ContestId"];
+            var results1 = Main.GetDataTable("select *  from Contest where Id = " + contestId);
+            var row = results1.Rows[0];
+           long companyId = (long)row["CompanyId"];
+            ViewBag.ContestName = (string)row["ContestName"];
+           
+            var companyInfo = GetCompanyInfo(companyId, null);
+            ViewBag.CompanyName = companyInfo.CompanyName;
+            ViewBag.Logo = companyInfo.Logo;
+            foreach (DataRow resultsRow in results.Rows)
+            {
+                response.List.Add(new PickEmResult()
+                {
+                    Id = (long)resultsRow["Id"],
+                    Contestid = (int)resultsRow["Contestid"],
+                    Date = (DateTime)resultsRow["Date"],
+                    Ranking = (int)resultsRow["Ranking"],
+                    Score =(int) resultsRow["Score"],
+                    Username = (string)resultsRow["Username"],
+                });
+            }
+
+            response.List = response.List.OrderBy(o => o.Ranking).ToList();
+            return View(response);
+        }
+
+        public ActionResult CreateStreakContest(int contestId)
+        {
+            return View();
+        }
+
+        public ActionResult StreakContest(long id)
+        {
+            var streakContest = new StreakContext();
+            var results = Main.GetDataTable("select *  from Contest where Id = " + id);
+            if (results.Rows.Count > 0)
+            {
+                var row = results.Rows[0];
+                var isPublished = (bool)row["IsPublished"];
+                streakContest.Logo = (string)row["Logo"];
+                streakContest.CompanyId = (long)row["CompanyId"];
+                streakContest.ContestName = (string)row["ContestName"];
+                streakContest.ContestId = id;
+                var companyInfo = GetCompanyInfo(streakContest.CompanyId, null);
+                streakContest.CompanyName = companyInfo.CompanyName;
+                if (isPublished)
+                {
+                    var pickEmContestResult = Main.GetDataTable("select * from StreakQuestions where contestId  = " + id);
+                    var dr = pickEmContestResult.Rows[0];
+                    streakContest.Id = (long)dr["Id"];
+                    streakContest.EndDate =  dr["EndDate"]==DBNull.Value?null: (DateTime?)dr["EndDate"];
+                    streakContest.SelectedStocks = (string) dr["SelectedStocks"];
+                    streakContest.IsPublished = true;
+                }
+            }
+            else
+            {
+                return RedirectToAction("NotFound");
+            }
+
+            var request = HttpContext.Request;
+            var appUrl = HttpRuntime.AppDomainAppVirtualPath;
+
+            if (appUrl != "/")
+                appUrl = "/" + appUrl;
+
+            ViewBag.url = string.Format("{0}://{1}{2}", request.Url.Scheme, request.Url.Authority, appUrl);
+
+            return View(streakContest);
+        }
+
+        [HttpPost]
+        public ActionResult CreateAndPublishStreakQuestion(StreakContext model)
+        {
+
+            
+            string format = "yyyy-MM-dd HH:mm:ss";
+            var finalDate = model.EndDate!=null? model.EndDate.Value.ToString(format):null;
+            if (model.Id > 0)
+            {
+
+                var query = @"
+                         Update StreakQuestions
+                        set enddate = '"+finalDate+@"', selectedStocks = '"+model.SelectedStocks+@"'
+                        where id ="+model.Id;
+                SQL.NonScalarQuery(query);
+            }
+            else
+            {
+
+                var query =string.IsNullOrEmpty(finalDate)?@"Insert Into StreakQuestions(companyId, ContestId, EndDate, SelectedStocks, CreatedDate)
+                Values("+model.CompanyId+ ", " + model.ContestId + ", null, '"+model.SelectedStocks+"', getdate()); SELECT SCOPE_IDENTITY()": @"
+                    Insert Into StreakQuestions(companyId,ContestId,EndDate,SelectedStocks,CreatedDate)
+                    Values("+model.CompanyId+ "," + model.ContestId + ",'" + finalDate + "','"+model.SelectedStocks+"',getdate());SELECT SCOPE_IDENTITY()";
+                var val = SQL.ScalarQuery(query);
+
+                var updateQuery = @"Update Contest set IsPublished = 1 where Id =" + model.ContestId;
+                SQL.NonScalarQuery(updateQuery);
+            }
+
+
+
+            return Json(new
+            {
+                isError = false,
+
+            });
+        }
+
+        public ActionResult StreakJudgment(long id)
+        {
+            var streakContext = new StreakContext();
+            var streakContextResult = Main.GetDataTable("select * from StreakQuestions where id  = " + id);
+
+            if (streakContextResult.Rows.Count > 0)
+            {
+                var dr = streakContextResult.Rows[0];
+                streakContext.Id = (long)dr["Id"];
+                streakContext.EndDate = dr["EndDate"]==DBNull.Value?null: (DateTime?)dr["EndDate"];
+                streakContext.SelectedStocks = (string)dr["SelectedStocks"];
+                streakContext.IsPublished = true;
+
+                var contestId = (long)dr["ContestId"];
+                var results = Main.GetDataTable("select *  from Contest where Id = " + contestId);
+                var row = results.Rows[0];
+                streakContext.Logo = (string)row["Logo"];
+                streakContext.CompanyId = (long)row["CompanyId"];
+                streakContext.ContestName = (string)row["ContestName"];
+                streakContext.ContestId = contestId;
+                var companyInfo = GetCompanyInfo(streakContext.CompanyId, null);
+                streakContext.CompanyName = companyInfo.CompanyName;
+                var stocks = GetStocks();
+                ViewBag.isExpired = streakContext.EndDate !=null && DateTime.Now > streakContext.EndDate;
+                var data = streakContext.SelectedStocks.Split(',');
+                if (data[0] != "all")
+                {
+                    foreach (var s in data)
+                    {
+                        streakContext.Stocks.AddRange(stocks.Where(o => o.Type.Trim().ToLower() == s.Trim().ToLower()).ToList());
+                    }
+                }
+                else
+                {
+                    streakContext.Stocks = stocks;
+                }
+            }
+            else
+            {
+                return RedirectToAction("NotFound");
+            }
+
+            return View(streakContext);
+        }
+        public ActionResult StreakLeadBoard()
+        {
+            return View();
+        }
+
+        private List<Stock> GetStocks()
+        {
+            var dt = Main.GetDataTable("select * from Stock");
+            var stocks = new List<Stock>();
+            
+            foreach (DataRow row in dt.Rows)
+            {
+                stocks.Add(new Stock()
+                {
+                    Name = (string)row["Name"],
+                    Type = (string)row["Type"],
+                });
+            }
+
+            return stocks;
+        }
+
+        [HttpPost]
+        public ActionResult SaveStreakJudgment(StreakJudgment model)
+        {
+            var streakContextResult = Main.GetDataTable("select * from StreakQuestions where contestId  = " + model.ContestId);
+            var dr = streakContextResult.Rows[0];
+            var enddate = dr["EndDate"] == DBNull.Value ? null : (DateTime?)dr["EndDate"];
+            if (enddate != null && DateTime.Now > enddate)
+            {
+                return Json(new
+                {
+                    message = "Contest has been expired",
+                    isError = true,
+
+                });
+            }
+
+
+            var timeUtc = DateTime.UtcNow;
+            TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            DateTime easternTime = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, easternZone);
+
+
+            //easternTime< Convert.ToDateTime("09:00")
+            if (easternTime < Convert.ToDateTime("09:00"))
+            {
+                var re = Main.GetDataTable("select * from StreakJudgement where iscalculated=0 and email = '" + model.Email + "' and contestId =" + model.ContestId);
+
+                if (re.Rows.Count > 0)
+                {
+                    return Json(new
+                    {
+                        message = "Your results are not calculated yet",
+                        isError = true,
+
+                    });
+                }
+                else
+                {
+                    var query = @"
+                           Insert Into StreakJudgement(username,email,stock,value,companyId,Contestid,QuestionId,CreatedDate,streak,iscalculated)
+                        values('" + model.Username + "','" + model.Email + "','" + model.Stock + "','" + model.Value + "'," + model.ContestId + "," + model.ContestId + "," + model.QuestionId + ",getdate(),1,0)";
+                    SQL.NonScalarQuery(query);
+
+                    return Json(new
+                    {
+                        isError = false,
+
+                    });
+                }
+
+                
+            }
+            else
+            {
+                return Json(new
+                {
+                    isError = true,
+                    message = "Result cannot be submitted after 9:00 AM"
+
+                });
+            }
+            
+
+
+            
+        }
+
+
+
+        public ActionResult StreakHistory(int id,string email)
+        {
+           
+            ViewBag.questionId = id;
+            var pickEmContestResult = Main.GetDataTable("select * from StreakQuestions where id  = " + id);
+            var dr = pickEmContestResult.Rows[0];
+
+            var contestId = (long)dr["ContestId"];
+            var results1 = Main.GetDataTable("select *  from Contest where Id = " + contestId);
+            var row1 = results1.Rows[0];
+            long companyId = (long)row1["CompanyId"];
+            ViewBag.ContestName = (string)row1["ContestName"];
+
+            var companyInfo = GetCompanyInfo(companyId, null);
+            ViewBag.CompanyName = companyInfo.CompanyName;
+            ViewBag.Logo = companyInfo.Logo;
+
+            ViewBag.email =email;
+
+            StreakHistory result = new StreakHistory();
+
+
+            var dt = Main.GetDataTable(@"select createdDate,stock,value,streak
+                                                     from StreakJudgement
+                                                        where username = '"+ email + "' and contestId="+contestId);
+            var stocks = new List<UserHistory>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                stocks.Add(new UserHistory()
+                {
+                    Date = (DateTime)row["createdDate"],
+                    Direction = (string)row["value"],
+                    Stock = (string)row["Stock"],
+                    Streak = (int)row["Streak"]
+                });
+
+                
+            }
+
+            result.UserHistory = stocks;
+
+            var dt1 = Main.GetDataTable(@"Select t.stock,
+  (select count(1) from StreakJudgement where stock = t.stock and value = 'Up') as UpCount,
+  (select count(1) from StreakJudgement where stock = t.stock and value = 'Down') as DownCount
+  from
+  (select stock
+  from StreakJudgement
+  where CONVERT(date, createdDate) = CONVERT(date, GETDATE()) and  contestId=" + contestId + " group by stock) as t");
+            var today = new List<TodayHistory>();
+
+            foreach (DataRow row in dt1.Rows)
+            {
+                today.Add(new TodayHistory()
+                {
+                    Symbol = (string)row["stock"],
+                    DownCount = (int)row["DownCount"],
+                    UpCount = (int)row["UpCount"],
+                    Total = (int)row["DownCount"] + (int)row["UpCount"]
+                });
+            }
+
+            result.TodayHistory = today;
+            return View(result);
+        }
+
+
+        public ActionResult ContentList(long id)
+        {
+            var companyInfo = GetCompanyInfo(id, null);
+            ViewBag.CompanyName = companyInfo.CompanyName;
+            var response = new ContestList();
+            var result = Main.GetDataTable("select * from Contest where companyid="+id);
+
+            if (result.Rows.Count > 0)
+            {
+                foreach (DataRow row in result.Rows)
+                {
+                    var Id = (long) row["Id"];
+                    var companyName = (string) row["CompanayName"];
+                    var contestName = (string) row["ContestName"];
+                    var type = (int) row["ContestType"];
+                    var date = (DateTime) row["CreatedDate"];
+                   
+                    response.List.Add(new ContestInfo()
+                    {
+                        Name = contestName,
+                        Type = type==1?"Custom":type==2?"PickEm":"Streak",
+                        CreatedDate = date,
+                        Url = type == 1 ? 
+                            $"/contest-admin/{Id}/{contestName}" :
+                            type == 2 ?
+                                $"/contest-pickem-{companyName}-{contestName}/{Id}"
+                                : $"/contest-streak-{companyName}-{contestName}/{Id}"
+                    });
+                  
+                       
+                    
+
+                }
+            }
+
+            return View(response);
+        }
+
+        #endregion
+        }
 }
