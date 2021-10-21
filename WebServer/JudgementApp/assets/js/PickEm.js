@@ -96,12 +96,16 @@
                 } else if (style == 2 && !totalDollars) {
                     alert("Please select total dollars");
                     return;
-                } else if (style == 2 && !maxDollars) {
-                    alert("Please select max dollars");
+                } else if (style == 2 && totalDollars==0) {
+                    alert("Total dollars should be greater than 0");
                     return;
                 } else if (style == 2 && parseInt(maxDollars) > parseInt(totalDollars)) {
                     alert("Max dollars should be less than total dollars");
                     return;
+                }
+
+                if (!maxDollars) {
+                    maxDollars = 0;
                 }
 
                 var question = new Object();
@@ -115,26 +119,38 @@
                 question.MaxDollars = maxDollars;
                 question.StyleType = style;
 
-                $.ajax({
-                    type: "POST",
-                    url: "/Judgement/CreateAndPublishPickEmQuestion",
-                    data: JSON.stringify(question),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.isError) {
-                            alert(response.message);
-                        } else {
-                            location.reload();
+
+                var r = false;
+                if ($("#publish1").val()) {
+                    r = confirm("This contest name already exists. If you publish again it will delete the existing contest. Press OK to continue. Change the name of the contest to create a separate contest.");
+                } else {
+                    r = true;
+                }
+                
+                if (r == true) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Judgement/CreateAndPublishPickEmQuestion",
+                        data: JSON.stringify(question),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.isError) {
+                                alert(response.message);
+                            } else {
+                                location.reload();
+                            }
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
                         }
-                    },
-                    failure: function (response) {
-                        alert(response.responseText);
-                    },
-                    error: function (response) {
-                        alert(response.responseText);
-                    }
-                });
+                    });
+                } 
+
+                
             });
 
     };

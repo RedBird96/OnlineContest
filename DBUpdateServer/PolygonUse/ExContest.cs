@@ -31,6 +31,13 @@ namespace PolygonUse
                     string strUser = row["Username"].ToString();
                     nContestId = int.Parse(row["ContestId"].ToString());
 
+                    DataTable questionTable = SQL.GetDataTable("SELECT ContestExpiration FROM PickEmQuestions WHERE ContestId = nContestId");
+                    string expiration_date = questionTable.Rows[0]["ContestExpiration"].ToString();
+                    DateTime expire_DT = Convert.ToDateTime(expiration_date);
+
+                    if (date < expire_DT)
+                        continue;
+
                     DateTime submit_DT = Convert.ToDateTime(submit_datetime);
                     string[] strStocksArr = strStocks.Split(',');
                     if (strAmounts.Length == 0)
@@ -46,7 +53,7 @@ namespace PolygonUse
                     }
                     SQL.NonScalarQuery("UPDATE PickEmJudgment SET IsCalculated = 1 WHERE Id = " + strId);
                 }
-                if (nContestId != 0)
+                if (dicUserScore.Count != 0)
                 {
                     foreach (var oneUserScoer in dicUserScore)
                     {

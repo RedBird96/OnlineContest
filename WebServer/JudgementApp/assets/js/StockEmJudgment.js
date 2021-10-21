@@ -4,7 +4,8 @@
         Judgment.bindPageEvents();
     };
 
-    var bindPageEvents = function() {
+    var bindPageEvents = function () {
+       
         $("#submit").on("click",
             function() {
                 var username = $("#UserName").val();
@@ -32,7 +33,7 @@
                         if (!amountVal) {
                             alert("Please enter the all amounts.");
                             return;
-                        } else if (amountVal > parseInt($("#totalValue").val())) {
+                        } else if (amountVal > parseInt($("#totalValue").val()) && parseInt($("#totalValue").val()!=0)) {
                             alert("Amount value should be less than " + $("#totalValue").val());
                             return;
                         }
@@ -54,7 +55,7 @@
 
                 var findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
                 if (findDuplicates(stock).length > 0) {
-                    alert("Please select different values for each stocks");
+                    alert("Please select different stocks");
                     return;
                 }
 

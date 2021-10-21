@@ -30,6 +30,8 @@ namespace PolygonUse
 
                     DateTime submit_DT = Convert.ToDateTime(submit_datetime);
 
+                    if (submit_DT.Hour > 16)
+                        submit_DT = submit_DT.AddDays(1);
 
                     strAssess = assessment.AssessStreak(strSymbol, submit_DT);
 

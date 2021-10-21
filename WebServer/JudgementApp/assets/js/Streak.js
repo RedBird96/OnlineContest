@@ -7,6 +7,8 @@
 
     var bindPageEvents = function () {
 
+        
+
         $('#btnCopy').click(function () {
 
             $("#linkINput").css({ "display": "block" });
@@ -62,7 +64,7 @@
 
         $("#publish").on("click",
             function () {
-                debugger;
+                
                 var id = $("#id").val();
                 var companyId = $("#companyId").val();
                 var contestId = $("#contestId").val();
@@ -90,7 +92,7 @@
                 
 
                 if (!selectedStocks.length > 0) {
-                    alert("Please select at least one stock type.");
+                    alert("Please select at least one symbol type.");
                     return;
                 }
                 
@@ -101,26 +103,35 @@
                 question.EndDate = date;
                 question.SelectedStocks = selectedStocks.toString();
 
-                $.ajax({
-                    type: "POST",
-                    url: "/Judgement/CreateAndPublishStreakQuestion",
-                    data: JSON.stringify(question),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.isError) {
-                            alert(response.message);
-                        } else {
-                            location.reload();
+                var r = false;
+                if ($("#publish1").val()) {
+                    r = confirm("This contest name already exists. If you publish again it will delete the existing contest. Press OK to continue. Change the name of the contest to create a separate contest.");
+                } else {
+                    r = true;
+                }
+                if (r == true) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Judgement/CreateAndPublishStreakQuestion",
+                        data: JSON.stringify(question),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.isError) {
+                                alert(response.message);
+                            } else {
+                                location.reload();
+                            }
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
                         }
-                    },
-                    failure: function (response) {
-                        alert(response.responseText);
-                    },
-                    error: function (response) {
-                        alert(response.responseText);
-                    }
-                });
+                    });
+                }
+                
             });
 
         $("#all").change(function () {
@@ -150,6 +161,7 @@
                 $("#crypto").prop('disabled', false);
             }
         });
+
 
     };
 
