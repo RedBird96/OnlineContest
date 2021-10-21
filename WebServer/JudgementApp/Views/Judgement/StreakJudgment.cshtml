@@ -27,6 +27,25 @@
         <section class="contact-clean" id="mainContent">
             <form style="text-align: center;">
                 <h2 id="contestName" class="text-center">@Model.ContestName</h2>
+
+                <div class="row">
+                    <div style="text-align:center">
+                        <h10 style="color:white">Contest Rules</h10>
+                    </div>
+                    <div style="text-align:left">
+                        <t style="color: white">
+                            Each day make a valid selection before 9:00 AM ET. Please select a symbol and a direction (up or down). <br>
+                            If the symbol finishes the day in the direction you have selected (based on the daily open to close change)<br>
+                            on the day of your selection, then your streak will be incremented. If no selection is made, then<br>
+                            the current streak will remain intact without change for the next eligible day. An incorrect submission will reset the streak to zero.<br>
+                        </t>
+                    </div>
+
+                </div>
+                <div class="row">
+
+                </div>
+
                 <img class="img-responsive" src="/assets/CompanyLogos/@Model.Logo" style="width:200px;" />
                 <input type="hidden" value="@Model.CompanyId" id="companyId" />
                 <input type="hidden" value="@Model.Id" id="id" />
@@ -35,20 +54,27 @@
 
                 <div>
                     <div style="text-align: left !important">
+                        <div class="mb-3" style="text-align: center">
+                            <br />
+                            <span style="position: relative;bottom: 6px;">Current Streak : &nbsp;&nbsp;&nbsp;</span> <span style="font-size: 40px;font-weight: bold;color: rgb(0, 227,174) !important;" id="streakV">0</span>
+                            <div class="mb-3"><br /></div>
+                        </div>
                         <div class="mb-3">
 
-                            <input class="form-control" type="text" id="UserName"   placeholder="Name">
+                            <input class="form-control" type="text" id="UserName" placeholder="Name">
 
                         </div>
                         <div class="mb-3">
                             <br />
-                            <input class="form-control" type="text" id="UserEmail"  placeholder="Email Address">
+                            <input class="form-control" type="text" id="UserEmail" placeholder="Email Address">
                             <div class="mb-3"><br /></div>
                         </div>
-                        <table style="width:100%;">
 
+                        <table style="width: 100%;">
                             <tr id="endDate">
-                                <td style="width:100%"><b>Select Stock For @DateTime.Now.Date.ToString("d")</b><br> </td>
+                            </tr>
+                            <tr id="endDate">
+                                <td style="width: 100%; text-align: center"><b>Select Symbol For @ViewBag.NextDay.ToString("d")</b><br> </td>
 
                             </tr>
                             <tr id="endDate">
@@ -67,7 +93,10 @@
 
                                 <td>
                                     <br />
-                                    <label style="margin-left: 250px;" class="switch"><input type="checkbox" id="togBtn"><div class="slider round"><!--ADDED HTML --><span class="on">Up</span><span class="off">Down</span><!--END--></div></label>
+                                    <label style="margin-left: 250px;" class="switch">
+                                        <input type="checkbox" id="togBtn">
+                                        <div class="slider round"><!--ADDED HTML --><span class="on">Up</span><span class="off">Down</span><!--END--></div>
+                                    </label>
                                 </td>
                             </tr>
 
@@ -98,6 +127,12 @@
 <style>
     p {
         font-size: 16px;
+        line-height: 26px;
+        letter-spacing: 0.5px;
+        color: #484848;
+    }
+    t {
+        font-size: 12px;
         line-height: 26px;
         letter-spacing: 0.5px;
         color: #484848;

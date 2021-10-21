@@ -5,7 +5,43 @@
     };
 
     var bindPageEvents = function () {
+        var typingTimer;                //timer identifier
+        var doneTypingInterval = 1000;  //time in ms, 5 second for example
+        var $input = $('#UserEmail');
 
+        //on keyup, start the countdown
+        $input.on('keyup', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        });
+
+        //on keydown, clear the countdown 
+        $input.on('keydown', function () {
+            clearTimeout(typingTimer);
+        });
+
+        //user is "finished typing," do something
+        function doneTyping() {
+            $.ajax({
+                type: "GET",
+                url: "/Judgement/GetUserStreak",
+                data: {
+                    email: $("#UserEmail").val(),
+                    id: $("#contestId").val()
+                },
+                dataType: "json",
+                success: function (response) {
+                    $("#streakV").text(response);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+       
         $("#hitbtn").on("click",
             function () {
                 var email = $("#UserName").val();

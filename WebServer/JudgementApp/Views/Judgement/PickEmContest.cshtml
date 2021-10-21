@@ -21,7 +21,7 @@
                         <tr>
                             <td style="width: 20%"  data-toggle="tooltip" title="Number of Stocks User Will Select">
                                 <b>
-                                    Stock Number
+                                    Number of Stocks User Will Select
                                 </b> </td>
                             <td>
                                 <input type="number" id="stockNumber" onchange="PickEm.StockChange()" class="form-control" width="250px" value="@Model.StockNumber"/>
@@ -50,13 +50,17 @@
                             </td>
                         </tr>
                         <tr>
-                            <td data-toggle="tooltip" title="Contest Style"><b>Style</b> </td>
                             <td>
-                                <br />
+                                <div class="row">
+                                    <div class="col"><b>Contest Style</b></div>
+                                    <div class="col" style="text-align:center; padding-top:10px;" data-toggle="tooltip" title="Percentage Point contests will simply sum the percentage return of the user’s selected stocks over the contest duration. Returns will be calculated from the first daily opening price after user submission. Users will be ranked based on the sum of all percentage returns assuming equal weight. &#013;&#013;Dollar contests will sum the total dollar return based on the dollars allocated to each stock by the user. Position size will be determined by the allocated dollar amount and the first daily opening price after user submission. Contest administrator can set a maximum dollar per stock amount by setting the Max Dollars Per Position below; the default Max Dollars Per Position is unlimited. This means the user could put ‘Total Dollars’ into one stock. If this is undesirable, please set a Max Dollars Per Position.">(?)</div>
+                                </div>
+                            </td>
+                            <td>
                                 <input id="preStyleValue" type="hidden" value="@Model.StyleType" />
                                 <select id="style" class="form-control">
-                                    <option value="1" data-toggle="tooltip" title="Percentage Point contests will simply sum the percentage return of the user’s selected stocks over the contest duration. Users will be ranked based on the sum.">Percentage Point</option>
-                                    <option value="2" data-toggle="tooltip" title="Dollar contests will sum the total return based on the dollars allocated to each stock by the user. You can set a maximum per stock by setting the Max Dollars Per Position below; the default Max Dollars Per Position is unlimited mean user could put ‘Total Dollars’ into one stock.">Dollar</option>
+                                    <option value="1">Percentage Point</option>
+                                    <option value="2">Dollar</option>
 
                                 </select>
                             </td>
@@ -89,6 +93,7 @@
             <button class="btn btn-primary" type="button" id="publish">Publish</button>
             @if (Model.IsPublished)
             {
+                <input id="publish1" value="true" type="hidden" />
                 <div class="row col-md-12">
                     <div class="pull-left">
 

@@ -18,5 +18,6 @@ namespace JudgementApp.Models
         public string Username { get; set; }
         public int Score { get; set; }
         public DateTime Date { get; set; }
+        public List<string> SubData = new List<string>();
     }
 }

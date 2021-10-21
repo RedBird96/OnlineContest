@@ -649,8 +649,9 @@ namespace JudgementApp.Controllers
         public ActionResult SavePickEmJudgment(PickEmJudgment model)
         {
             var pickEmContestResult = Main.GetDataTable("select * from PickEmQuestions where contestId  = " + model.ContestId);
-            var re = Main.GetDataTable("select * from PickEmJudgment where iscalculated=0 and email = '"+model.Email+"' and contestId ="+model.ContestId);
-           
+            var reUser = Main.GetDataTable("select * from PickEmJudgment where iscalculated=0 and Username = '"+model.Username + "' and contestId =" +model.ContestId);
+            var reEmail = Main.GetDataTable("select * from PickEmJudgment where iscalculated=0 and Email = '" + model.Email + "' and contestId =" + model.ContestId);
+
             var dr = pickEmContestResult.Rows[0];
             var expirayDate = (DateTime)dr["ContestExpiration"];
             if (DateTime.Now > expirayDate)
@@ -663,37 +664,61 @@ namespace JudgementApp.Controllers
                 });
             }
 
-            if (re.Rows.Count > 0)
-            {
-                return Json(new
-                {
-                    message = "Your results are not calculated yet",
-                    isError = true,
+            var timeUtc = DateTime.UtcNow;
+            TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            DateTime easternTime = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, easternZone);
 
-                });
+
+            //easternTime< Convert.ToDateTime("09:00")
+            if (easternTime < Convert.ToDateTime("09:00"))
+            {
+                if (reUser.Rows.Count > 0)
+                {
+                    return Json(new
+                    {
+                        message = "Username already exists. Please select a new one",
+                        isError = true,
+
+                    });
+                }
+                else if (reEmail.Rows.Count > 0)
+                {
+                    return Json(new
+                    {
+                        message = "Email already exists. Please select a new one",
+                        isError = true,
+
+                    });
+
+                }
+                else
+                {
+                    var query = @"
+                         Insert into PickEmJudgment(Username,Email,CompanyId,ContestId,QuestionId,Stocks,Amount,CreatedDate,iscalculated)
+                         values('" + model.Username + "','" + model.Email + "'," + model.CompanyId + "," + model.ContestId + "," + model.QuestionId + ",'" + model.Stocks + "','" + model.Amounts + "',getdate(),0)";
+                    SQL.NonScalarQuery(query);
+
+                    var query1 = @"                     
+Insert into PickEmResults (contestId,Ranking,Username,Score,date)
+Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
+                    SQL.NonScalarQuery(query1);
+
+                    return Json(new
+                    {
+                        isError = false,
+
+                    });
+                }
             }
             else
             {
-                var query = @"
-                         Insert into PickEmJudgment(Username,Email,CompanyId,ContestId,QuestionId,Stocks,Amount,CreatedDate,iscalculated)
-                         values('" + model.Username + "','" + model.Email + "'," + model.CompanyId + "," + model.ContestId + "," + model.QuestionId + ",'" + model.Stocks + "','" + model.Amounts + "',getdate(),0)";
-                SQL.NonScalarQuery(query);
-
-                var query1 = @"                     
-Insert into PickEmResults (contestId,Ranking,Username,Score,date)
-Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
-                SQL.NonScalarQuery(query1);
-
                 return Json(new
                 {
-                    isError = false,
+                    isError = true,
+                    message = "Results cannot be submitted after 9:00 AM"
 
                 });
             }
-
-          
-
-
            
         }
 
@@ -717,14 +742,35 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
             ViewBag.Logo = companyInfo.Logo;
             foreach (DataRow resultsRow in results.Rows)
             {
+                
+
+                var subResults = Main.GetDataTable("select * from PickEmJudgment where contestId = "+ contestId + " and username  = '"+ (string)resultsRow["Username"]+"'");
+
+                var srow =subResults.Rows[0];
+                var stocks = (string)srow["stocks"];
+                var amount = (string)srow["amount"];
+
+                var stocksData = stocks.Split(',');
+                var amountData = string.IsNullOrEmpty(amount)?null: amount.Split(',');
+                List<string> subData = new List<string>();
+                for (var i=0;i<stocksData.Length;i++)
+                {
+                    var finishdata = string.Empty;
+
+                    finishdata = amountData==null
+                        ? stocksData[i]
+                        : $"{stocksData[i]}({amountData[i]})";
+                    subData.Add(finishdata);
+                }
                 response.List.Add(new PickEmResult()
                 {
                     Id = (long)resultsRow["Id"],
                     Contestid = (int)resultsRow["Contestid"],
                     Date = (DateTime)resultsRow["Date"],
                     Ranking = (int)resultsRow["Ranking"],
-                    Score =(int) resultsRow["Score"],
+                    Score = (int)resultsRow["Score"],
                     Username = (string)resultsRow["Username"],
+                    SubData = subData
                 });
             }
 
@@ -786,11 +832,13 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
             var finalDate = model.EndDate!=null? model.EndDate.Value.ToString(format):null;
             if (model.Id > 0)
             {
-
-                var query = @"
+                var query = string.IsNullOrEmpty(finalDate) ? @"
                          Update StreakQuestions
-                        set enddate = '"+finalDate+@"', selectedStocks = '"+model.SelectedStocks+@"'
-                        where id ="+model.Id;
+                        set enddate = null, selectedStocks = '" + model.SelectedStocks + @"'
+                        where id =" + model.Id : @"
+                         Update StreakQuestions
+                        set enddate = '" + finalDate + @"', selectedStocks = '" + model.SelectedStocks + @"'
+                        where id =" + model.Id;
                 SQL.NonScalarQuery(query);
             }
             else
@@ -851,6 +899,30 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
                 {
                     streakContext.Stocks = stocks;
                 }
+
+
+                var weekendDays = new[] { DayOfWeek.Saturday, DayOfWeek.Sunday };
+
+                
+                var timeUtc = DateTime.UtcNow;
+                TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                DateTime easternTime = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, easternZone);
+
+                ViewBag.NextDay = easternTime;
+                if (easternTime > Convert.ToDateTime("16:00"))
+                {
+                    var stockDay = Holiday.GetNextNonHolidayWeekDay(easternTime, new List<Holiday>(), weekendDays);
+                    ViewBag.NextDay = stockDay;
+                }
+
+                if (easternTime.DayOfWeek == DayOfWeek.Saturday || easternTime.DayOfWeek == DayOfWeek.Sunday)
+                {
+                    var stockDay = Holiday.GetNextNonHolidayWeekDay(easternTime, new List<Holiday>(), weekendDays);
+                    ViewBag.NextDay = stockDay;
+                }
+                
+
+                
             }
             else
             {
@@ -902,26 +974,36 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
             TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
             DateTime easternTime = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, easternZone);
 
-
             //easternTime< Convert.ToDateTime("09:00")
             if (easternTime < Convert.ToDateTime("09:00"))
             {
-                var re = Main.GetDataTable("select * from StreakJudgement where iscalculated=0 and email = '" + model.Email + "' and contestId =" + model.ContestId);
+                var reUser = Main.GetDataTable("select * from StreakJudgement where iscalculated=0 and Username = '" + model.Username + "' and contestId =" + model.ContestId );
+                var reEmail = Main.GetDataTable("select * from StreakJudgement where iscalculated=0 and Email = '" + model.Email + "' and contestId =" + model.ContestId);
 
-                if (re.Rows.Count > 0)
+                if (reUser.Rows.Count > 0)
                 {
                     return Json(new
                     {
-                        message = "Your results are not calculated yet",
+                        message = "Username already exists. Please select a new one.",
                         isError = true,
 
                     });
+                }
+                else if (reEmail.Rows.Count > 0)
+                {
+                    return Json(new
+                    {
+                        message = "Email already exists. Please select a new one.",
+                        isError = true,
+
+                    });
+
                 }
                 else
                 {
                     var query = @"
                            Insert Into StreakJudgement(username,email,stock,value,companyId,Contestid,QuestionId,CreatedDate,streak,iscalculated)
-                        values('" + model.Username + "','" + model.Email + "','" + model.Stock + "','" + model.Value + "'," + model.ContestId + "," + model.ContestId + "," + model.QuestionId + ",getdate(),1,0)";
+                        values('" + model.Username + "','" + model.Email + "','" + model.Stock + "','" + model.Value + "'," + model.ContestId + "," + model.ContestId + "," + model.QuestionId + ",getdate(),0,0)";
                     SQL.NonScalarQuery(query);
 
                     return Json(new
@@ -938,13 +1020,10 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
                 return Json(new
                 {
                     isError = true,
-                    message = "Result cannot be submitted after 9:00 AM"
+                    message = "Results cannot be submitted after 9:00 AM"
 
                 });
             }
-            
-
-
             
         }
 
@@ -993,12 +1072,9 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
             result.UserHistory = stocks;
 
             var dt1 = Main.GetDataTable(@"Select t.stock,
-  (select count(1) from StreakJudgement where stock = t.stock and value = 'Up') as UpCount,
-  (select count(1) from StreakJudgement where stock = t.stock and value = 'Down') as DownCount
-  from
-  (select stock
-  from StreakJudgement
-  where CONVERT(date, createdDate) = CONVERT(date, GETDATE()) and  contestId=" + contestId + " group by stock) as t");
+  (select count(1) from StreakJudgement where stock = t.stock and value = 'Up' and contestId=" + contestId + ") as UpCount," +
+  "(select count(1) from StreakJudgement where stock = t.stock and value = 'Down' and contestId=" + contestId + ") as DownCount " +
+  "from (select stock from StreakJudgement where CONVERT(date, createdDate) = CONVERT(date, GETDATE()) and  contestId=" + contestId + " group by stock) as t");
             var today = new List<TodayHistory>();
 
             foreach (DataRow row in dt1.Rows)
@@ -1055,6 +1131,24 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
             return View(response);
         }
 
+        [HttpGet]
+        public ActionResult GetUserStreak(string email, long id)
+        {
+            var result = Main.GetDataTable("Select * from StreakJudgement where contestId = "+ id + " and email = '"+email+"'");
+
+            var strakCount = 0;
+            if (result.Rows.Count > 0)
+            {
+                foreach (DataRow row in result.Rows)
+                {
+                    var count = (int)row["Streak"];
+
+                    strakCount = strakCount + count;
+                }
+            }
+
+            return Json(strakCount, JsonRequestBehavior.AllowGet);
+        }
         #endregion
         }
 }

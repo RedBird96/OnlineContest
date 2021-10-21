@@ -6,7 +6,7 @@
 
 <body style="background: ;color:  ">
     <section class="contact-clean" style="background: ">
-        <form method="post" style="text-align: center;background: ">
+        <form method="post" style="max-width: 1000px;text-align: center; background: ">
             <h2 class="text-center">@ViewBag.ContestName</h2>
             <img class="img-responsive" src="/assets/CompanyLogos/@ViewBag.Logo" style="width:200px;" />
 
@@ -14,7 +14,7 @@
                 <div class="table-responsive">
                     <table class="table table-borderless">
                         <thead>
-                            <tr style="color: rgb(37 140 75);">
+                            <tr style="color: rgb(0, 227,174); ">
                                 <th style="color: ;width: 206px;">Ranking</th>
                                 <th style="color: ;width: 206px;">Username</th>
                                 <th style="color: ;width: 206px">Score</th>
@@ -22,15 +22,28 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @{ int i = 1;}
                             @foreach (var row in Model.List)
                             {
                                 <tr>
-                                    <td>@row.Ranking</td>
+                                    <td>
+                                        <a onclick="hide('r-@i')" id="r-@i-hide" style="display: none;font-size: 15px; margin-right: 5px; font-weight: bold; cursor: pointer">-</a>
+                                        <a onclick="show('r-@i')"  id="r-@i-show" style="font-size: 15px; margin-right: 5px; font-weight: bold; cursor: pointer">+</a>@row.Ranking
+                                    </td>
                                     <td>@row.Username</td>
                                     <td>@row.Score</td>
                                     <td>@row.Date</td>
 
                                 </tr>
+
+                                foreach (var s in row.SubData)
+                                {
+                                    <tr class="r-@i" style="display: none">
+                                        <td>@s</td>
+                                    </tr>
+                                }
+
+                                { i = i+1;}
                             }
 
 
@@ -43,5 +56,18 @@
         </form>
     </section>
     <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="~/assets/js/theme.js"></script>
+<script src="~/assets/js/theme.js"></script>
+<script>
+    function show(cl) {
+        $("." + cl).show();
+        $("#" + cl + "-hide").show();
+        $("#" + cl + "-show").hide();
+    }
+
+    function hide(cl) {
+        $("." + cl).hide();
+        $("#" + cl + "-hide").hide();
+        $("#" + cl + "-show").show();
+    }
+</script>
 </body>

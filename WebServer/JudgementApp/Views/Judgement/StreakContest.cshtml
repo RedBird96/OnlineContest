@@ -19,15 +19,19 @@
                     <table style="width:100%;">
 
                         <tr id="endDate">
-                            <td style="width:20%" data-toggle="tooltip" title="If no End Date is selected then the contest will go on forever. "><b>End Date</b> </td>
-                            <td>
-                                <br />
+                            <td style="width:20%" >
+                                <div class="row">
+                                    <div class="col" ><b>End Date</b></div>
+                                    <div class="col" style="padding-top:10px" data-toggle="tooltip" title="If no End Date is selected then the contest will go on forever. ">(?)</div>
+                                </div>
+                            </td>
+                            <td >
                                 @Html.TextBoxFor(m => m.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @id = "date", @width = "250px", type = "date" })
                             </td>
                         </tr>
                         <tr>
                             <td style="padding: 20px"><b>Asset</b> </td>
-                            <td style="padding: 20px">
+                            <td style="padding-top: 20px">
                             <div style="border: 1px solid;
                                         padding: 10px 30px;
                                         width: fit-content;">
@@ -62,6 +66,7 @@
             
             @if (Model.IsPublished)
             {
+                <input id="publish1" value="true" type="hidden"/>
                 <div class="row col-md-12">
                     <div class="pull-left">
 

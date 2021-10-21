@@ -7,32 +7,32 @@
 
 <body style="background: ;color:  ">
     <section class="contact-clean" style="background:">
-        <form method="post" style="text-align: center; background: ;max-width: 1200px">
+        <form method="post" style="text-align: center; background: ;max-width: 1300px">
             <h2 class="text-center">@ViewBag.ContestName</h2>
             <img class="img-responsive" src="/assets/CompanyLogos/@ViewBag.Logo" style="width:200px;" />
             <h4 class="text-center" id="ProblemName" style="color:">@ViewBag.email - Current Streak</h4>
             <div>
                 <div class="row">
-                    <div class="col-md-5 table-responsive" style="border: 1px gray solid;">
+                    <div class="col-md-6 table-responsive" style="border: 1px gray solid;">
                         <h3>User History</h3>
                         <table class="table table-borderless">
                             <thead>
-                                <tr style="color: rgb(0,227,174);">
-                                    <th style="width: 206px;">Date</th>
-                                    <th style="width: 206px;">Stock</th>
+                                <tr style="color: rgb(0, 227,174);">
+                                    <th style="width: 206px;">Symbol</th>
                                     <th style="width: 206px;">Direction</th>
                                     <th style="width: 206px;">Streak</th>
+                                    <th style="width: 206px;">Date</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var a in Model.UserHistory)
                                 {
-                                    <tr style="color: white">
-                                        <td>@a.Date</td>
-                                        <td>@a.Stock</td>
-                                        <td>@a.Direction</td>
-                                        <td>@a.Streak</td>
-                                    </tr>
+                                <tr style="color: white">
+                                    <td>@a.Stock</td>
+                                    <td>@a.Direction</td>
+                                    <td>@a.Streak</td>
+                                    <td width="35%">@a.Date</td>
+                                </tr>
                                 }
 
 
@@ -40,12 +40,12 @@
                         </table>
 
                     </div>
-                    <div class="col-md-2"></div>
+                    <div class="col-md-1"></div>
                     <div class="col-md-5 table-responsive" style="border:1px gray solid">
-                        <h3>Today History</h3>
+                        <h3>Today's Selections</h3>
                         <table class="table table-borderless">
                             <thead>
-                                <tr style="color: rgb(0,227,174) ">
+                                <tr style="color: rgb(0, 227,174);">
                                     <th style="width: 206px;">Symbol</th>
                                     <th style="width: 206px;">Up</th>
                                     <th style="width: 206px;">Down</th>
@@ -69,7 +69,7 @@
                     </div>
 
                 </div>
-
+                <button class="btn btn-primary" type="button" onclick="location.href='/streak-judgement-@ViewBag.CompanyName-@ViewBag.ContestName/@ViewBag.questionId'"">Back to Contest</button>
             </div>
 
 

@@ -26,33 +26,46 @@
     else
     {
         <section class="contact-clean" id="mainContent">
-            <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">
-                    @if (Model.StyleType == 1)
-                    {
-                    <p style="color: white">
-                        Please select <b>@Model.StockNumber</b> stocks below. Each stock’s percentage return will be summed and the contestant with the highest sum will win the contest.<br>
-                        Example:<br>
-                        User1: +2.4%, -1.2%, +3.1% = 2.4 -1.2 + 3.1 = 4.3<br>
-                        User2: +1.8%, +2.9%, -0.5% = 1.8 + 2.9 – 0.5 = 4.2<br>
-
-                        User1 has outperformed User2 and would rank higher on the Contest Leaderboard.
-                    </p>
-                    }
-                    else
-                    {
-                        <p style="color: white">
-                            Please select <b>@Model.StockNumber</b> stocks below. You can allocate <b>@(@Model.DollarsPerPoint/@Model.StockNumber)</b> dollars per stock. Contest winner will be based on total dollar return.
-                        </p>
-                    }
-
-                </div>
-                <div class="col-md-4"></div>
-
-            </div>
             <form style="text-align: center;">
                 <h2 class="text-center">@Model.ContestName</h2>
+                <div class="row">
+                    <div style="text-align:center">
+                        <h10 style="color:white">Contest Rules</h10>
+                    </div>
+                    <div style="text-align:left">
+                        @if (Model.StyleType == 1)
+                        {
+                        <t style="color: white">
+                            Please select <b>@Model.StockNumber</b> stocks below. Each stock’s percentage return will be summed and the contestant with<br>
+                            the highest sum will win the contest. Returns are calculated from the first daily opening price after user submission.<br>
+
+                            Example:<br>
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspUser1: +2.4%, -1.2%, +3.1% = 2.4 -1.2 + 3.1 = 4.3<br>
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspUser2: +1.8%, +2.9%, -0.5% = 1.8 + 2.9 – 0.5 = 4.2<br>
+                            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspUser1 has outperformed User2 and would rank higher on the Contest Leaderboard.
+                        </t>
+                        }
+                        else
+                        {
+                            if (@Model.MaxDollars != 0)
+                            {
+                                <t style="color: white">
+                                    Please select <b>@Model.StockNumber</b> stocks below. You can allocate $<b>@(@Model.MaxDollars)</b>
+                                    dollars per stock. Contest winner will be based on total dollar return. Returns are calculated from the first daily opening price after user submission. <br>
+                                </t>
+                            }
+                            else
+                            {
+                                <t style="color: white">
+                                    Please select <b>@Model.StockNumber</b> stocks below. Contest winner will be based on total dollar return. Returns are calculated from the first daily opening price after user submission. <br>
+                                </t>
+                            }
+
+                        }
+
+                    </div>
+
+                </div>
                 <img class="img-responsive" src="/assets/CompanyLogos/@Model.Logo" style="width: 200px;" />
                 <input type="hidden" value="@Model.CompanyId" id="companyId" />
                 <input type="hidden" value="@Model.Id" id="id" />
@@ -99,7 +112,7 @@
                                 </table>
                                 <div class=" col-md-3"></div>
                             </div>
-                            
+
                         }
                         else
                         {
@@ -165,6 +178,13 @@
 <style>
     p {
         font-size: 16px;
+        line-height: 26px;
+        letter-spacing: 0.5px;
+        color: #484848;
+    }
+
+    t {
+        font-size: 12px;
         line-height: 26px;
         letter-spacing: 0.5px;
         color: #484848;
