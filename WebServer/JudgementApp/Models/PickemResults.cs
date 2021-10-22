@@ -16,7 +16,7 @@ namespace JudgementApp.Models
         public long Contestid { get; set; }
         public long Ranking { get; set; }
         public string Username { get; set; }
-        public int Score { get; set; }
+        public double Score { get; set; }
         public DateTime Date { get; set; }
         public List<string> SubData = new List<string>();
     }

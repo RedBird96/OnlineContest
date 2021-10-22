@@ -417,6 +417,29 @@ namespace JudgementApp.Controllers
             long FKCompany = Convert.ToInt64(id);
             return Json(GetCompanyInfo( id, prob), JsonRequestBehavior.AllowGet); ;
         }
+        public DateTime GetWeekendDate(DateTime inputDate)
+        {
+            DayOfWeek currentDay = inputDate.DayOfWeek;
+            int daysTillCurrentDay = DayOfWeek.Friday - currentDay;
+            DateTime currentWeekendDate = inputDate.AddDays(daysTillCurrentDay);
+            DateTime output = new DateTime(currentWeekendDate.Year, currentWeekendDate.Month, currentWeekendDate.Day, 16, 30, 0);
+
+            return output;
+        }
+        public DateTime GetMonthendDate(DateTime inputDate)
+        {
+            DateTime lastDayOfMonth = new DateTime(inputDate.Year, inputDate.Month, DateTime.DaysInMonth(inputDate.Year, inputDate.Month));
+            if (lastDayOfMonth.DayOfWeek == DayOfWeek.Saturday)
+            {
+                lastDayOfMonth = lastDayOfMonth.AddDays(-1);
+            }
+            else if (lastDayOfMonth.DayOfWeek == DayOfWeek.Sunday)
+            {
+                lastDayOfMonth = lastDayOfMonth.AddDays(-2);
+            }
+
+            return lastDayOfMonth;
+        }
 
 
         #region New Work
@@ -561,19 +584,29 @@ namespace JudgementApp.Controllers
         [HttpPost]
         public ActionResult CreateAndPublishPickEmQuestion(PickEmContest model)
         {
-           
-            DateTime time = DateTime.Now.AddDays(1);
+            var timeUtc = DateTime.UtcNow;
+            TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            DateTime nowEasternTime = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, easternZone);
+
+            if (nowEasternTime.Hour > 16)
+                nowEasternTime.AddDays(1);
+
+            DateTime time = new DateTime(nowEasternTime.Year, nowEasternTime.Month, nowEasternTime.Day, 16, 0, 0);
+            if (model.ExpirationType == 1)
+            {
+                time = new DateTime(nowEasternTime.Year, nowEasternTime.Month, nowEasternTime.Day, 16, 0, 0);
+            }
             if (model.ExpirationType == 2)
             {
-                time =time.AddDays(7);
+                time = new DateTime(GetWeekendDate(nowEasternTime).Year, GetWeekendDate(nowEasternTime).Month, GetWeekendDate(nowEasternTime).Day, 16, 0, 0);
             }
             else if(model.ExpirationType==3)
             {
-                time = time.AddDays(30);
+                time = new DateTime(GetMonthendDate(nowEasternTime).Year, GetMonthendDate(nowEasternTime).Month, GetMonthendDate(nowEasternTime).Day, 16, 0, 0);
             }
             else if (model.ExpirationType == 4)
             {
-                time = model.ExpirationDate;
+                time = new DateTime(model.ExpirationDate.Year, model.ExpirationDate.Month, model.ExpirationDate.Day, 16, 0, 0);
             }
             string format = "yyyy-MM-dd HH:mm:ss";
             var finalDate = time.ToString(format);
@@ -670,7 +703,7 @@ namespace JudgementApp.Controllers
 
 
             //easternTime< Convert.ToDateTime("09:00")
-            if (easternTime < Convert.ToDateTime("09:00"))
+            if (easternTime < Convert.ToDateTime("09:00") || easternTime > Convert.ToDateTime("16:00"))
             {
                 if (reUser.Rows.Count > 0)
                 {
@@ -768,7 +801,7 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
                     Contestid = (int)resultsRow["Contestid"],
                     Date = (DateTime)resultsRow["Date"],
                     Ranking = (int)resultsRow["Ranking"],
-                    Score = (int)resultsRow["Score"],
+                    Score = (double)resultsRow["Score"],
                     Username = (string)resultsRow["Username"],
                     SubData = subData
                 });
@@ -828,7 +861,7 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
         {
 
             
-            string format = "yyyy-MM-dd HH:mm:ss";
+            string format = "yyyy-MM-dd 16:00:00";
             var finalDate = model.EndDate!=null? model.EndDate.Value.ToString(format):null;
             if (model.Id > 0)
             {
@@ -975,7 +1008,7 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
             DateTime easternTime = TimeZoneInfo.ConvertTimeFromUtc(timeUtc, easternZone);
 
             //easternTime< Convert.ToDateTime("09:00")
-            if (easternTime < Convert.ToDateTime("09:00"))
+            if (easternTime < Convert.ToDateTime("09:00") || easternTime > Convert.ToDateTime("16:00"))
             {
                 var reUser = Main.GetDataTable("select * from StreakJudgement where iscalculated=0 and Username = '" + model.Username + "' and contestId =" + model.ContestId );
                 var reEmail = Main.GetDataTable("select * from StreakJudgement where iscalculated=0 and Email = '" + model.Email + "' and contestId =" + model.ContestId);
@@ -1003,7 +1036,7 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
                 {
                     var query = @"
                            Insert Into StreakJudgement(username,email,stock,value,companyId,Contestid,QuestionId,CreatedDate,streak,iscalculated)
-                        values('" + model.Username + "','" + model.Email + "','" + model.Stock + "','" + model.Value + "'," + model.ContestId + "," + model.ContestId + "," + model.QuestionId + ",getdate(),0,0)";
+                        values('" + model.Username + "','" + model.Email + "','" + model.Stock + "','" + model.Value + "'," + model.CompanyId + "," + model.ContestId + "," + model.QuestionId + ",getdate(),0,0)";
                     SQL.NonScalarQuery(query);
 
                     return Json(new
@@ -1098,7 +1131,7 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
             var companyInfo = GetCompanyInfo(id, null);
             ViewBag.CompanyName = companyInfo.CompanyName;
             var response = new ContestList();
-            var result = Main.GetDataTable("select * from Contest where companyid="+id);
+            var result = Main.GetDataTable("select * from Contest where IsActive = 1 and companyid="+id);
 
             if (result.Rows.Count > 0)
             {
@@ -1112,6 +1145,7 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
                    
                     response.List.Add(new ContestInfo()
                     {
+                        DeleteId = Id,
                         Name = contestName,
                         Type = type==1?"Custom":type==2?"PickEm":"Streak",
                         CreatedDate = date,
@@ -1129,6 +1163,16 @@ Values(" + model.ContestId + "," + 0 + ",'" + model.Username + "',0,getdate())";
             }
 
             return View(response);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteContest(long id)
+        {
+            SQL.NonScalarQuery("Update Contest set isactive=0 where id="+id);
+            return Json(new
+            {
+                isError = false
+            });
         }
 
         [HttpGet]

@@ -125,9 +125,18 @@
     </Compile>
     <Compile Include="Main.cs" />
     <Compile Include="Models\Company.cs" />
+    <Compile Include="Models\Contest.cs" />
+    <Compile Include="Models\ContestList.cs" />
     <Compile Include="Models\Data.cs" />
     <Compile Include="Models\JudgementParameter.cs" />
     <Compile Include="Models\Leaderboard.cs" />
+    <Compile Include="Models\PickEmContest.cs" />
+    <Compile Include="Models\PickEmJudgement.cs" />
+    <Compile Include="Models\PickemResults.cs" />
+    <Compile Include="Models\Stock.cs" />
+    <Compile Include="Models\StreakContext.cs" />
+    <Compile Include="Models\StreakHistory.cs" />
+    <Compile Include="Models\StreakJudgment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQL.cs" />
   </ItemGroup>
@@ -147,6 +156,11 @@
     <Content Include="assets\img\avatars\avatar5.jpeg" />
     <Content Include="assets\img\dogs\image2.jpeg" />
     <Content Include="assets\img\dogs\image3.jpeg" />
+    <Content Include="assets\js\contest.js" />
+    <Content Include="assets\js\PickEm.js" />
+    <Content Include="assets\js\StockEmJudgment.js" />
+    <Content Include="assets\js\Streak.js" />
+    <Content Include="assets\js\StreakJudgement.js" />
     <Content Include="assets\js\theme.js" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -199,9 +213,20 @@
     <Content Include="Views\Judgement\Leaderboard.cshtml" />
     <Content Include="Views\Judgement\Details.cshtml" />
     <Content Include="Views\Judgement\LeaderboardDetail.cshtml" />
+    <Content Include="Views\Judgement\ContestAdmin.cshtml" />
+    <Content Include="Views\Judgement\PickEmContest.cshtml" />
+    <Content Include="Views\Judgement\PickEmJudgment.cshtml" />
+    <Content Include="Views\Judgement\PickEmLeadBoard.cshtml" />
+    <Content Include="Views\Judgement\CreateStreakContest.cshtml" />
+    <Content Include="Views\Judgement\StreakContest.cshtml" />
+    <Content Include="Views\Judgement\StreakLeadBoard.cshtml" />
+    <Content Include="Views\Judgement\StreakJudgment.cshtml" />
+    <Content Include="Views\Judgement\StreakHistory.cshtml" />
+    <Content Include="Views\Judgement\ContentList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="assets\CompanyLogos\" />
     <Folder Include="assets\img\company\" />
     <Folder Include="Page\" />
   </ItemGroup>

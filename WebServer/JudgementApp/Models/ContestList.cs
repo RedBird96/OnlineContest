@@ -13,6 +13,7 @@ namespace JudgementApp.Models
 
     public class ContestInfo
     {
+        public long DeleteId { get; set; }
         public String Name { get; set; }
         public string Type { get; set; }
         public string Url { get; set; }
