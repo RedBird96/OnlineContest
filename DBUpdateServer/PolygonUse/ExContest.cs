@@ -16,8 +16,8 @@ namespace PolygonUse
                 DateTime date = DateTime.Now;
 
                 //Getting Judgement data from yesterday
-                DataTable judgementTable = SQL.GetDataTable("SELECT * FROM PickEmJudgment WHERE IsCalculated = 0");
-                Dictionary<int, Dictionary<string, double>> dicUserScore = new Dictionary<int, Dictionary<string, double>>();
+                DataTable judgementTable = SQL.GetDataTable("SELECT * FROM PickEmJudgment WHERE IsCalculated = 1");
+                Dictionary<int, List<Tuple<string, double>>> dicUserScore = new Dictionary<int, List<Tuple<string, double>>>();
 //                Dictionary<string, double> dicUserScore = new Dictionary<string, double>();
                 int nContestId = 0;
 
@@ -31,25 +31,30 @@ namespace PolygonUse
                     string strUser = row["Username"].ToString();
                     nContestId = int.Parse(row["ContestId"].ToString());
 
-                    DataTable questionTable = SQL.GetDataTable("SELECT ContestExpiration FROM PickEmQuestions WHERE ContestId = nContestId");
+                    DataTable questionTable = SQL.GetDataTable($"SELECT ContestExpiration FROM PickEmQuestions WHERE ContestId = {nContestId}");
                     string expiration_date = questionTable.Rows[0]["ContestExpiration"].ToString();
                     DateTime expire_DT = Convert.ToDateTime(expiration_date);
 
                     if (date < expire_DT)
                         continue;
 
+                    if (!dicUserScore.ContainsKey(nContestId))
+                    {
+                        dicUserScore.Add(nContestId, new List<Tuple<string, double>>());
+                    }
+
                     DateTime submit_DT = Convert.ToDateTime(submit_datetime);
                     string[] strStocksArr = strStocks.Split(',');
                     if (strAmounts.Length == 0)
                     {
                         double score = assessment.AssessPickA(strStocksArr.ToList<string>(), submit_DT, date);
-                        dicUserScore.Add(nContestId, new Dictionary<string, double>() { { strUser, score } });
+                        dicUserScore[nContestId].Add(new Tuple<string, double>(strUser, Math.Round(score * 100, 2)));
                     }
                     else
                     {
                         double[] dAmountArr = Array.ConvertAll(strAmounts.Split(','), Double.Parse);
                         int score = (int)assessment.AssessPickB(strStocksArr.ToList<string>(), submit_DT, date, dAmountArr.ToList<double>());
-                        dicUserScore.Add(nContestId, new Dictionary<string, double>() { { strUser, score } });
+                        dicUserScore[nContestId].Add(new Tuple<string, double>(strUser, score));
                     }
                     SQL.NonScalarQuery("UPDATE PickEmJudgment SET IsCalculated = 1 WHERE Id = " + strId);
                 }
@@ -57,11 +62,13 @@ namespace PolygonUse
                 {
                     foreach (var oneUserScoer in dicUserScore)
                     {
-                        int ranking = oneUserScoer.Value.Count;
-                        foreach (KeyValuePair<string, double> author in oneUserScoer.Value.OrderBy(key => key.Value))
+                        int ranking = 1;
+                        var lst = oneUserScoer.Value;
+                        lst = lst.OrderByDescending(x => x.Item2).ToList();
+                        foreach (var author in lst)
                         {
-                            SQL.NonScalarQuery("UPDATE PickEmResults SET Ranking = " + ranking + ", Score = " + author.Value + " WHERE Contestid = " + oneUserScoer.Key + " and Username = '" + author.Key + "'");
-                            ranking = ranking - 1;
+                            SQL.NonScalarQuery("UPDATE PickEmResults SET Ranking = " + ranking + ", Score = " + author.Item2 + " WHERE Contestid = " + oneUserScoer.Key + " and Username = '" + author.Item1 + "'");
+                            ranking = ranking + 1;
                         }
                     }
                 }

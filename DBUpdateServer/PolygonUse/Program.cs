@@ -14,9 +14,11 @@ namespace PolygonUse
         {
             Assessment assessment = new Assessment();
 
-            //CustomContest.DoContest(assessment);
+            CustomContest.DoContest(assessment);
             ExContest.DoContest(assessment);
-            //StreakContest.DoContest(assessment);
+            StreakContest.DoContest(assessment);
+
+            Console.WriteLine("Score updated successfully!");
         }
     }
 }

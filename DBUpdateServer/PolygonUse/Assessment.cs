@@ -288,7 +288,7 @@ namespace PolygonUse
             { 
                 double close_st = 0, close_en = 0;
                 LoadHistoryBar(symbol_one, dtStart, 1, "day");
-                close_st = intervals.ElementAt(0).GetClose();
+                close_st = intervals.ElementAt(0).GetOpen();
                 LoadHistoryBar(symbol_one, dtEnd, 1, "day");
                 close_en = intervals.ElementAt(0).GetClose();
 

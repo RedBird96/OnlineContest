@@ -43,7 +43,6 @@ namespace PolygonUse
                     //Updating Score
                     SQL.NonScalarQuery("UPDATE StreakJudgement SET IsCalculated = 1, Streak = " + nStreak + " WHERE Id = " + strId);
                 }
-                Console.WriteLine("Score updated successfully!");
             }
             catch (Exception ex)
             {
