@@ -285,15 +285,16 @@ namespace PolygonUse
             double sum = 0;
 
             foreach(string symbol_one in symbol)
-            { 
-                double close_st = 0, close_en = 0;
-                LoadHistoryBar(symbol_one, dtStart, 1, "day");
-                close_st = intervals.ElementAt(0).GetOpen();
+            {
                 LoadHistoryBar(symbol_one, dtEnd, 1, "day");
-                close_en = intervals.ElementAt(0).GetClose();
-
-                rise_percent = (close_en - close_st) / close_st;
-                sum += rise_percent;
+                foreach(Interval intV in intervals)
+                {
+                    double close_st = 0, close_en = 0;
+                    close_st = intV.GetOpen();
+                    close_en = intV.GetClose();
+                    rise_percent = (close_en - close_st) / close_st;
+                    sum += rise_percent;
+                }
             }
             return sum;
         }
@@ -308,7 +309,7 @@ namespace PolygonUse
             {
                 string symbol_one = symbol[index];
                 double open_st, close_en;
-                LoadHistoryBar(symbol_one, dtStart, 1, "day");
+                LoadHistoryBar(symbol_one, dtEnd, 1, "day");
                 open_st = intervals[0].GetOpen();
                 LoadHistoryBar(symbol_one, dtEnd, 1, "day");
                 close_en = intervals[0].GetClose();

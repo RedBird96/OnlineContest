@@ -81,6 +81,11 @@ namespace JudgementApp
        defaults: new { controller = "Judgement", action = "PickEmLeadBoard" }
    );
 
+            routes.MapRoute(
+       name: "streak-leaderboad",
+       url: "streak-leaderboad-{companyName}-{contestName}/{id}",
+       defaults: new { controller = "Judgement", action = "StreakLeadBoard" }
+   );
 
             routes.MapRoute(
                name: "Default",

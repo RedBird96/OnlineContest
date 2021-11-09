@@ -9,6 +9,7 @@ namespace JudgementApp.Models
     {
         public List<UserHistory> UserHistory = new List<UserHistory>();
         public List<TodayHistory> TodayHistory = new List<TodayHistory>();
+        public List<TodayHistory> ContentHistory = new List<TodayHistory>();
     }
 
     public class UserHistory
@@ -25,5 +26,16 @@ namespace JudgementApp.Models
         public int UpCount { get; set; }
         public int DownCount { get; set; }
         public int Total { get; set; }
+    }
+
+    public class StreakResult
+    {
+        public string Username { get; set; }
+        public int Streak { get; set; }
+    }
+
+    public class StreakResultList
+    {
+        public List<StreakResult> List = new List<StreakResult>();
     }
 }

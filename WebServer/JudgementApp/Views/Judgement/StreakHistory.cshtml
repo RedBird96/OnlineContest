@@ -7,13 +7,14 @@
 
 <body style="background: ;color:  ">
     <section class="contact-clean" style="background:">
-        <form method="post" style="text-align: center; background: ;max-width: 1300px">
+        <form method="post" style="text-align: center; background: ;max-width: 1500px">
             <h2 class="text-center">@ViewBag.ContestName</h2>
             <img class="img-responsive" src="/assets/CompanyLogos/@ViewBag.Logo" style="width:200px;" />
             <h4 class="text-center" id="ProblemName" style="color:">@ViewBag.email - Current Streak</h4>
+            <br />
             <div>
                 <div class="row">
-                    <div class="col-md-6 table-responsive" style="border: 1px gray solid;">
+                    <div class="col-md-4 table-responsive" style="border: 1px gray solid;">
                         <h3>User History</h3>
                         <table class="table table-borderless">
                             <thead>
@@ -27,12 +28,12 @@
                             <tbody>
                                 @foreach (var a in Model.UserHistory)
                                 {
-                                <tr style="color: white">
-                                    <td>@a.Stock</td>
-                                    <td>@a.Direction</td>
-                                    <td>@a.Streak</td>
-                                    <td width="35%">@a.Date</td>
-                                </tr>
+                                    <tr style="color: white">
+                                        <td>@a.Stock</td>
+                                        <td>@a.Direction</td>
+                                        <td>@a.Streak</td>
+                                        <td width="35%" data-toggle="tooltip" title="@a.Date">@a.Date.ToString("dd/MM/yyyy")</td>
+                                    </tr>
                                 }
 
 
@@ -41,7 +42,7 @@
 
                     </div>
                     <div class="col-md-1"></div>
-                    <div class="col-md-5 table-responsive" style="border:1px gray solid">
+                    <div class="col-md-3 table-responsive" style="border:1px gray solid">
                         <h3>Today's Selections</h3>
                         <table class="table table-borderless">
                             <thead>
@@ -54,6 +55,33 @@
                             </thead>
                             <tbody>
                                 @foreach (var a in Model.TodayHistory)
+                                {
+                                    <tr style="color: white">
+                                        <td>@a.Symbol</td>
+                                        <td>@a.UpCount</td>
+                                        <td>@a.DownCount</td>
+                                        <td>@a.Total</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-3 table-responsive" style="border:1px gray solid">
+                        <h3>Contest History</h3>
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr style="color: rgb(0, 227,174);">
+                                    <th style="width: 206px;">Symbol</th>
+                                    <th style="width: 206px;">Up</th>
+                                    <th style="width: 206px;">Down</th>
+                                    <th style="width: 206px;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in Model.ContentHistory)
                                 {
                                     <tr style="color: white">
                                         <td>@a.Symbol</td>

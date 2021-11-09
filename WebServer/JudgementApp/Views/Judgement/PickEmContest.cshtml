@@ -42,18 +42,26 @@
                             </td>
                         </tr>
                         <tr id="customeDate" style="display: none">
-                            <td style="width:20%"><b>Custom Date</b> </td>
+                            <td style="width:20%">Custom Date</td>
                             <td>
-                                <br />
                                 @Html.TextBoxFor(m => m.ExpirationDate, "{0:yyyy-MM-dd}", new { @class = "form-control", @id = "date", @width = "250px", type = "date" })
-
+                                <br />
+                            </td>
+                        </tr>
+                        <tr id="allowSelection" style="display: none">
+                            <td></td>
+                            <td>
+                                <input id="preIsAllowNewContest" type="hidden" value="@Model.IsAllowNewContest" />
+                                <input class="col" type="checkbox" id="allowcheck" value="">
+                                <label class="col" for="allowcheck" data-toggle="tooltip" title="Allowing new selections each day gives the user the ability to select new stocks each day before 9:00 AM ET for the duration of the contest. The individual daily results would be summed for the duration of the contest. Users need to resubmit results each day.&#013;&#013;Disallowing new selections each day means that each user can submit their results once per contest. User action is only required once for initial submit.">Allow new selection each day (?)</label>
+                                <br />
                             </td>
                         </tr>
                         <tr>
                             <td>
                                 <div class="row">
                                     <div class="col"><b>Contest Style</b></div>
-                                    <div class="col" style="text-align:center; padding-top:10px;" data-toggle="tooltip" title="Percentage Point contests will simply sum the percentage return of the user’s selected stocks over the contest duration. Returns will be calculated from the first daily opening price after user submission. Users will be ranked based on the sum of all percentage returns assuming equal weight. &#013;&#013;Dollar contests will sum the total dollar return based on the dollars allocated to each stock by the user. Position size will be determined by the allocated dollar amount and the first daily opening price after user submission. Contest administrator can set a maximum dollar per stock amount by setting the Max Dollars Per Position below; the default Max Dollars Per Position is unlimited. This means the user could put ‘Total Dollars’ into one stock. If this is undesirable, please set a Max Dollars Per Position.">(?)</div>
+                                    <label class="col" style="text-align:center; padding-top:10px;" data-toggle="tooltip" title="Percentage Point contests will simply sum the percentage return of the user’s selected stocks over the contest duration. Returns will be calculated from the first daily opening price after user submission. Users will be ranked based on the sum of all percentage returns assuming equal weight. &#013;&#013;Dollar contests will sum the total dollar return based on the dollars allocated to each stock by the user. Position size will be determined by the allocated dollar amount and the first daily opening price after user submission. Contest administrator can set a maximum dollar per stock amount by setting the Max Dollars Per Position below; the default Max Dollars Per Position is unlimited. This means the user could put ‘Total Dollars’ into one stock. If this is undesirable, please set a Max Dollars Per Position.">(?)</label>
                                 </div>
                             </td>
                             <td>
@@ -75,10 +83,8 @@
                             </td>
                         </tr>
                         <tr id="maxDollars">
-                            <td><b>Max Dollars Per Position</b> </td>
+                            <td>Max Dollars Per Position </td>
                             <td>
-                                <br />
-
                                 <input class="form-control" type="number" id="maxDollar" name="ProblemName" value="@Model.MaxDollars" required="required" placeholder="Name">
                                 <br />
                             </td>

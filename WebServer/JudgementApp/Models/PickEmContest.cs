@@ -23,5 +23,6 @@ namespace JudgementApp.Models
 
         public List<Stock> Stocks = new List<Stock>();
 
+        public bool IsAllowNewContest { get; set; }
     }
 }

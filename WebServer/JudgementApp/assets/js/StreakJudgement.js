@@ -8,6 +8,7 @@
         var typingTimer;                //timer identifier
         var doneTypingInterval = 1000;  //time in ms, 5 second for example
         var $input = $('#UserEmail');
+        var $inputName = $('#UserName');
 
         //on keyup, start the countdown
         $input.on('keyup', function () {
@@ -20,6 +21,18 @@
             clearTimeout(typingTimer);
         });
 
+        //on keyup, start the countdown
+        $inputName.on('keyup', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        });
+
+        //on keydown, clear the countdown 
+        $inputName.on('keydown', function () {
+            clearTimeout(typingTimer);
+        });
+
+
         //user is "finished typing," do something
         function doneTyping() {
             $.ajax({
@@ -27,6 +40,7 @@
                 url: "/Judgement/GetUserStreak",
                 data: {
                     email: $("#UserEmail").val(),
+                    username: $("#UserName").val(),
                     id: $("#contestId").val()
                 },
                 dataType: "json",
@@ -44,13 +58,14 @@
        
         $("#hitbtn").on("click",
             function () {
-                var email = $("#UserName").val();
-                if (email) {
+                var username = $("#UserName").val();
+                var email = $("#UserEmail").val();
+                if (email || username) {
                     window.location =
-                        "/streak-history-" + $("#companyName").val() + "-" + $("#contestName").text() + "/" + $("#id").val() + "?email=" + email;
+                        "/streak-history-" + $("#companyName").val() + "-" + $("#contestName").text() + "/" + $("#id").val() + "?email=" + email + "&username=" + username;
                     return false;
                 } else {
-                    alert("Please enter username to see history.");
+                    alert("Please enter username or email to see history.");
                 }
                 
             });

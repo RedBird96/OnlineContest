@@ -1,9 +1,14 @@
 ﻿var Contest = (function() {
-    var init = function() {
+    var init = function () {
         Contest.bindPageEvents();
+
     };
 
-    var bindPageEvents = function() {
+    var bindPageEvents = function () {
+        var id = $("#companyId").val();
+        if (id) {
+            Contest.fillCompanyData();
+        }
         $("#fileUpload").on("change",
             function() {
                 var fileUpload = $("#fileUpload").get(0);

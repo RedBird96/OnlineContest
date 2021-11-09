@@ -29,6 +29,20 @@
         } else {
             $("#customeDate").hide();
         }
+        debugger;
+        if (val != 1) {
+            var preVal = $("#preIsAllowNewContest").val();
+            if (preVal != 0) {
+                $("#allowcheck").attr('checked', true)
+            }
+            else {
+                $("#allowcheck").attr('checked', false)
+            }
+            $("#allowSelection").show();
+        }
+        else {
+            $("#allowSelection").hide();
+        }
     };
 
     var bindPageEvents = function() {
@@ -64,6 +78,13 @@
                 } else {
                     $("#customeDate").hide();
                 }
+
+                if (val != 1) {
+                    $("#allowSelection").show();
+                }
+                else {
+                    $("#allowSelection").hide();
+                }
             });
 
         var now = new Date(),
@@ -86,7 +107,8 @@
                 var totalDollars = $("#totalDollarsVal").val();
                 var maxDollars = $("#maxDollar").val();
                 var style = $("#style").val();
-                
+                var isAllowNewContest = $("#allowcheck").is(":checked");
+                debugger;
                 if (!stockNumber) {
                     alert("Please select stock number");
                     return;
@@ -118,7 +140,7 @@
                 question.DollarsPerPoint = totalDollars;
                 question.MaxDollars = maxDollars;
                 question.StyleType = style;
-
+                question.IsAllowNewContest = isAllowNewContest;
 
                 var r = false;
                 if ($("#publish1").val()) {

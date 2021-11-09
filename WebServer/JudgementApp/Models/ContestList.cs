@@ -19,5 +19,7 @@ namespace JudgementApp.Models
         public string Url { get; set; }
         public DateTime CreatedDate { get; set; }
 
+        public string EndDate { get; set; }
+
     }
 }

@@ -1,7 +1,115 @@
-﻿
+﻿@model JudgementApp.Models.StreakResultList
 @{
-    ViewBag.Title = "StreakLeadBoard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>StreakLeadBoard</h2>
+<body style="background: ;color:  ">
+    <section class="contact-clean" style="background: ">
+        <form method="post" style="max-width: 1000px;text-align: center; background: ">
+            <h2 class="text-center">@ViewBag.ContestName</h2>
+            <img class="img-responsive" src="/assets/CompanyLogos/@ViewBag.Logo" style="width:200px;" />
 
+            <div>
+                <div class="table-responsive"  style="border: 1px solid; height: 350px" >
+                    <table id="table"  class="table table-borderless">
+                        <thead>
+                            <tr style="color: rgb(0, 227,174); ">
+                                <th style="color:; width: 206px; cursor: pointer;" onclick="sortTable(0, false)">Username <span style="color: lightgray">▲▼</span></th>
+                                <th style="color:; width: 206px; cursor: pointer;" onclick="sortTable(1, false)">Score <span style="color: lightgray">▲▼</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int i = 1;}
+                            @foreach (var row in Model.List)
+                            {
+                                <tr>
+                                    <td style="color:white" >@row.Username</td>
+                                    <td style="color:white">@row.Streak</td>
+                                </tr>
+                                { i = i + 1; }
+                            }
+
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button class="btn btn-primary" type="button" onclick="location.href='/streak-judgement-@ViewBag.CompanyName-@ViewBag.ContestName/@ViewBag.questionId'">Back to Contest</button>
+        </form>
+    </section>
+    <script src="~/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/theme.js"></script>
+    <script>
+        function sortTable(n, isNum) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("table");
+            switching = true;
+            //Set the sorting direction to ascending:
+            dir = "asc";
+            /*Make a loop that will continue until
+            no switching has been done:*/
+            while (switching) {
+                //start by saying: no switching is done:
+                switching = false;
+                rows = table.rows;
+                /*Loop through all table rows (except the
+                first, which contains table headers):*/
+                for (i = 1; i < (rows.length - 1); i++) {
+                    //start by saying there should be no switching:
+                    shouldSwitch = false;
+                    /*Get the two elements you want to compare,
+                    one from current row and one from the next:*/
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    /*check if the two rows should switch place,
+                    based on the direction, asc or desc:*/
+                    if (dir == "asc") {
+                        if (isNum) {
+                            if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                //if so, mark as a switch and break the loop:
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+
+                    } else if (dir == "desc") {
+                        if (isNum) {
+                            if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else {
+                            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                //if so, mark as a switch and break the loop:
+                                shouldSwitch = true;
+                                break;
+                            }
+                        }
+
+                    }
+                }
+                if (shouldSwitch) {
+                    /*If a switch has been marked, make the switch
+                    and mark that a switch has been done:*/
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    //Each time a switch is done, increase this count by 1:
+                    switchcount++;
+                } else {
+                    /*If no switching has been done AND the direction is "asc",
+                    set the direction to "desc" and run the while loop again.*/
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
